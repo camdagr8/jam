@@ -1,0 +1,20 @@
+<header class="header header-admin">
+	<nav class="navbar navbar-toggleable-md navbar-inverse bg-translucent">
+		<a class="navbar-brand" href="#"><img src="/assets/images/logo.jpg" class="logo rounded-circle" /> Jam</a>
+		<button class="navbar-toggler navbar-toggler-right bd-0" type="button" data-target="#header-toggle" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle navigation">
+			<i class="lnr-menu"></i>
+		</button>
+
+		<div class="collapse navbar-collapse" id="header-toggle">
+			<ul class="navbar-nav ml-auto mt-2 mt-md-0">
+				<li class="nav-item active">
+					<% if (currentuser) { %>
+					<a class="nav-link" href="<%=baseurl%>/logout"><i class="lnr-user mr-xs"></i> Sign out</a>
+					<% } else { %>
+					<a class="nav-link" href="<%=baseurl%>/login"><i class="lnr-lock mr-xs"></i> Sign in</a>
+					<% } %>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</header>

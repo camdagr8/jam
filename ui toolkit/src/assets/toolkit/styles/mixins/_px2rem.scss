@@ -1,0 +1,33 @@
+/**
+ * px2rem();
+ *
+ * @description Mixin that converts pixels into rems based on the $base-font-size.
+ */
+
+// base font size must be in pixels!!!
+$base-font-size: 16px !default;
+
+// ----------------------------------------------------------------------------
+//
+// 	 strip-units() : convert 14px/14em/etc to (int) 14
+//
+// ----------------------------------------------------------------------------
+@function strip-units($number) {
+
+	@if ($number == null) {
+		@return null;
+	}
+
+	@return $number / ($number * 0 + 1);
+}
+
+// ----------------------------------------------------------------------------
+//
+// 	 px2rem() : convert from pixels to rems
+//
+// ----------------------------------------------------------------------------
+@function px2rem($pixels) {
+	$pixels                    : strip-units($pixels);
+	$unitless-base-font-size   : strip-units($base-font-size);
+	@return #{$pixels/$unitless-base-font-size}rem;
+}

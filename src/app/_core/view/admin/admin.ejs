@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include ./partials/head -%>
+	</head>
+	<body class="bgc-gray-lightest">
+
+		<%- include ./partials/header -%>
+
+		<main class="admin-container" role="main">
+			<%- include ./partials/sidebar -%>
+
+			<section id="admin-content">
+
+				<div id="admin-alert">
+					<div class="alert alert-danger">
+						<button type="button" class="close" aria-label="Close" data-alert-close>
+							<span aria-hidden="true"><i class="lnr-cross"></i></span>
+						</button>
+						<span class="message"></span>
+					</div>
+				</div>
+
+				<% if (content) { %>
+				<%- include(content) -%>
+				<% } %>
+			</section>
+		</main>
+
+		<%- include ./partials/footer -%>
+	</body>
+</html>

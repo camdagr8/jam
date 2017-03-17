@@ -1,0 +1,33 @@
+/**
+ * toolkit.scss
+ * @description Main style sheet
+ */
+
+
+
+/**
+ * -------------------
+ *  0.0 - Vendor
+ * -------------------
+ */
+// Bootstrap
+@import 'vendor/bootstrap/bootstrap';
+@import 'vendor/tagsinput';
+@import 'vendor/datetimepicker';
+@import 'vendor/trumbowyg';
+
+
+/**
+ * -------------------
+ *  1.0 - Mixins
+ * -------------------
+ */
+@import 'mixins/px2rem';
+
+
+/**
+ * -------------------
+ *  2.0 - Theme
+ * -------------------
+ */
+@import 'themes/default/style';

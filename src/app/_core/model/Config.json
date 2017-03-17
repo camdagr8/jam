@@ -1,0 +1,8 @@
+[
+	{"key": "title", "value": {"title": "Jam"}},
+	{"key": "folders", "value": {"folders": []}},
+	{"key": "theme", "value": {"theme": "default"}},
+	{"key": "installed", "value": {"installed": true}},
+	{"key": "page_count", "value": {"page_count": 1}},
+	{"key": "user_count", "value": {"user_count": 1}}
+]

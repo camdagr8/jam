@@ -1,0 +1,54 @@
+.home {
+	header.header-default {
+		position: fixed;
+	}
+}
+
+.hero-home {
+	overflow: hidden;
+	background-size: cover;
+	background-position: center center;
+}
+
+.home-tiles {
+	$home-tile-padding: 10;
+
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+	display: flex;
+
+	a.tile {
+		width: 25%;
+		margin: auto;
+		flex-grow: 1;
+		position: relative;
+
+		img {
+			width: 100%;
+		}
+
+		&:after {
+			opacity: 0;
+			z-index: 2;
+			content: "";
+			position: absolute;
+			transition: opacity .75s;
+			border: 0px solid #FFFFFF;
+			top: px2rem($home-tile-padding);
+			left: px2rem($home-tile-padding);
+			right: px2rem($home-tile-padding);
+			bottom: px2rem($home-tile-padding);
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
+		&:hover,
+		&:focus,
+		&:active {
+			outline: none;
+			&:after { opacity: .5; }
+		}
+	}
+}

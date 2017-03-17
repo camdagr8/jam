@@ -1,0 +1,9 @@
+[
+	{
+		"type": "page",
+		"template": "index",
+		"routes": ["/","/index.html","/home.html"],
+		"meta": {"title":"JAM","mod-test":{"fubar":"suckers!"}},
+		"body": "<main><div class=\"jumbotron\"><h1>Welcome to Jam</h1>{{> test }}<small>{{date format=\"LL\"}}</small></div></main>"
+	}
+]

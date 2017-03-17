@@ -1,0 +1,33 @@
+/**
+ * Raleway font
+ */
+@import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700');
+
+
+$raleway-weights: (
+	light: 300,
+	regular: 400,
+	medium: 500,
+	semi-bold: 600,
+	bold: 700
+);
+
+.raleway {
+	font-family: 'Raleway', sans-serif;
+	font-weight: 400;
+}
+
+@each $key, $value in $raleway-weights {
+	.raleway-#{$key} {
+		font-family: 'Raleway', sans-serif;
+		font-weight: $value;
+	}
+};
+
+
+/**
+ * Monospace font
+ */
+.monospace {
+  font-family: monospace;
+}

@@ -1,0 +1,15 @@
+<div class="card card-shadow bgc-white bd-0">
+	<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> Template</h6>
+	<ul class="list-group list-group-flush" data-toggle="check">
+		<li class="list-group-item">
+			<select class="form-control" id="admin-template-select" name="template">
+				{{#loop 1 5 1}}
+				<option value="template-{{@index}}">Template {{@index}}</option>
+				{{/loop}}
+			</select>
+		</li>
+	</ul>
+	<div class="card-footer bgc-white" style="margin-top: -1px;">
+		<button type="button" class="btn btn-outline-secondary btn-block text-uppercase" data-preview>Preview</button>
+	</div>
+</div>

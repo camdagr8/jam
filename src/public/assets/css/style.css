@@ -1,0 +1,21 @@
+#admin-alert {
+  display: none; }
+
+.form-control[readonly] {
+  background-color: #FFF; }
+
+.card-shadow {
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.25); }
+
+.input-group label {
+  margin-bottom: 0; }
+
+#admin-form h1 .ico, #admin-form h2 .ico, #admin-form h3 .ico, #admin-form h4 .ico, #admin-form h5 .ico, #admin-form h6 .ico {
+  float: left;
+  margin-top: 2px;
+  margin-right: 16px; }
+
+#admin-form .input-group .btn {
+  padding-top: .4rem; }
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIl9hZG1pbi5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNBO0VBQ0MsY0FBYSxFQUNiOztBQUVEO0VBQ0MsdUJBQXNCLEVBQ3RCOztBQUVEO0VBQ0MsMENBQXFDLEVBQ3JDOztBQUdEO0VBQ0MsaUJBQWdCLEVBQ2hCOztBQUdEO0VBR0csWUFBVztFQUNYLGdCQUFlO0VBQ2YsbUJBQWtCLEVBQ2xCOztBQU5IO0VBVUUsbUJBQWtCLEVBQ2xCIiwiZmlsZSI6InN0eWxlLmNzcyIsInNvdXJjZXNDb250ZW50IjpbIlxuI2FkbWluLWFsZXJ0IHtcblx0ZGlzcGxheTogbm9uZTtcbn1cblxuLmZvcm0tY29udHJvbFtyZWFkb25seV0ge1xuXHRiYWNrZ3JvdW5kLWNvbG9yOiAjRkZGO1xufVxuXG4uY2FyZC1zaGFkb3cge1xuXHRib3gtc2hhZG93OiAwIDAgMXB4IDAgcmdiYSgwLDAsMCwuMjUpO1xufVxuXG5cbi5pbnB1dC1ncm91cCBsYWJlbCB7XG5cdG1hcmdpbi1ib3R0b206IDA7XG59XG5cblxuI2FkbWluLWZvcm0ge1xuXHRoMSwgaDIsIGgzLCBoNCwgaDUsIGg2IHtcblx0XHQuaWNvIHtcblx0XHRcdGZsb2F0OiBsZWZ0O1xuXHRcdFx0bWFyZ2luLXRvcDogMnB4O1xuXHRcdFx0bWFyZ2luLXJpZ2h0OiAxNnB4O1xuXHRcdH1cblx0fVxuXG5cdC5pbnB1dC1ncm91cCAuYnRuIHtcblx0XHRwYWRkaW5nLXRvcDogLjRyZW07XG5cdH1cbn1cbiJdfQ== */

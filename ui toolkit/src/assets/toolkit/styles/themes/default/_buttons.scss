@@ -1,0 +1,22 @@
+.btn {
+  position: relative;
+  &:hover {
+    cursor: pointer;
+  }
+
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    z-index: 1000;
+  }
+
+  &-clear {
+    border: none;
+    background-color: transparent;
+
+    i {
+      line-height: 1.5;
+    }
+  }
+}

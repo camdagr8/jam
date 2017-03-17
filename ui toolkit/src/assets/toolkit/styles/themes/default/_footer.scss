@@ -1,0 +1,17 @@
+footer.footer-default {
+	min-height: px2rem(200);
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			margin-bottom: px2rem($s);
+		}
+
+		li a {
+			color: $white;
+		}
+	}
+}

@@ -1,0 +1,126 @@
+---
+{
+	"title": "Admin: New Page",
+	"body-class": "admin bgc-gray-lightest",
+	"admin": true
+}
+---
+<header class="header header-admin">
+	<nav class="navbar navbar-toggleable-md navbar-inverse bg-translucent">
+		<a class="navbar-brand" href="#"><img src="{{baseurl}}/assets/toolkit/images/logo.jpg" class="logo rounded-circle" /> Jam</a>
+		<button class="navbar-toggler navbar-toggler-right bd-0" type="button" data-target="#header-toggle" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle navigation">
+			<i class="lnr-menu"></i>
+		</button>
+
+		<div class="collapse navbar-collapse" id="header-toggle">
+			<ul class="navbar-nav ml-auto mt-2 mt-md-0">
+				<li class="nav-item active">
+					<a class="nav-link" href="#"><i class="lnr-user mr-xs"></i> Sign out</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</header>
+
+<section id="admin-alert" class="hidden-xs-up">
+	<div class="alert alert-danger">
+		{{lipsum 200 500}}
+	</div>
+</section>
+
+<main class="admin-container" role="main">
+	<aside id="admin-menu" class="bg-translucent bdc-inverse" aria-expanded="true">
+		<ul class="list-menu">
+			<li class="list-menu-heading active" data-toggle="collapse" href="#admin-collapse-1" aria-expanded="true" aria-controls="admin-collapse-1">
+				<span class="badge badge-info">20</span><h6><i class="lnr-document2 ico"></i>Pages</h6>
+			</li>
+			<li class="list-sub-menu collapse show" id="admin-collapse-1" aria-expanded="true">
+				<ul class="list-sub-menu collapse show" id="admin-collapse-1">
+					<li>
+						<a href="/templates/admin-page.html" class="list-menu-item menu-add">New Page</a>
+					</li>
+					<li><a href="#" class="list-menu-item">Cras justo odio</a></li>
+					<li><a href="#" class="list-menu-item">Cras justo odio</a></li>
+					<li><a href="#" class="list-menu-item">Cras justo odio</a></li>
+					<li><a href="#" class="list-menu-item">Cras justo odio</a></li>
+				</ul>
+			</li>
+
+			<li class="list-menu-heading" data-toggle="collapse" href="#admin-collapse-2" aria-expanded="false" aria-controls="admin-collapse-2">
+				<span class="badge badge-info">99+</span><h6><i class="lnr-menu3 ico"></i>Navigation</h6>
+			</li>
+			<li class="list-sub-menu collapse" id="admin-collapse-2">
+				<ul class="list-sub-menu">
+					<li><a href="#" class="list-menu-item">Header</a></li>
+					<li><a href="#" class="list-menu-item">Footer</a></li>
+				</ul>
+			</li>
+
+			<li class="list-menu-heading" data-toggle="collapse" href="#admin-collapse-3" aria-expanded="false" aria-controls="admin-collapse-3">
+				<span class="badge badge-info">5</span><h6><i class="lnr-users2 ico"></i>Users</h6>
+			</li>
+			<li class="list-sub-menu collapse" id="admin-collapse-3">
+				<ul class="list-sub-menu">
+					<li>
+						<a href="#" class="list-menu-item menu-add">New User</a>
+					</li>
+				</ul>
+			</li>
+
+			<li class="list-menu-link">
+				<h6><a href="#"><i class="lnr-equalizer ico"></i>Settings</a></h6>
+			</li>
+		</ul>
+	</aside>
+	<section id="admin-content">
+		<form id="admin-form" action="/" method="post">
+			<div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
+				<div class="mb-s">
+					<div class="input-group mb-xs">
+						<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
+						<input type="text" class="form-control form-control-lg pl-s" placeholder="Page title" name="title" autocomplete="off" />
+					</div>
+
+					<div id="admin-routes-req" class="input-group">
+						<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-link2"></i></span>
+						<input type="text" class="form-control pl-s" placeholder="/page-url" name="routes" required data-slug="blur" autocapitalize="off" autocomplete="off" autocorrect="off" />
+						<span data-dna="input-group-btn" class="input-group-btn">
+							<button class="btn btn-primary" type="button" data-clone="#route-hbs" data-target="#admin-routes" style="width: 46px;"><i class="lnr-plus"></i></button>
+						</span>
+					</div>
+					<div id="admin-routes" class="mb-l"></div>
+
+					<textarea name="body" placeholder="Page Content" data-wysiwyg></textarea>
+				</div>
+				<aside>
+					<div class="mb-l">{{> admin-template-select }}</div>
+
+					<div class="mb-l">{{> admin-publish }}</div>
+
+					<div class="mb-l">
+						<button
+							type="button"
+							class="btn btn-primary btn-block btn-lg text-uppercase"
+							data-label="Save Page"
+							data-confirm="Are you sure?"
+							data-submit='{"active": "Saving..."}'>Save Page</button>
+					</div>
+				</aside>
+			</div>
+		</form>
+	</section>
+</main>
+
+<script id="route-hbs" type="text/x-handlebars-template">
+	<div class="input-group mt-xs">
+		<span data-dna="input-group-btn" class="input-group-btn">
+			<button class="btn btn-secondary bd-r-0" type="button" data-target=".input-group" data-remove style="width: 46px;"><i class="lnr-cross"></i></button>
+		</span>
+		<input type="text" class="form-control pl-s" placeholder="/page-url" autocapitalize="off" autocomplete="off" autocorrect="off" name="routes" data-slug="blur" />
+		<span data-dna="input-group-btn" class="input-group-btn">
+			<button class="btn btn-primary bd-l-0" type="button" data-clone="#route-hbs" data-target="#admin-routes" style="width: 46px;"><i class="lnr-plus"></i></button>
+		</span>
+	</div>
+</script>
+
+{{> wysiwyg-icons }}
