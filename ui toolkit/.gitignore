@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log
+*.komodo*
+.idea
+dist
+.sass-cache
+.DS_Store
