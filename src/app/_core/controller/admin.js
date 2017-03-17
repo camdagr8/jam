@@ -26,7 +26,6 @@ exports.use = (req, res, next) => {
  * /admin & /dashboard handler
  */
 exports.all = (req, res) => {
-	log('users:', jam.users);
 	jam.content = './sections/dashboard';
 	res.render(core.template.admin, jam);
 };

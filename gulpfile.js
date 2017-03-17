@@ -3,23 +3,23 @@
  * Dependencies
  * -----------------------------------------------------------------------------
  */
-const beautify = require('js-beautify').js_beautify;
-const browserSync = require('browser-sync');
-const csso = require('gulp-csso');
-const del = require('del');
-const gulp = require('gulp');
-const gulpif = require('gulp-if');
-const gutil = require('gulp-util');
-const install = require('gulp-install');
-const nodemon = require('gulp-nodemon');
-const prefix = require('gulp-autoprefixer');
-const runSequence = require('run-sequence');
-const sass = require('gulp-sass');
-const slugify = require('slugify');
-const source = require('vinyl-source-stream');
-const sourcemaps = require('gulp-sourcemaps');
-const webpack = require('webpack');
-const _ = require('underscore');
+const beautify       = require('js-beautify').js_beautify;
+const browserSync    = require('browser-sync');
+const csso           = require('gulp-csso');
+const del            = require('del');
+const gulp           = require('gulp');
+const gulpif         = require('gulp-if');
+const gutil          = require('gulp-util');
+const install        = require('gulp-install');
+const nodemon        = require('gulp-nodemon');
+const prefix         = require('gulp-autoprefixer');
+const runSequence    = require('run-sequence');
+const sass           = require('gulp-sass');
+const slugify        = require('slugify');
+const source         = require('vinyl-source-stream');
+const sourcemaps     = require('gulp-sourcemaps');
+const webpack        = require('webpack');
+const _              = require('underscore');
 
 
 /**

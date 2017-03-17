@@ -2,7 +2,7 @@
 
 let users_get = (request, response, results = []) => {
 
-	// 0.1 - Use core.query() to contruct the Parse.Query object
+	// 0.1 - Use core.query() to construct the Parse.Query object
 	let qry = core.query({table: '_User', skip: request.params.skip, limit: request.params.limit, orderBy: 'username', order: 'ascending'});
 
 	qry.find({useMasterKey: true}).then((users) => {
@@ -15,7 +15,7 @@ let users_get = (request, response, results = []) => {
 			response.success(results);
 		}
 
-	}, (err) => {
+	}, () => {
 		response.success(results);
 	});
 };
@@ -102,7 +102,7 @@ Parse.Cloud.define('user_session_get', (request, response) => {
 
 		return u.save(null, {useMasterKey: true});
 
-	}).then((user) => {
+	}).then(() => {
 		response.success(u);
 	});
 });
