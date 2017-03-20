@@ -187,6 +187,7 @@ $(function () {
 
 	// #install-form
 	$(document).on('submit', '#install-form', (e) => {
+
 		e.preventDefault();
 
 		// Get the form values
@@ -208,12 +209,13 @@ $(function () {
 
 		var reqs = {
 			'title': 'Site name is a required field',
-			'email': 'Enter the admin account email address',
+			'username': 'Enter the admin account email address',
 			'password': 'Enter the admin account password',
 			'confirm': 'Confirm the admin account password'
 		};
 
-		for (var prop in reqs) {
+		let keys = _.keys(reqs);
+		keys.forEach((prop) => {
 			if (!frm.hasOwnProperty(prop)) {
 				var elm = $('input[name="'+prop+'"]');
 					elm.closest('.list-group-item').find('.form-control-feedback').html(reqs[prop]);
@@ -222,7 +224,7 @@ $(function () {
 					elm.focus();
 					return;
 			}
-		}
+		});
 
 		if (frm.password !== frm.confirm) {
 			var elm = $('input[name="confirm"]');
@@ -238,8 +240,10 @@ $(function () {
 		btn.html('Aww Yeah! Let&rsquo;s Install Some Jam&hellip;');
 		btn.focus();
 
-		var u = $(this).attr('action');
+		var u = $('#install-form').prop('action');
 		var me = $(this);
+
+		console.log(u, frm);
 
 		$.ajax({
 			url: u,
@@ -247,10 +251,12 @@ $(function () {
 			method: 'POST',
 			dataType: 'json',
 			success: function (result) {
+			    console.log('success');
 				btn.html('Installation Complete!');
 				setTimeout(function () { window.location.reload(true); }, 2000);
 			},
 			error: function (err) {
+			    console.log(err);
 				btn.removeAttr('disabled');
 				$('body').find('.alert').text(err.message).addClass('show');
 			}

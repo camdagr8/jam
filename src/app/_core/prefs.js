@@ -10,70 +10,73 @@ const _ = require('underscore');
  * @description Retrieves configuration variables, preferences, and other necessary data.
  */
 module.exports = (req, res, next) => {
-    jam = {};
+
 
     let url = req.url.split('/');
-        url.shift();
+    url.shift();
 
-    jam['baseurl'] 		= req.protocol + '://' + req.get('host');
-    jam['blocks'] 		= [];
-    jam['currentuser'] 	= null;
-    jam['helpers'] 		= [];
-    jam['pages'] 		= [];
-    jam['plugin'] 		= {};
-    jam['plugins'] 		= [];
-    jam['sidebar'] 		= [];
-    jam['url'] 			= url;
-    jam['users'] 		= [];
-    jam['widgets'] 		= [];
+    jam                = {};
+    jam['baseurl']     = req.protocol + '://' + req.get('host');
+    jam['theme']       = 'default';
+    jam['blocks']      = [];
+    jam['currentuser'] = null;
+    jam['helpers']     = [];
+    jam['pages']       = [];
+    jam['plugin']      = {};
+    jam['plugins']     = [];
+    jam['sidebar']     = [];
+    jam['url']         = url;
+    jam['users']       = [];
+    jam['widgets']     = [];
 
-	Parse.Cloud.run('config_get').then((result) => { // Get Config objects
-        log('result', result);
-
+    Parse.Cloud.run('config_get').then((result) => { // Get Config objects
+        log('config_get');
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
 
-	}, (err) => { // Not able to get the configs
+    }, (err) => { // Not able to get the configs
+        log('no configs');
 
         jam.installed = false;
-		next();
+        next();
 
-	}).then(() => { // Get the current user from session token
-		let stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : null;
-		return (stoken) ? Parse.Cloud.run('user_session_get', {token: stoken}) : null;
+    }).then(() => { // Get the current user from session token
+        log('get current user from session');
+        let stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : null;
+        return (stoken) ? Parse.Cloud.run('user_session_get', {token: stoken}) : null;
 
-	}).then((user) => { // Set the currentuser value: Parse.User || null
-		jam.currentuser = user;
+    }).then((user) => { // Set the currentuser value: Parse.User || null
+        log('set current user');
+        jam.currentuser = user;
 
-	}, (err) => { // No current user: Keep going
-		log(err);
+    }, (err) => { // No current user: Keep going
+        log(err);
 
-	}).then(() => {
+    }).then(() => {
+        log('content_get_pages');
+        return Parse.Cloud.run('content_get_pages');
 
-		return Parse.Cloud.run('content_get_pages');
+    }).then((pages) => {
+        log('got pages');
+        jam['pages'] = pages;
 
-	}).then((pages) => {
+    }, (err) => {
 
-		jam['pages'] = pages;
+        log(err);
 
-	}, (err) => {
+    }).then(() => {
 
-		log(err);
+        log('helpers');
+        // Core helpers & plugins
+        jam['helpers'] = core.plugins(appdir + '/_core/helper', true);
+        jam['plugins'] = core.plugins(appdir + '/_core/plugin');
 
-	}).then(() => {
+        // User helpers & plugins
+        jam['helpers'] = jam.helpers.concat(core.plugins(appdir + '/helper', true));
+        jam['plugins'] = jam.plugins.concat(core.plugins(appdir + '/plugin'));
 
-		// Core helpers & plugins
-		jam['helpers'] 	= core.plugins(appdir + '/_core/helper', true);
-		jam['plugins'] 	= core.plugins(appdir + '/_core/plugin');
-
-		// User helpers & plugins
-		jam['helpers'] 	= jam.helpers.concat(core.plugins(appdir + '/helper', true));
-		jam['plugins'] 	= jam.plugins.concat(core.plugins(appdir + '/plugin'));
-
-
-	}).then(() => { // Done!
-
-		next();
-
-	});
+    }).then(() => { // Done!
+        log(jam);
+        next();
+    });
 };

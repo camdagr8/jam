@@ -29,15 +29,17 @@ const install_get = (req, res) => {
 
 const install_post = (req, res, next) => {
 
-	if (!req.body.hasOwnProperty('email') || !req.body.hasOwnProperty('password')) {
-		res.redirect('/install');
+	if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('password')) {
+		//res.redirect('/install');
+        //res.status(400).send('Bad Request');
+        res.json({error: 101, message: 'invalid '})
 		return;
 	}
 
 	// Create the user
 	let admin = new Parse.User();
-		admin.set('email', req.body.email);
-		admin.set('username', req.body.email);
+		admin.set('email', req.body.username);
+		admin.set('username', req.body.username);
 		admin.set('password', req.body.password);
 
 	// Admin ACL & Role
@@ -118,8 +120,8 @@ const install_post = (req, res, next) => {
 
 	}).then((config) => {
 
-		//res.json(config);
-		res.redirect('/');
+		res.json(config);
+		//res.redirect('/');
 
 	});
 
@@ -148,4 +150,4 @@ module.exports = (req, res, next) => {
 		install_get(req, res);
 	}
 
-}
+};
