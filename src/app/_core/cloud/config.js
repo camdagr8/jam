@@ -71,8 +71,11 @@ const config_get = (request, response, skip, output) => {
 				response.success(v);
 
 			} else {
-
-				response.success(output);
+                if (_.isEmpty(output)) {
+                    response.error('no config');
+                } else {
+                    response.success(output);
+                }
 
 			}
 		}
