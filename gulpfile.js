@@ -151,7 +151,7 @@ gulp.task('serve', (done) => {
 		timestamps: true,
 		reloadDelay: 500,
 		reloadDebounce: 2000,
-		logPrefix: 'BROWSERSYNC',
+		logPrefix: '00:00:00',
 		port: config.port.browsersync,
 		ui: {port: config.port.browsersync+1},
 		proxy: 'localhost:'+config.port.proxy
