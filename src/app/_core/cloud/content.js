@@ -46,12 +46,12 @@ Parse.Cloud.define('content_get', (request, response) => {
 	qry.first().then((result) => {
 
 		if (!result) {
-			response.error("page not foud");
+			response.error("page not found");
 		} else {
 			response.success(result);
 		}
 
-	}, (err) => {
+	}, () => {
 		response.error("page not found");
 	});
 });

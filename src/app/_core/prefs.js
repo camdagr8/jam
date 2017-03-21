@@ -11,11 +11,9 @@ const _ = require('underscore');
  */
 module.exports = (req, res, next) => {
 
-
     let url = req.url.split('/');
     url.shift();
 
-    jam                = {};
     jam['baseurl']     = req.protocol + '://' + req.get('host');
     jam['theme']       = 'default';
     jam['blocks']      = [];
@@ -34,7 +32,7 @@ module.exports = (req, res, next) => {
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
 
-    }, (err) => { // Not able to get the configs
+    }, () => { // Not able to get the configs
 
         jam.installed = false;
         next();

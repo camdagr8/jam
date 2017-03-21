@@ -22,132 +22,145 @@ const _ = require('underscore');
  * @description Renders the install.ejs file
  */
 const install_get = (req, res) => {
-	jam.title = "Jam Install";
-	res.render(appdir + '/_core/view/admin/install', jam);
+    jam.title = "Jam Install";
+    res.render(appdir + '/_core/view/admin/install', jam);
 };
 
 
 const install_post = (req, res, next) => {
 
-	if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('password')) {
-		//res.redirect('/install');
-        //res.status(400).send('Bad Request');
-        res.json({error: 101, message: 'invalid '})
-		return;
-	}
+    if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('password')) {
+        res.status(500).json({error: 101, message: 'invalid '});
+        return;
+    }
 
-	// Create the user
-	let admin = new Parse.User();
-		admin.set('email', req.body.username);
-		admin.set('username', req.body.username);
-		admin.set('password', req.body.password);
+    // Create the user
+    let admin = new Parse.User();
+    admin.set('email', req.body.username);
+    admin.set('username', req.body.username);
+    admin.set('password', req.body.password);
 
-	// Admin ACL & Role
-	var adminACL = new Parse.ACL();
-		adminACL.setPublicReadAccess(true);
+    // Admin ACL & Role
+    let adminACL = new Parse.ACL();
+    adminACL.setPublicReadAccess(true);
 
-	var adminRole = new Parse.Role('Administrator', adminACL);
-		adminRole.set('level', 1000);
+    let adminRole = new Parse.Role('Administrator', adminACL);
+    adminRole.set('level', 1000);
 
-	// Sign up the admin user
-	admin.signUp().then((user) => { // Admin Role create
+    // Sign up the admin user
+    admin.signUp().then((user) => { // Admin Role create
 
-		adminRole.getUsers().add(user);
+        adminRole.getUsers().add(user);
 
-		return adminRole.save();
+        return adminRole.save();
 
-	}).then((role) => { // Moderator ACL & Role
+    }, (err) => {
+        res.status(500).json(err);
 
-		let modACL = new Parse.ACL();
-			modACL.setPublicReadAccess(true);
+    }).then(() => { // Moderator ACL & Role
 
-		let modRole = new Parse.Role('Moderator', modACL);
-			modRole.set('level', 100);
-			modRole.getRoles().add([adminRole]);
+        let modACL = new Parse.ACL();
+        modACL.setPublicReadAccess(true);
 
-		return modRole.save();
+        let modRole = new Parse.Role('Moderator', modACL);
+        modRole.set('level', 100);
+        modRole.getRoles().add([adminRole]);
 
-	}).then((role) => { // Publisher ACL & Role
+        return modRole.save();
+    }, (err) => {
 
-		let pubACL = new Parse.ACL();
-			pubACL.setPublicReadAccess(true);
+        res.status(500).json(err);
 
-		let pubRole = new Parse.Role('Publisher', pubACL);
-			pubRole.set('level', 50);
-			pubRole.getRoles().add([adminRole, role]);
+    }).then((role) => { // Publisher ACL & Role
 
-		return pubRole.save();
+        let pubACL = new Parse.ACL();
+        pubACL.setPublicReadAccess(true);
 
-	}).then(() => { // Load the default Config objects
+        let pubRole = new Parse.Role('Publisher', pubACL);
+        pubRole.set('level', 50);
+        pubRole.getRoles().add([adminRole, role]);
 
-		let items = require(appdir + '/_core/model/Config.json');
+        return pubRole.save();
+    }, (err) => {
 
-		let objs = [];
+        res.status(500).json(err);
 
-		items.forEach((item) => {
-			let obj = new Parse.Object('Config');
-			let keys = _.keys(item);
+    }).then(() => { // Load the default Config objects
 
-			if (req.body.hasOwnProperty(item.key)) {
-				item.value[item.key] = req.body[item.key];
-			}
+        let items = require(appdir + '/_core/model/Config.json');
 
-			keys.forEach((key) => { obj.set(key, item[key]); });
+        let objs = [];
 
-			objs.push(obj);
-		});
+        items.forEach((item) => {
+            let obj  = new Parse.Object('Config');
+            let keys = _.keys(item);
 
-		return Parse.Object.saveAll(objs);
+            if (req.body.hasOwnProperty(item.key)) {
+                item.value[item.key] = req.body[item.key];
+            }
 
-	}).then(() => { // Load the default Content objects
+            keys.forEach((key) => {
+                obj.set(key, item[key]);
+            });
 
-		let items = require(appdir + '/_core/model/Content.json');
+            objs.push(obj);
+        });
 
-		let objs = [];
+        return Parse.Object.saveAll(objs);
 
-		items.forEach((item) => {
-			let obj = new Parse.Object('Content');
-			let keys = _.keys(item);
+    }, (err) => {
 
-			keys.forEach((key) => {
-				obj.set(key, item[key]);
-			});
+        res.status(500).json(err);
 
-			objs.push(obj);
-		});
+    }).then(() => { // Load the default Content objects
 
-		return Parse.Object.saveAll(objs);
+        let items = require(appdir + '/_core/model/Content.json');
 
-	}).then((config) => {
+        let objs = [];
 
-		res.json(config);
-		//res.redirect('/');
+        items.forEach((item) => {
+            let obj  = new Parse.Object('Content');
+            let keys = _.keys(item);
 
-	});
+            keys.forEach((key) => {
+                obj.set(key, item[key]);
+            });
+
+            objs.push(obj);
+        });
+
+        return Parse.Object.saveAll(objs);
+
+    }, (err) => {
+
+        res.status(500).json(err);
+
+    }).then(() => {
+        next();
+    });
 
 };
-
 
 
 /**
  * Exports
  */
 module.exports = (req, res, next) => {
-
-	if (req.path === '/install' && req.method === 'POST') {
-		install_post(req, res, next);
-		return;
-	}
-
-	// Check if the install config has been set
-	if (jam.hasOwnProperty('installed')) {
-		if (jam.installed === true) {
-			next();
-		} else {
-			install_get(req, res);
-		}
-	} else {
-		install_get(req, res);
-	}
-
+    if (jam['installed'] === true) {
+        next();
+    } else {
+        if (req.method === 'POST') {
+            log('INSTALL POST');
+            install_post(req, res, next);
+            //res.json(req.body);
+        } else {
+            // Check if the install config has been set
+            if (jam['installed'] === true) {
+                next();
+            } else {
+                log('INSTALL GET');
+                install_get(req, res);
+            }
+        }
+    }
 };
