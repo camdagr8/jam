@@ -177,15 +177,18 @@ const add_widgets = (sections) => {
  * @since 0.1.0
  *
  * @description Function that reads the helpers directory and creates an object array of the results.
- * @param path {String} The helpers directory to scan.
+ * @param mod_path {String} The helpers directory to scan.
  * @returns {ObjectArray} List of modules.
  */
-const plugins = (mod_path, helper) => {
+const plugins = (mod_path) => {
+    if (!fs.existsSync(mod_path)) {
+        return [];
+    }
 
 	let output 	= [];
 	let mods 	= fs.readdirSync(mod_path);
 
-	if (!jam.hasOwnProperty('plugin')) { jam.widget = {}; }
+	if (!jam.hasOwnProperty('plugin')) { jam.plugin = {}; }
 
 	mods.forEach((dir) => {
 

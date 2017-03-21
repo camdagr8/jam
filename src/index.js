@@ -6,7 +6,7 @@
 global.basedir 			= __dirname; // ref to this directory as root
 global.env 				= (process.env.NODE_ENV) ? process.env : require(basedir + '/env.json');
 global.appdir 			= basedir + env.APP_MOUNT; // ref to the /app dir
-global.jam 				= {} // global namespace used to store misc. data
+global.jam 				= {}; // global namespace used to store misc. data
 global.core 			= require(appdir + '/_core/core.js');
 
 
@@ -42,16 +42,16 @@ global.log = (...args) => {
 };
 
 // Parse API setup
-var api = new ParseServer({
-	appId				: env.APP_ID,
-	appName				: env.APP_NAME,
-	cloud				: appdir + '/_core/cloud/cloud.js',
-	databaseURI			: env.DATABASE_URI,
-	javascriptKey		: env.JAVASCRIPT_KEY,
-	masterKey			: env.MASTER_KEY,
-	publicServerURL 	: env.SERVER_URI + env.PARSE_MOUNT,
-	serverURL			: env.SERVER_URI + env.PARSE_MOUNT,
-	loggerAdapter 		: {
+const api = new ParseServer({
+    appId				: env.APP_ID,
+    appName				: env.APP_NAME,
+    cloud				: appdir + '/_core/cloud/cloud.js',
+    databaseURI			: env.DATABASE_URI,
+    javascriptKey		: env.JAVASCRIPT_KEY,
+    masterKey			: env.MASTER_KEY,
+    publicServerURL 	: env.SERVER_URI + env.PARSE_MOUNT,
+    serverURL			: env.SERVER_URI + env.PARSE_MOUNT,
+    loggerAdapter 		: {
         module: "parse-server/lib/Adapters/Logger/WinstonLoggerAdapter",
         options: {
             logLevel: "error"
@@ -61,9 +61,9 @@ var api = new ParseServer({
 
 
 // Parse Dashboard setup
-var users = (typeof env.PARSE_DASHBOARD_USERS === 'string') ? JSON.parse(env.PARSE_DASHBOARD_USERS) : env.PARSE_DASHBOARD_USERS;
+const users = (typeof env.PARSE_DASHBOARD_USERS === 'string') ? JSON.parse(env.PARSE_DASHBOARD_USERS) : env.PARSE_DASHBOARD_USERS;
 
-var dashboard = new ParseDashboard({
+const dashboard = new ParseDashboard({
 	"allowInsecureHTTP"	: true,
 	"trustProxy"  		: 1,
 	"users"				: users,

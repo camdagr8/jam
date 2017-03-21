@@ -20,7 +20,7 @@ exports.all = (req, res) => {
 		} else {
 			res.render(tmp, jam);
 		}
-	}, (err) => {
+	}, () => {
 		res.render(tmp, jam);
 	});
 };

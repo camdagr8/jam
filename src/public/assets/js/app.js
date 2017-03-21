@@ -2353,7 +2353,6 @@ $(function () {
 				}
 				if (!data.hasOwnProperty(fld)) {
 					err = req[fld];
-					return;
 				}
 			});
 
@@ -2538,7 +2537,6 @@ $(function () {
 				elm.closest('.list-group-item').addClass('has-danger');
 				btn.removeAttr('disabled');
 				elm.focus();
-				return;
 			}
 		});
 
@@ -2557,9 +2555,11 @@ $(function () {
 		btn.focus();
 
 		var u = $('#install-form').prop('action');
-		var me = $(_this);
 
-		console.log(u, frm);
+		setTimeout(function () {
+			btn.removeAttr('disabled');
+			$('body').find('.alert').text('Request timeout').addClass('show');
+		}, 20000);
 
 		$.ajax({
 			url: u,
@@ -2567,22 +2567,17 @@ $(function () {
 			method: 'POST',
 			dataType: 'json',
 			success: function success(result) {
-				console.log('success');
 				btn.html('Installation Complete!');
 				setTimeout(function () {
-					window.location.reload(true);
+					window.location.href = '/';
 				}, 2000);
 			},
-			error: function error(err) {
+			error: function error(xhr, status, err) {
+				console.log('error');
 				console.log(err);
 				btn.removeAttr('disabled');
 				$('body').find('.alert').text(err.message).addClass('show');
 			}
-		});
-
-		setTimeout(function () {
-			btn.removeAttr('disabled');
-			$('body').find('.alert').text('Request timeout').addClass('show');
 		});
 
 		return true;

@@ -1,6 +1,6 @@
-var _ = require('underscore');
-var hbs = require('handlebars');
-var slugify = require('slugify');
+const _ = require('underscore');
+const hbs = require('handlebars');
+const slugify = require('slugify');
 
 $(function () {
 
@@ -52,7 +52,6 @@ $(function () {
 				if (err !== null) { return; }
 				if (!data.hasOwnProperty(fld)) {
 					err = req[fld];
-					return;
 				}
 			});
 
@@ -116,27 +115,27 @@ $(function () {
 		e.type = (e.type === 'focusin') ? 'focus' : e.type;
 
 		if (e.type === 'keydown') {
-			var k = e.which || e.keyCode;
+			let k = e.which || e.keyCode;
 			if (k === 13) { e.type = $(this).data('slug'); }
 		}
 
 		if ($(this).data('slug') !== e.type) { return; }
 
-		var t = $(this).val();
+		let t = $(this).val();
 		if (t.length < 1 || t === '/') { return; }
 
 		t = t.replace(/\/\/+/g, '');
 		$(this).val(t);
 
-		var a = t.split('/');
+		let a = t.split('/');
 			a = _.compact(a);
 
 		if (a.length < 1) { return; }
 
-		var o = [];
-		for (var i = 0; i < a.length; i++) { o.push(slugify(a[i])); }
+		let o = [];
+		for (let i = 0; i < a.length; i++) { o.push(slugify(a[i])); }
 
-		var s = o.join('/');
+		let s = o.join('/');
 
 		if (s.substr(0, 1) != '/') { s = '/' + s; }
 
@@ -171,9 +170,9 @@ $(function () {
 			}
 
 			// Slide up/down [data-toggle="check"] elements
-			var sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
+			let sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
 				sibs.each(function () {
-					var t = $(this).data('target');
+					let t = $(this).data('target');
 					if (t) {
 						if (this.checked === true) {
 							$(t).stop().slideDown(200);
@@ -191,10 +190,10 @@ $(function () {
 		e.preventDefault();
 
 		// Get the form values
-		var frm =  {};
+		let frm =  {};
 		$(this).find('input, select, textarea').each(function () {
 			if (this.name.length > 0) {
-				var v = (this.value.length > 0) ? this.value : null;
+				let v = (this.value.length > 0) ? this.value : null;
 				if (v !== null) { frm[this.name] = v; }
 			}
 		});
@@ -204,10 +203,10 @@ $(function () {
 		$(this).find('.has-danger').removeClass('has-danger');
 		$(this).find('.form-control-feedback').html('');
 
-		var btn = $(this).find('[type="submit"]');
+		let btn = $(this).find('[type="submit"]');
 			btn.html('Submit').attr('disabled', true);
 
-		var reqs = {
+		let reqs = {
 			'title': 'Site name is a required field',
 			'username': 'Enter the admin account email address',
 			'password': 'Enter the admin account password',
@@ -217,17 +216,16 @@ $(function () {
 		let keys = _.keys(reqs);
 		keys.forEach((prop) => {
 			if (!frm.hasOwnProperty(prop)) {
-				var elm = $('input[name="'+prop+'"]');
+				let elm = $('input[name="'+prop+'"]');
 					elm.closest('.list-group-item').find('.form-control-feedback').html(reqs[prop]);
 					elm.closest('.list-group-item').addClass('has-danger');
 					btn.removeAttr('disabled');
 					elm.focus();
-					return;
 			}
 		});
 
 		if (frm.password !== frm.confirm) {
-			var elm = $('input[name="confirm"]');
+			let elm = $('input[name="confirm"]');
 				elm.closest('.list-group-item').find('.form-control-feedback').html('Passwords do not match');
 				elm.closest('.list-group-item').addClass('has-danger');
 				btn.removeAttr('disabled');
@@ -240,10 +238,12 @@ $(function () {
 		btn.html('Aww Yeah! Let&rsquo;s Install Some Jam&hellip;');
 		btn.focus();
 
-		var u = $('#install-form').prop('action');
-		var me = $(this);
+		let u = $('#install-form').prop('action');
 
-		console.log(u, frm);
+        setTimeout(function () {
+            btn.removeAttr('disabled');
+            $('body').find('.alert').text('Request timeout').addClass('show');
+        }, 20000);
 
 		$.ajax({
 			url: u,
@@ -251,20 +251,15 @@ $(function () {
 			method: 'POST',
 			dataType: 'json',
 			success: function (result) {
-			    console.log('success');
 				btn.html('Installation Complete!');
-				setTimeout(function () { window.location.reload(true); }, 2000);
+                setTimeout(function () { window.location.href = '/'; }, 2000);
 			},
-			error: function (err) {
+			error: function (xhr, status, err) {
+			    console.log('error');
 			    console.log(err);
 				btn.removeAttr('disabled');
 				$('body').find('.alert').text(err.message).addClass('show');
 			}
-		});
-
-		setTimeout(function () {
-			btn.removeAttr('disabled');
-			$('body').find('.alert').text('Request timeout').addClass('show');
 		});
 
 		return true;
@@ -274,7 +269,7 @@ $(function () {
 	$(document).on('change', '[data-toggle="check"] input', function () {
 
 		// Update siblings
-		var sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
+		let sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
 			sibs.each(function () {
 				if (this.checked) {
 					$(this).closest('label').addClass('active');
@@ -289,7 +284,7 @@ $(function () {
 	// input[name="unpublish"] change listener
 	$(document).on('change', 'input[name="unpublish"]', function (e) {
 
-		var btn = $('[data-submit]');
+		let btn = $('[data-submit]');
 		if (btn.length) {
 			if (this.checked !== true || this.value !== 'delete') {
 				btn.removeClass('btn-danger').addClass('btn-primary');
@@ -304,24 +299,24 @@ $(function () {
 	// [data-toggle="check"] label keydown listener
 	$(document).on('keydown', '[data-toggle="check"] label', function (e) {
 
-		var k = e.which || e.keyCode;
+		let k = e.which || e.keyCode;
 		if (k === 13) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			var elm = $(this).parent().find('input');
+			let elm = $(this).parent().find('input');
 			$(elm[0]).prop('checked', !elm[0].checked).change();
 		}
 	});
 
 	// [data-toggle="attr"] click listener
 	$(document).on('click', '[data-toggle="attr"]', function (e) {
-		var p = $(this).data('attr') || 'disabled';
+		let p = $(this).data('attr') || 'disabled';
 
-		var t = $(this).data('target');
+		let t = $(this).data('target');
 			t = $(this).parents().find(t).first();
 
 		if (t.length > 0) {
-			var v = !t.prop(p);
+			let v = !t.prop(p);
 			t.prop(p, v);
 		}
 	});

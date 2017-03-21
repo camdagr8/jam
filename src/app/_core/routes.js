@@ -83,6 +83,11 @@ routes.push(default_route);
  * @description Applies the `routes` array to the app.
  */
 module.exports = (req, res, next) => {
+    if (req.path === '/install' && req.method === 'POST') {
+        res.json({status: 'OK'});
+        return;
+    }
+
 	// Type of http request methods to handle
 	let methods = ['use', 'all', 'get', 'post', 'put', 'delete'];
 
