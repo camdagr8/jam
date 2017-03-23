@@ -1,9 +1,10 @@
 /**
  * -----------------------------------------------------------------------------
- * Imports
+ * Imports & Settings
  * -----------------------------------------------------------------------------
  */
-const _ = require('underscore');
+const _             = require('underscore');
+const permission    = 'administrator';
 
 /**
  * -----------------------------------------------------------------------------
@@ -51,14 +52,27 @@ const template_save = (req, res) => {
 exports.use = (req, res, next) => {
     jam['rec'] = {};
 
+    /**
+     * Permissions
+     * Minimum user level: administrator
+     */
+    if (!core.is_role(permission)) {
+        jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render('themes/' + jam['theme'] + '/templates/404', jam);
+        return;
+    }
+
     // Get template rec if :id specified in url
     if (req.params['id']) {
-        Parse.Cloud.run('template_get', {objectId: req.params.id}).then((result) => {
-            jam['rec'] = (result) ? result.toJSON() : jam.rec;
+
+        let tmp = _.findWhere(jam['templates'], {objectId: req.params.id});
+        if (!tmp) {
+            res.render('themes/' + jam['theme'] + '/templates/404');
+        } else {
+            jam['rec'] = tmp;
             next();
-        }, () => {
-            res.render('themes/' + jam.theme + '/templates/404');
-        });
+        }
+
     } else {
         next();
     }

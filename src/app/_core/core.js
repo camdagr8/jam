@@ -286,6 +286,41 @@ const hbsParse = (source, data) => {
 	return template(data);
 };
 
+/**
+ *
+ * is_role(permission, user)
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Checks the user's for the specified role or level
+ *
+ * @param permission {String|Number} The role or level to check for
+ * @param user {Object} The Parse.User object to check or jam.currentuser if undefined
+ *
+ * @returns {Boolean}
+ */
+const is_role = (permission, user) => {
+    user = user || jam['currentuser'];
+
+    if (!user) { return false; }
+
+    user = (typeof user['toJSON'] !== 'function') ? user : user.toJSON();
+
+    if (typeof permission === 'string') {
+        let r = _.keys(user.roles);
+        return (r.indexOf(permission) > -1);
+    }
+
+    if (typeof permission === 'number') {
+        let v = _.values(user.roles);
+        let l = _.pluck(v, 'level');
+        return (l.indexOf(permission) > -1);
+    }
+
+    return false;
+};
+
 
 /**
  * Remove the file ext from a file path.
@@ -365,6 +400,7 @@ const timestamper = () => {
 exports.add_widgets 	= add_widgets;
 exports.ext_remove 		= ext_remove;
 exports.hbsParse 		= hbsParse;
+exports.is_role          = is_role;
 exports.perm_check 		= perm_check;
 exports.plugins 		= plugins;
 exports.query 			= query;

@@ -1,34 +1,47 @@
-const _ = require('underscore');
-const hbs = require('handlebars');
-const slugify = require('slugify');
-const log = console.log;
+/**
+ * -----------------------------------------------------------------------------
+ * Imports
+ * -----------------------------------------------------------------------------
+ */
+const _          = require('underscore');
+const hbs        = require('handlebars');
+const slugify    = require('slugify');
+const log        = console.log;
 
 $(function () {
-
 
 	/**
 	 * -------------------------------------------------------------------------
 	 * Functions
 	 * -------------------------------------------------------------------------
 	 */
-	const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
-		let t = $(target);
-		let a = t.find('.alert');
-		a.removeClass('alert-warning alert-info alert-success alert-danger')
-		a.addClass(cls);
-		a.find('.message').html(message);
 
-		if (delay > 0) {
-			setTimeout(() => { t.stop().slideDown(250) }, delay);
-		} else {
-			t.stop().slideDown(250);
-		}
-	};
+    const clone = function () {
+        let t = $(this).data('target');
+        let c = $(this).data('clone');
 
-	const show_success = (message, delay = 3000, target = '#admin-alert') => {
-		show_msg(message, 'alert-success', 0, target);
-		hide_alert(delay);
-	};
+        if (!t || !c) { return; }
+
+        // Get input
+        let input = {};
+        if ($(this).data('input')) {
+            $(this).parents().find($(this).data('input')).each(function () {
+                input[$(this).attr('name')] = $(this).val();
+
+                if ($(this).is('input:text') || $(this).is('textarea')) {
+                    $(this).val('');
+                }
+            });
+        }
+
+
+        let src = $(c).html();
+        let tmp = hbs.compile(src);
+        let trg = $(t);
+        let elm = $(tmp(input)).appendTo(trg);
+
+        $(this).trigger('clone', [elm]);
+    };
 
 	const hide_alert = (delay = 0, target = '#admin-alert') => {
 		let t = $(target);
@@ -38,43 +51,6 @@ $(function () {
 		} else {
 			t.stop().slideUp(250);
 		}
-	};
-
-	const validate = {
-		page: (data) => {
-
-			let err = null;
-			let req = {
-				template: 'Select a template',
-				title: 'Enter the page title'
-			};
-
-			_.keys(req).forEach((fld) => {
-				if (err !== null) { return; }
-				if (!data.hasOwnProperty(fld)) {
-					err = req[fld];
-				}
-			});
-
-			return (err !== null) ? err : true;
-		},
-
-        template: (data) => {
-            let err = null;
-            let req = {
-                title: 'Enter the template name',
-                template: 'Select the template file'
-            };
-
-            _.keys(req).forEach((fld) => {
-                if (err !== null) { return; }
-                if (!data.hasOwnProperty(fld)) {
-                    err = req[fld];
-                }
-            });
-
-            return (err !== null) ? err : true;
-        }
 	};
 
 	const parse_data = {
@@ -113,33 +89,6 @@ $(function () {
         }
 	};
 
-	const clone = function () {
-		let t = $(this).data('target');
-		let c = $(this).data('clone');
-
-		if (!t || !c) { return; }
-
-		// Get input
-		let input = {};
-		if ($(this).data('input')) {
-			$(this).parents().find($(this).data('input')).each(function () {
-				input[$(this).attr('name')] = $(this).val();
-
-				if ($(this).is('input:text') || $(this).is('textarea')) {
-					$(this).val('');
-				}
-			});
-		}
-
-
-		let src = $(c).html();
-		let tmp = hbs.compile(src);
-		let trg = $(t);
-		let elm = $(tmp(input)).appendTo(trg);
-
-		$(this).trigger('clone', [elm]);
-	};
-
 	const slugit = function(e) {
 
 		e.type = (e.type === 'focusout') ? 'blur' : e.type;
@@ -174,47 +123,67 @@ $(function () {
 		$(this).val(s);
 	};
 
+    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
+        let t = $(target);
+        let a = t.find('.alert');
+        a.removeClass('alert-warning alert-info alert-success alert-danger')
+        a.addClass(cls);
+        a.find('.message').html(message);
+
+        if (delay > 0) {
+            setTimeout(() => { t.stop().slideDown(250) }, delay);
+        } else {
+            t.stop().slideDown(250);
+        }
+    };
+
+    const show_success = (message, delay = 3000, target = '#admin-alert') => {
+        show_msg(message, 'alert-success', 0, target);
+        hide_alert(delay);
+    };
+
+    const validate = {
+        page: (data) => {
+
+            let err = null;
+            let req = {
+                template: 'Select a template',
+                title: 'Enter the page title'
+            };
+
+            _.keys(req).forEach((fld) => {
+                if (err !== null) { return; }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            return (err !== null) ? err : true;
+        },
+
+        template: (data) => {
+            let err = null;
+            let req = {
+                title: 'Enter the template name',
+                template: 'Select the template file'
+            };
+
+            _.keys(req).forEach((fld) => {
+                if (err !== null) { return; }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            return (err !== null) ? err : true;
+        }
+    };
+
 	/**
 	 * -------------------------------------------------------------------------
 	 * Listeners
 	 * -------------------------------------------------------------------------
 	 */
-
-	// Status toggles
-	setTimeout(function() {
-		$('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
-
-			// If unpublish input
-			if (this.name === 'unpublish') {
-				$('input[name="unpublish"]').not($(this)).prop('checked', false);
-			}
-
-			// If value is delete -> uncheck publish elements
-			if (this.value === 'delete' && this.checked === true) {
-				$('input[name="publish"]').prop('checked', false).change();
-			}
-
-			// Uncheck delete if checking the publish radios
-			if (this.value === 'publish' || this.value === 'draft' || this.value === 'publish-later') {
-				if (this.checked === true) {
-					$('input[value="delete"]').prop('checked', false).change();
-				}
-			}
-
-			// Slide up/down [data-toggle="check"] elements
-			let sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
-				sibs.each(function () {
-					let t = $(this).data('target');
-					if (t) {
-						if (this.checked === true) {
-							$(t).stop().slideDown(200);
-						} else {
-							$(t).stop().slideUp(200);
-						}
-					}
-				});
-		});
-	}, 2000);
 
 	// #install-form
 	$(document).on('submit', '#install-form', (e) => {
@@ -559,7 +528,41 @@ $(function () {
 	// [data-clone] click listener
 	$(document).on('click', '[data-clone]', clone);
 
+    // Status toggles
+    setTimeout(function() {
+        $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
 
+            // If unpublish input
+            if (this.name === 'unpublish') {
+                $('input[name="unpublish"]').not($(this)).prop('checked', false);
+            }
+
+            // If value is delete -> uncheck publish elements
+            if (this.value === 'delete' && this.checked === true) {
+                $('input[name="publish"]').prop('checked', false).change();
+            }
+
+            // Uncheck delete if checking the publish radios
+            if (this.value === 'publish' || this.value === 'draft' || this.value === 'publish-later') {
+                if (this.checked === true) {
+                    $('input[value="delete"]').prop('checked', false).change();
+                }
+            }
+
+            // Slide up/down [data-toggle="check"] elements
+            let sibs = $('[data-toggle="check"] input[name="'+this.name+'"]');
+            sibs.each(function () {
+                let t = $(this).data('target');
+                if (t) {
+                    if (this.checked === true) {
+                        $(t).stop().slideDown(200);
+                    } else {
+                        $(t).stop().slideUp(200);
+                    }
+                }
+            });
+        });
+    }, 2000);
 	/**
 	 * -------------------------------------------------------------------------
 	 * Initializers

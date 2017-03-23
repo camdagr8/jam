@@ -2283,6 +2283,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
 "use strict";
 
 
+/**
+ * -----------------------------------------------------------------------------
+ * Imports
+ * -----------------------------------------------------------------------------
+ */
 var _ = __webpack_require__(8);
 var hbs = __webpack_require__(6);
 var slugify = __webpack_require__(7);
@@ -2296,32 +2301,33 @@ $(function () {
   * Functions
   * -------------------------------------------------------------------------
   */
-	var show_msg = function show_msg(message) {
-		var cls = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'alert-danger';
-		var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-		var target = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#admin-alert';
 
-		var t = $(target);
-		var a = t.find('.alert');
-		a.removeClass('alert-warning alert-info alert-success alert-danger');
-		a.addClass(cls);
-		a.find('.message').html(message);
+	var clone = function clone() {
+		var t = $(this).data('target');
+		var c = $(this).data('clone');
 
-		if (delay > 0) {
-			setTimeout(function () {
-				t.stop().slideDown(250);
-			}, delay);
-		} else {
-			t.stop().slideDown(250);
+		if (!t || !c) {
+			return;
 		}
-	};
 
-	var show_success = function show_success(message) {
-		var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3000;
-		var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '#admin-alert';
+		// Get input
+		var input = {};
+		if ($(this).data('input')) {
+			$(this).parents().find($(this).data('input')).each(function () {
+				input[$(this).attr('name')] = $(this).val();
 
-		show_msg(message, 'alert-success', 0, target);
-		hide_alert(delay);
+				if ($(this).is('input:text') || $(this).is('textarea')) {
+					$(this).val('');
+				}
+			});
+		}
+
+		var src = $(c).html();
+		var tmp = hbs.compile(src);
+		var trg = $(t);
+		var elm = $(tmp(input)).appendTo(trg);
+
+		$(this).trigger('clone', [elm]);
 	};
 
 	var hide_alert = function hide_alert() {
@@ -2336,47 +2342,6 @@ $(function () {
 			}, delay);
 		} else {
 			t.stop().slideUp(250);
-		}
-	};
-
-	var validate = {
-		page: function page(data) {
-
-			var err = null;
-			var req = {
-				template: 'Select a template',
-				title: 'Enter the page title'
-			};
-
-			_.keys(req).forEach(function (fld) {
-				if (err !== null) {
-					return;
-				}
-				if (!data.hasOwnProperty(fld)) {
-					err = req[fld];
-				}
-			});
-
-			return err !== null ? err : true;
-		},
-
-		template: function template(data) {
-			var err = null;
-			var req = {
-				title: 'Enter the template name',
-				template: 'Select the template file'
-			};
-
-			_.keys(req).forEach(function (fld) {
-				if (err !== null) {
-					return;
-				}
-				if (!data.hasOwnProperty(fld)) {
-					err = req[fld];
-				}
-			});
-
-			return err !== null ? err : true;
 		}
 	};
 
@@ -2414,34 +2379,6 @@ $(function () {
 
 			return data;
 		}
-	};
-
-	var clone = function clone() {
-		var t = $(this).data('target');
-		var c = $(this).data('clone');
-
-		if (!t || !c) {
-			return;
-		}
-
-		// Get input
-		var input = {};
-		if ($(this).data('input')) {
-			$(this).parents().find($(this).data('input')).each(function () {
-				input[$(this).attr('name')] = $(this).val();
-
-				if ($(this).is('input:text') || $(this).is('textarea')) {
-					$(this).val('');
-				}
-			});
-		}
-
-		var src = $(c).html();
-		var tmp = hbs.compile(src);
-		var trg = $(t);
-		var elm = $(tmp(input)).appendTo(trg);
-
-		$(this).trigger('clone', [elm]);
 	};
 
 	var slugit = function slugit(e) {
@@ -2490,47 +2427,80 @@ $(function () {
 		$(this).val(s);
 	};
 
+	var show_msg = function show_msg(message) {
+		var cls = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'alert-danger';
+		var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+		var target = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#admin-alert';
+
+		var t = $(target);
+		var a = t.find('.alert');
+		a.removeClass('alert-warning alert-info alert-success alert-danger');
+		a.addClass(cls);
+		a.find('.message').html(message);
+
+		if (delay > 0) {
+			setTimeout(function () {
+				t.stop().slideDown(250);
+			}, delay);
+		} else {
+			t.stop().slideDown(250);
+		}
+	};
+
+	var show_success = function show_success(message) {
+		var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3000;
+		var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '#admin-alert';
+
+		show_msg(message, 'alert-success', 0, target);
+		hide_alert(delay);
+	};
+
+	var validate = {
+		page: function page(data) {
+
+			var err = null;
+			var req = {
+				template: 'Select a template',
+				title: 'Enter the page title'
+			};
+
+			_.keys(req).forEach(function (fld) {
+				if (err !== null) {
+					return;
+				}
+				if (!data.hasOwnProperty(fld)) {
+					err = req[fld];
+				}
+			});
+
+			return err !== null ? err : true;
+		},
+
+		template: function template(data) {
+			var err = null;
+			var req = {
+				title: 'Enter the template name',
+				template: 'Select the template file'
+			};
+
+			_.keys(req).forEach(function (fld) {
+				if (err !== null) {
+					return;
+				}
+				if (!data.hasOwnProperty(fld)) {
+					err = req[fld];
+				}
+			});
+
+			return err !== null ? err : true;
+		}
+	};
+
 	/**
   * -------------------------------------------------------------------------
   * Listeners
   * -------------------------------------------------------------------------
   */
-
-	// Status toggles
-	setTimeout(function () {
-		$('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
-
-			// If unpublish input
-			if (this.name === 'unpublish') {
-				$('input[name="unpublish"]').not($(this)).prop('checked', false);
-			}
-
-			// If value is delete -> uncheck publish elements
-			if (this.value === 'delete' && this.checked === true) {
-				$('input[name="publish"]').prop('checked', false).change();
-			}
-
-			// Uncheck delete if checking the publish radios
-			if (this.value === 'publish' || this.value === 'draft' || this.value === 'publish-later') {
-				if (this.checked === true) {
-					$('input[value="delete"]').prop('checked', false).change();
-				}
-			}
-
-			// Slide up/down [data-toggle="check"] elements
-			var sibs = $('[data-toggle="check"] input[name="' + this.name + '"]');
-			sibs.each(function () {
-				var t = $(this).data('target');
-				if (t) {
-					if (this.checked === true) {
-						$(t).stop().slideDown(200);
-					} else {
-						$(t).stop().slideUp(200);
-					}
-				}
-			});
-		});
-	}, 2000);
 
 	// #install-form
 	$(document).on('submit', '#install-form', function (e) {
@@ -2911,6 +2881,41 @@ $(function () {
 	// [data-clone] click listener
 	$(document).on('click', '[data-clone]', clone);
 
+	// Status toggles
+	setTimeout(function () {
+		$('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
+
+			// If unpublish input
+			if (this.name === 'unpublish') {
+				$('input[name="unpublish"]').not($(this)).prop('checked', false);
+			}
+
+			// If value is delete -> uncheck publish elements
+			if (this.value === 'delete' && this.checked === true) {
+				$('input[name="publish"]').prop('checked', false).change();
+			}
+
+			// Uncheck delete if checking the publish radios
+			if (this.value === 'publish' || this.value === 'draft' || this.value === 'publish-later') {
+				if (this.checked === true) {
+					$('input[value="delete"]').prop('checked', false).change();
+				}
+			}
+
+			// Slide up/down [data-toggle="check"] elements
+			var sibs = $('[data-toggle="check"] input[name="' + this.name + '"]');
+			sibs.each(function () {
+				var t = $(this).data('target');
+				if (t) {
+					if (this.checked === true) {
+						$(t).stop().slideDown(200);
+					} else {
+						$(t).stop().slideUp(200);
+					}
+				}
+			});
+		});
+	}, 2000);
 	/**
   * -------------------------------------------------------------------------
   * Initializers

@@ -27,9 +27,15 @@ module.exports = (req, res, next) => {
     jam['users']             = [];
     jam['widgets']           = [];
     jam['template_files']    = [];
+    jam['templates']         = [];
+    jam['is']                = {};
 
+    // jam.is.admin boolean
+    let base_urls = ['admin', 'dashboard'];
+    jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
+
+    // Start the process
     let prm = Parse.Promise.when(Parse.Cloud.run('config_get'));
-
     prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
@@ -38,7 +44,7 @@ module.exports = (req, res, next) => {
     }, (err) => { // Not able to get the configs
 
         log(err);
-        jam.installed = false;
+        jam['installed'] = false;
         prm.reject();
 
     }).then(() => { // Get the current user from session token
@@ -48,7 +54,7 @@ module.exports = (req, res, next) => {
 
     }).then((user) => { // Set the currentuser value: Parse.User || null
 
-        jam.currentuser = user;
+        jam['currentuser'] = user;
 
     }, (err) => { // No current user: Keep going
 
@@ -91,10 +97,22 @@ module.exports = (req, res, next) => {
                 path: path + file
             };
 
-            jam.template_files.push(obj);
+            jam['template_files'].push(obj);
         });
 
     }, (err) => { // Get template files error
+
+        log(err);
+
+    }).then(() => { // Get templates array
+
+        return Parse.Cloud.run('template_get');
+
+    }).then((templates) => {
+
+        jam['templates'] = templates;
+
+    }, (err) => {
 
         log(err);
 

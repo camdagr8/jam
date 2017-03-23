@@ -15,7 +15,7 @@ const template_get = (request, response, skip = 0, output = []) => {
     let limit    = 1000;
     let qry      = core.query({table: 'Template', skip: skip, limit: limit});
 
-    if (request.params.hasOwnProperty('objectId')) { // Get a single template by ID
+    if (request.params['objectId']) { // Get a single template by ID
 
         qry.get(request.params.objectId).then((result) => {
             response.success(result);
@@ -25,12 +25,13 @@ const template_get = (request, response, skip = 0, output = []) => {
 
     } else { // Get all templates
 
-        qry.equalTo('status', 'active');
         qry.find().then((results) => {
 
-            output.concat(results);
+            results.forEach((item) => {
+                output.push(item.toJSON());
+            });
 
-            if (results.length === limit) {
+            if (results.length >= limit) {
                 skip += limit;
                 template_get(request, response, skip, output);
             } else {
