@@ -4,8 +4,12 @@
 		<li class="list-group-item">
 			<select class="form-control" id="admin-template-select" name="template">
 				<option value="">Select</option>
-				<% jam.template.forEach((item) => { %>
+				<% jam.template_files.forEach((item) => { %>
+                <% if (item.hasOwnProperty('id')) { %>
 				<option value="<%=item.id%>" <%-(rec['template'] === item.id) ? 'selected' : '' %>><%=item.name%></option>
+                <% } else { %>
+                <option value="<%=item.name%>" %> <%-(rec['template'] === item.name) ? 'selected' : '' %>><%=item.name%></option>
+                <% } %>
 				<% }); %>
 			</select>
 		</li>

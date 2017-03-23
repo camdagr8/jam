@@ -2357,6 +2357,25 @@ $(function () {
 			});
 
 			return err !== null ? err : true;
+		},
+
+		template: function template(data) {
+			var err = null;
+			var req = {
+				title: 'Enter the template name',
+				template: 'Select the template file'
+			};
+
+			_.keys(req).forEach(function (fld) {
+				if (err !== null) {
+					return;
+				}
+				if (!data.hasOwnProperty(fld)) {
+					err = req[fld];
+				}
+			});
+
+			return err !== null ? err : true;
 		}
 	};
 
@@ -2378,6 +2397,19 @@ $(function () {
 
 				delete data.unpublish;
 			}
+
+			return data;
+		},
+
+		template: function template(data) {
+
+			// Remove unecessary fields
+			var flds = ['metaboxType', 'type'];
+			flds.forEach(function (fld) {
+				if (data.hasOwnProperty(fld)) {
+					delete data[fld];
+				}
+			});
 
 			return data;
 		}
@@ -2642,6 +2674,7 @@ $(function () {
 	// #metabox-clone clone listener
 	$(document).on('clone', '#metabox-clone', function (e, elm) {
 		var n = elm.find('input:text');
+		var i = elm.find('input.metabox-id');
 		var v = n.val();
 
 		if (String(v).length < 1) {
@@ -2652,7 +2685,7 @@ $(function () {
 
 		// Test if the value is already used
 		var dup = 0;
-		elm.parent().find('input:text').each(function () {
+		elm.parent().find('input.metabox-id').each(function () {
 			var t = $(this).val();
 			if (t === v) {
 				dup += 1;
@@ -2663,7 +2696,7 @@ $(function () {
 			elm.remove();return;
 		}
 
-		n.val(v);
+		i.val(String(v).toLowerCase());
 	});
 
 	// [data-remove] click listener
@@ -2707,7 +2740,7 @@ $(function () {
 	$(document).on('focus', '[data-slug]', slugit);
 
 	// [data-submit] click listener
-	$(document).on('click', '[data-submit]', function (e) {
+	$(document).on('click', '[data-submit]', function () {
 		hide_alert();
 
 		var o = $(this).data('submit');
@@ -2776,12 +2809,19 @@ $(function () {
 				// Update the objectId field
 				if (resp.hasOwnProperty('data')) {
 					if (resp.data.hasOwnProperty('objectId')) {
+
+						if (!data.hasOwnProperty('objectId')) {
+							var eurl = action + '/' + resp.data.objectId;
+							window.location.href = eurl;
+							return;
+						}
+
 						$(document).find('[name=objectId]').val(resp.data.objectId);
 					}
 				}
 
 				if (resp.hasOwnProperty('error')) {
-					show_msg('Unable to save ' + data.title + ': ' + resp.error.message + '.</div>');
+					show_msg('Unable to save ' + data.title + ': ' + resp.error.message);
 				} else {
 					show_success('Successfully saved ' + data.title);
 				}
@@ -2820,7 +2860,7 @@ $(function () {
 			return;
 		}
 
-		var txt = $(this).text();
+		var txt = $(this).data('dropdown-value') || $(this).text();
 		trg.val(txt);
 	});
 

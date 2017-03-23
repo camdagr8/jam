@@ -56,7 +56,24 @@ $(function () {
 			});
 
 			return (err !== null) ? err : true;
-		}
+		},
+
+        template: (data) => {
+            let err = null;
+            let req = {
+                title: 'Enter the template name',
+                template: 'Select the template file'
+            };
+
+            _.keys(req).forEach((fld) => {
+                if (err !== null) { return; }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            return (err !== null) ? err : true;
+        }
 	};
 
 	const parse_data = {
@@ -79,7 +96,20 @@ $(function () {
 			}
 
 			return data;
-		}
+		},
+
+        template: (data) => {
+
+		    // Remove unecessary fields
+            let flds = ['metaboxType', 'type'];
+            flds.forEach((fld) => {
+                if (data.hasOwnProperty(fld)) {
+                    delete data[fld];
+                }
+            });
+
+            return data;
+        }
 	};
 
 	const clone = function () {
@@ -324,6 +354,7 @@ $(function () {
 	// #metabox-clone clone listener
 	$(document).on('clone', '#metabox-clone', function (e, elm) {
 		let n = elm.find('input:text');
+		let i = elm.find('input.metabox-id');
 		let v = n.val();
 
 		if (String(v).length < 1) { elm.remove(); return; }
@@ -332,14 +363,14 @@ $(function () {
 
 		// Test if the value is already used
 		let dup = 0;
-		elm.parent().find('input:text').each(function () {
+		elm.parent().find('input.metabox-id').each(function () {
 			let t = $(this).val();
 			if (t === v) { dup += 1; }
 		});
 
 		if (dup > 1) { elm.remove(); return; }
 
-		n.val(v);
+		i.val(String(v).toLowerCase());
 	});
 
 	// [data-remove] click listener
@@ -377,7 +408,7 @@ $(function () {
 	$(document).on('focus', '[data-slug]', slugit);
 
 	// [data-submit] click listener
-	$(document).on('click', '[data-submit]', function (e) {
+	$(document).on('click', '[data-submit]', function () {
 		hide_alert();
 
 		let o = $(this).data('submit');
@@ -404,7 +435,6 @@ $(function () {
 			}
 		});
 
-
 		if (validate.hasOwnProperty(data.type)) {
 			let valid = validate[data.type](data);
 			if (valid !== true) {
@@ -424,7 +454,6 @@ $(function () {
 		// Do the AJAX thang:
 		let action = trg.attr('action');
 		let type = (data.hasOwnProperty('objectId')) ? 'PUT' : 'POST';
-
 
 		$.ajax({
 			data: data,
@@ -446,12 +475,19 @@ $(function () {
 				// Update the objectId field
 				if (resp.hasOwnProperty('data')) {
 					if (resp.data.hasOwnProperty('objectId')) {
+
+                        if (!data.hasOwnProperty('objectId')) {
+                            let eurl = action + '/' + resp.data.objectId;
+                            window.location.href = eurl;
+                            return;
+                        }
+
 						$(document).find('[name=objectId]').val(resp.data.objectId);
 					}
 				}
 
 				if (resp.hasOwnProperty('error')) {
-					show_msg(`Unable to save ${data.title}: ${resp.error.message}.</div>`);
+					show_msg(`Unable to save ${data.title}: ${resp.error.message}`);
 				} else {
 					show_success(`Successfully saved ${data.title}`);
 				}
@@ -485,7 +521,7 @@ $(function () {
 		let trg = $($(this).data('dropdown-select'));
 		if (trg.length < 1) { return; }
 
-		let txt = $(this).text();
+		let txt = $(this).data('dropdown-value') || $(this).text();
 		trg.val(txt);
 	});
 

@@ -31,23 +31,23 @@ const fs 		= require('fs');
 const query = (params) => {
 
 	// 0.1 - Set up some defaults
-	var table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
-	var skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
-	var limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
+	let table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
+	let skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
+	let limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
 		limit 	= (limit > 1000) ? 1000 : limit;
 
 	// 0.2 - Exit if no table specified
 	if (table === null) { return null; }
 
 	// 1.0 - The Parse.Query constructor
-	var qry = new Parse.Query(table);
+	let qry = new Parse.Query(table);
 		qry.limit(limit);
 		qry.skip(skip);
 
 	// 2.0 - Set the order
-	var orders 	= ['ascending', 'descending'];
-	var orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
-	var order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
+	let orders 	= ['ascending', 'descending'];
+	let orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
+	let order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
 		order 	= order.toLowerCase();
 		order 	= (orders.indexOf(order) > -1) ? order : 'descending';
 
@@ -58,7 +58,7 @@ const query = (params) => {
 	 * into the max object query of 100000
 	 */
 	if (params['timestamp']) {
-		var d = moment(params['timestamp']).toDate();
+		let d = moment(params['timestamp']).toDate();
 
 		if (order === 'descending') {
 			qry.lessThan('createdAt', d);
@@ -114,8 +114,6 @@ const perm_check = (perms) => {
 	if (!_.isArray(perms)) { perms = [perms]; }
 	let i = _.intersection(perms, _.keys(roles));
 	return (i.length > 0);
-
-	return false;
 };
 
 /**
@@ -178,7 +176,7 @@ const add_widgets = (sections) => {
  *
  * @description Function that reads the helpers directory and creates an object array of the results.
  * @param mod_path {String} The helpers directory to scan.
- * @returns {ObjectArray} List of modules.
+ * @returns {Array} List of module objects.
  */
 const plugins = (mod_path) => {
     if (!fs.existsSync(mod_path)) {
@@ -193,14 +191,14 @@ const plugins = (mod_path) => {
 	mods.forEach((dir) => {
 
 		if (dir.substr(0, 1) === '.') { return; }
+        if (dir.substr(0, 1) === '_') { return; }
 
 		let name 	= slugify(dir);
 		let obj 	= {name: name, index: 1000000};
-		let path 	= mod_path+'/' + dir;
+		let path 	= mod_path + '/' + dir;
 		let files 	= fs.readdirSync(path);
 
 		if (files.length < 1) { return; }
-
 
 		files.forEach((file) => {
 			if (file.substr(0, 1) === '.') { return; }
@@ -211,17 +209,12 @@ const plugins = (mod_path) => {
 
 		if (obj.hasOwnProperty('mod')) {
 
-			let m = require(obj.mod);
-
-			obj.name = (m.hasOwnProperty('id')) ? m.id : obj.name;
-
-			let i = (m.hasOwnProperty('index')) ? m.index : obj.index;
-
-			obj.index = (typeof i !== 'number') ? obj.index : i;
-
-			let p = obj.name.split('-').join('_');
-
-			obj['func'] = p;
+			let m          = require(obj.mod);
+			obj.name       = (m.hasOwnProperty('id')) ? m.id : obj.name;
+			let i          = (m.hasOwnProperty('index')) ? m.index : obj.index;
+			obj.index      = (typeof i !== 'number') ? obj.index : i;
+			let p          = obj.name.split('-').join('_');
+			obj['func']    = p;
 
 			if (!jam.plugin.hasOwnProperty(p)) {
 				jam.plugin[p] = m;
@@ -320,8 +313,17 @@ const ext_remove = (str) => {
 const scan = (path) => {
 	return new Promise((fulfill, reject) => {
 		fs.readdir(path, 'utf8', (err, files) => {
-			if (err) { reject(err); }
-			else { fulfill(files); }
+			if (err) {
+			    reject(err);
+			} else {
+			    let farr = [];
+			    files.forEach((file) => {
+                    if (file.substr(0, 1) !== '_') {
+                        farr.push(file);
+                    }
+                });
+			    fulfill(farr);
+			}
 		});
 	});
 };
@@ -345,7 +347,7 @@ const template = {
  *
  * @description Function that updates the timestamp.json file when content is changed in the CMS
  */
-const timestamper = (request, response) => {
+const timestamper = () => {
 	let p = appdir + '/model/timestamp.json';
 		p = p.replace(/dist/, 'src');
 

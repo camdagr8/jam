@@ -3,9 +3,13 @@
 <head>
     <% include ../partials/head %>
 </head>
-<body class="container">
+<body class="container pt-4">
 
+    <% if (typeof err !== 'undefined') { %>
+    <h1 class="text-center"><%= (err['code']) ? err.code : '404'%> <%= (err['message']) ? err.message : 'Page not found'%></h1>
+    <% } else { %>
     <h1 class="text-center">404 Page not found</h1>
+    <% } %>
 
 </body>
 </html>

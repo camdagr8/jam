@@ -14,28 +14,32 @@ module.exports = (req, res, next) => {
     let url = req.url.split('/');
     url.shift();
 
-    jam['baseurl']     = req.protocol + '://' + req.get('host');
-    jam['theme']       = 'default';
-    jam['blocks']      = [];
-    jam['currentuser'] = null;
-    jam['helpers']     = [];
-    jam['pages']       = [];
-    jam['plugin']      = {};
-    jam['plugins']     = [];
-    jam['sidebar']     = [];
-    jam['url']         = url;
-    jam['users']       = [];
-    jam['widgets']     = [];
+    jam['baseurl']           = req.protocol + '://' + req.get('host');
+    jam['theme']             = 'default';
+    jam['blocks']            = [];
+    jam['currentuser']       = null;
+    jam['helpers']           = [];
+    jam['pages']             = [];
+    jam['plugin']            = {};
+    jam['plugins']           = [];
+    jam['sidebar']           = [];
+    jam['url']               = url;
+    jam['users']             = [];
+    jam['widgets']           = [];
+    jam['template_files']    = [];
 
-    Parse.Cloud.run('config_get').then((result) => { // Get Config objects
+    let prm = Parse.Promise.when(Parse.Cloud.run('config_get'));
+
+    prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
 
-    }, () => { // Not able to get the configs
+    }, (err) => { // Not able to get the configs
 
+        log(err);
         jam.installed = false;
-        next();
+        prm.reject();
 
     }).then(() => { // Get the current user from session token
 
@@ -50,19 +54,19 @@ module.exports = (req, res, next) => {
 
         log(err);
 
-    }).then(() => {
+    }).then(() => { // Get Content/Pages
 
         return Parse.Cloud.run('content_get_pages');
 
-    }).then((pages) => {
+    }).then((pages) => { // Get Content/Pages success
 
         jam['pages'] = pages;
 
-    }, (err) => {
+    }, (err) => { // Get Content/Pages error
 
         log(err);
 
-    }).then(() => {
+    }).then(() => { // Get helpers and plugins
 
         // Core helpers & plugins
         jam['helpers'] = core.plugins(appdir + '/_core/helper', true);
@@ -71,11 +75,33 @@ module.exports = (req, res, next) => {
         // User helpers & plugins
         jam['helpers'] = jam.helpers.concat(core.plugins(appdir + '/helper', true));
         jam['plugins'] = jam.plugins.concat(core.plugins(appdir + '/plugin'));
-    }, (err) => {
 
-        log('helpers error');
+    }).then(() => { // Get template files
 
-    }).then(() => { // Done!
+        return core.scan(`${appdir}/view/themes/${jam.theme}/templates/`);
+
+    }).then((files) => { // Get template files success
+        let path = `${appdir}/view/themes/${jam.theme}/templates/`;
+
+        files.forEach((file) => {
+
+            let obj = {
+                file: file,
+                name: core.ext_remove(file),
+                path: path + file
+            };
+
+            jam.template_files.push(obj);
+        });
+
+    }, (err) => { // Get template files error
+
+        log(err);
+
+    }).always(() => {
+
         next();
+
     });
+
 };

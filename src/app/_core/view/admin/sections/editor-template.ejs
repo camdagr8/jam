@@ -1,6 +1,7 @@
 <form id="admin-form" action="<%=baseurl%>/admin/template" method="post">
 
 	<input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="type" value="template" />
 	<input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
 
 	<div class="mb-l"><h5><i class="lnr-pencil ico"></i> Template Editor</h5></div>
@@ -10,7 +11,7 @@
 
 			<div class="input-group mb-l">
 				<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
-				<input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="name" autocomplete="off" value="<%=rec['name']%>" />
+				<input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['name']%>" />
 				<span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the page editor."><i class="lnr-question-circle"></i></span>
 			</div>
 
@@ -20,14 +21,14 @@
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item">
 						<div class="input-group">
-							<input type="text" class="form-control" name="id" value="<%=rec['id']%>" readonly />
+							<input type="text" class="form-control" name="template" value="<%=rec['template']%>" readonly />
 							<div class="input-group-btn">
 								<button type="button" class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 50px;">
 									<i class="lnr-chevron-down"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right">
-									<% templates.forEach((file) => { -%>
-									<a class="dropdown-item <%=(file === rec['id']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='id']"><%=file%></a>
+									<% template_files.forEach((file) => { -%>
+									<a class="dropdown-item <%=(file === rec['id']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
 									<% }); -%>
 								</div>
 							</div>
@@ -51,8 +52,8 @@
 							<span class="input-group-addon bgc-white">
 								<label><input type="radio" class="mr-xs" aria-label="plain text" name="metaboxType" id="metabox-type-text" value="text" /> Plain Text</label>
 							</span>
-							<span class="input-group-addon bgc-gray-lightest">ID:</span>
-							<input type="text" class="form-control" id="metabox-id" name="metaboxName" />
+							<span class="input-group-addon bgc-gray-lightest">Name:</span>
+							<input type="text" class="form-control" id="metabox-name" name="metaboxName" />
 							<span class="input-group-btn">
 								<button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType']:checked">
 									<i class="lnr-plus"></i>
@@ -98,8 +99,9 @@
 			<span class="input-group-btn">
 				<button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
 			</span>
-			<input type="text" class="form-control" name="metabox[][name]" value="{{metaboxName}}" />
-			<input type="hidden" class="form-control" name="metabox[][type]" value="{{metaboxType}}" />
+			<input type="text" class="form-control" name="metabox[name]" value="{{metaboxName}}" />
+            <input type="hidden" class="metabox-id" name="metabox[id]" value="" />
+			<input type="hidden" class="metabox-type" name="metabox[type]" value="{{metaboxType}}" />
 		</div>
 	</li>
 </script>

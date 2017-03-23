@@ -91,7 +91,11 @@ exports.get = (req, res) => {
 	}, (err) => {
 
 		log(err);
-		res.render(appdir + '/_core/view/admin/admin', jam);
+        jam['err'] = {
+            code: 400,
+            message: 'Bad Request'
+        };
+        res.status(jam.err.code).render('themes/' + jam.theme + '/templates/404', jam);
 
 	});
 };
