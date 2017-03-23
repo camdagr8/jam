@@ -9,53 +9,56 @@
 	<div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
 		<div class="mb-s">
 
+            <!-- Template Title -->
 			<div class="input-group mb-l">
 				<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
-				<input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['name']%>" />
-				<span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the page editor."><i class="lnr-question-circle"></i></span>
+				<input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['title']%>" />
+				<span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the template select dropdown widget."><i class="lnr-question-circle"></i></span>
 			</div>
 
+            <!-- Template File -->
 			<div class="card card-shadow bgc-white bd-0 mb-l">
 				<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> File</h6>
 
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item">
-						<div class="input-group">
+						<div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<input type="text" class="form-control" name="template" value="<%=rec['template']%>" readonly />
 							<div class="input-group-btn">
-								<button type="button" class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 50px;">
+								<button type="button" class="btn btn-primary" style="width: 50px;">
 									<i class="lnr-chevron-down"></i>
 								</button>
-								<div class="dropdown-menu dropdown-menu-right">
-									<% template_files.forEach((file) => { -%>
-									<a class="dropdown-item <%=(file === rec['id']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
-									<% }); -%>
-								</div>
 							</div>
 						</div>
+                        <div class="dropdown-menu dropdown-menu-right" style="margin-top: -10px; margin-right: 20px;">
+                            <% template_files.forEach((file) => { -%>
+                            <a class="dropdown-item <%=(file === rec['template']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
+                            <% }); -%>
+                        </div>
 					</li>
 				</ul>
 			</div>
 
+            <!-- Template Metabox Add -->
 			<div class="card card-shadow bgc-white bd-0 mb-l">
 				<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> Metaboxes</h6>
 
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item">
 						<div class="input-group">
-							<span class="input-group-addon bgc-gray-lightest">
-								Type:
-							</span>
-							<span class="input-group-addon bgc-white">
-								<label><input type="radio" class="mr-xs" aria-label="html" name="metaboxType" id="metabox-type-html" value="html" checked /> HTML</label>
-							</span>
-							<span class="input-group-addon bgc-white">
-								<label><input type="radio" class="mr-xs" aria-label="plain text" name="metaboxType" id="metabox-type-text" value="text" /> Plain Text</label>
-							</span>
 							<span class="input-group-addon bgc-gray-lightest">Name:</span>
-							<input type="text" class="form-control" id="metabox-name" name="metaboxName" />
+							<input type="text" class="form-control" id="metabox-name" name="metaboxName" placeholder="My Metabox Name" />
+                            <span class="input-group-addon bgc-gray-lightest">ID:</span>
+                            <input type="text" class="form-control" id="metabox-id" name="metaboxId" placeholder="my_metabox_id" />
+                            <div class="input-group-btn">
+                                <input type="text" class="btn btn-secondary" id="metabox-type" style="width: 100px;" value="TYPE" name="metaboxType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" readonly />
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="HTML">HTML</a>
+                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                                </div>
+                            </div>
 							<span class="input-group-btn">
-								<button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType']:checked">
+								<button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType'], input[name='metaboxId']">
 									<i class="lnr-plus"></i>
 								</button>
 							</span>
@@ -63,17 +66,27 @@
 					</li>
 				</ul>
 
+                <!-- Template Metabox List -->
 				<ul class="list-group list-group-flush" id="admin-template-metaboxes" style="margin-top: -1px;">
-					<% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
-					<li class="list-group-item">
-						<div class="input-group">
-							<span class="input-group-btn">
+                    <% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon bgc-gray-lightest">Name:</span>
+                            <input type="text" class="form-control metabox-name" name="metabox[name]" value="<%=item.name%>" />
+                            <span class="input-group-addon bgc-gray-lightest">ID:</span>
+                            <input type="text" class="form-control metabox-id" name="metabox[id]" value="<%=item.id%>" />
+                            <div class="input-group-btn">
+                                <input type="text" readonly class="btn btn-secondary metabox-type" style="width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="HTML">HTML</a>
+                                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                                </div>
+                            </div>
+                            <span class="input-group-btn">
 								<button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
 							</span>
-							<input type="text" class="form-control" name="metabox[][name]" value="<%=item.name%>" />
-							<input type="hidden" class="form-control" name="metabox[][type]" value="<%=item.type%>" />
-						</div>
-					</li>
+                        </div>
+                    </li>
 					<% }); } -%>
 				</ul>
 
@@ -94,14 +107,22 @@
 </form>
 
 <script id="metabox-hbs" type="text/x-handlebars-template">
-	<li class="list-group-item">
-		<div class="input-group">
-			<span class="input-group-btn">
-				<button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
-			</span>
-			<input type="text" class="form-control" name="metabox[name]" value="{{metaboxName}}" />
-            <input type="hidden" class="metabox-id" name="metabox[id]" value="" />
-			<input type="hidden" class="metabox-type" name="metabox[type]" value="{{metaboxType}}" />
-		</div>
-	</li>
+    <li class="list-group-item">
+        <div class="input-group">
+            <span class="input-group-addon bgc-gray-lightest">Name:</span>
+            <input type="text" class="form-control metabox-name" name="metabox[name]" value="{{metaboxName}}" />
+            <span class="input-group-addon bgc-gray-lightest">ID:</span>
+            <input type="text" class="form-control metabox-id" name="metabox[id]" value="{{metaboxId}}" />
+            <div class="input-group-btn">
+                <input type="text" readonly class="btn btn-secondary metabox-type" style="width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="HTML">HTML</a>
+                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                </div>
+            </div>
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
+            </span>
+        </div>
+    </li>
 </script>

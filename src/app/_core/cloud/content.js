@@ -1,10 +1,37 @@
 const moment = require('moment');
 const _ = require('underscore');
 
-let content_get_pages = (request, response, results = []) => {
+/**
+ * -----------------------------------------------------------------------------
+ * Functions
+ * -----------------------------------------------------------------------------
+ */
+const content_get = (request, response) => {
+    // 0.1 - Use core.query() to contruct the Parse.Query object
+    let qry = core.query({table: 'Content'});
+
+    // 1.0 - Apply route search
+    qry.containsAll('routes', [request.params.route]);
+
+    // 2.0 - Execute query
+    qry.first().then((result) => {
+
+        if (!result) {
+            response.error("page not found");
+        } else {
+            response.success(result);
+        }
+
+    }, () => {
+        response.error("page not found");
+    });
+};
+
+const content_get_pages = (request, response, results = []) => {
 
 	// 0.1 - Use core.query() to contruct the Parse.Query object
 	let qry = core.query({table: 'Content', skip: request.params.skip, limit: request.params.limit, orderBy: 'udpatedAt'});
+
 	qry.equalTo('type', 'page');
 	qry.find().then((content) => {
 		results = results.concat(content);
@@ -17,11 +44,59 @@ let content_get_pages = (request, response, results = []) => {
 		}
 
 	}, (err) => {
+	    log(err);
 		response.success(results);
 	});
 };
 
+const content_post = (request, response) => {
+    delete request.params.nonce;
 
+    let obj = new Parse.Object('Content');
+
+    _.keys(request.params).forEach((key) => {
+        obj.set(key, request.params[key]);
+    });
+
+    obj.save(null).then((result) => {
+        response.success(result);
+    }, (err) => {
+        response.error(err.message);
+    });
+
+};
+
+const content_before_save = (request, response) => {
+
+    let publishAt = request.object.get('publishAt');
+    if (typeof publishAt === 'string') {
+
+        let d = new Date(publishAt);
+        request.object.set('publishAt', d);
+    }
+
+    let unpublishAt = request.object.get('unpublishAt');
+    if (typeof unpublishAt === 'string') {
+
+        let d = new Date(unpublishAt);
+        request.object.set('unpublishAt', d);
+    }
+
+    let routes = request.object.get('routes');
+    if (typeof routes === 'string') {
+        routes = [routes];
+        request.object.set('routes', routes);
+    }
+
+    response.success();
+
+};
+
+/**
+ * -----------------------------------------------------------------------------
+ * Cloud Definitions
+ * -----------------------------------------------------------------------------
+ */
 /**
  *
  * content_get
@@ -35,26 +110,7 @@ let content_get_pages = (request, response, results = []) => {
  *
  * @returns {ParseObject}
  */
-Parse.Cloud.define('content_get', (request, response) => {
-	// 0.1 - Use core.query() to contruct the Parse.Query object
-	let qry = core.query({table: 'Content'});
-
-	// 1.0 - Apply route search
-	qry.containsAll('routes', [request.params.route]);
-
-	// 2.0 - Execute query
-	qry.first().then((result) => {
-
-		if (!result) {
-			response.error("page not found");
-		} else {
-			response.success(result);
-		}
-
-	}, () => {
-		response.error("page not found");
-	});
-});
+Parse.Cloud.define('content_get', content_get);
 
 
 /**
@@ -90,22 +146,7 @@ Parse.Cloud.define('content_get_pages', (request, response) => {
  * @description Creates a new `Content` object.
  *
  */
-Parse.Cloud.define('content_post', (request, response) => {
-	delete request.params.nonce;
-
-	let obj = new Parse.Object('Content');
-
-	_.keys(request.params).forEach((key) => {
-		obj.set(key, request.params[key]);
-	});
-
-	obj.save(null).then((result) => {
-		response.success(result);
-	}, (err) => {
-		response.error(err.message);
-	});
-
-});
+Parse.Cloud.define('content_post', content_post);
 
 
 
@@ -129,28 +170,4 @@ Parse.Cloud.define('content_post', (request, response) => {
  *
  * @description Formats certain fields before inserting.
  */
-Parse.Cloud.beforeSave('Content', (request, response) => {
-
-	let publishAt = request.object.get('publishAt');
-	if (typeof publishAt === 'string') {
-
-		let d = new Date(publishAt);
-		request.object.set('publishAt', d);
-	}
-
-	let unpublishAt = request.object.get('unpublishAt');
-	if (typeof unpublishAt === 'string') {
-
-		let d = new Date(unpublishAt);
-		request.object.set('unpublishAt', d);
-	}
-
-	let routes = request.object.get('routes');
-	if (typeof routes === 'string') {
-		routes = [routes];
-		request.object.set('routes', routes);
-	}
-
-	response.success();
-
-});
+Parse.Cloud.beforeSave('Content', content_before_save);

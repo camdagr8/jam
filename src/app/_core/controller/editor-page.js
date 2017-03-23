@@ -1,15 +1,22 @@
 /**
+ * -----------------------------------------------------------------------------
  * Imports
+ * -----------------------------------------------------------------------------
  */
 const _ = require('underscore');
 const moment = require('moment');
 
+/**
+ * -----------------------------------------------------------------------------
+ * Functions
+ * -----------------------------------------------------------------------------
+ */
 const page_save = (req, res) => {
 
 	let nonce = req.body.nonce;
 	let output = {data: null, nonce: null};
 
-	Parse.Cloud.run('nonce_get', {id: nonce}).then((result) => {
+	Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
 		delete req.body.nonce;
 		return Parse.Cloud.run('content_post', req.body);
@@ -37,7 +44,11 @@ const page_save = (req, res) => {
 	});
 };
 
-// Register widgets
+/**
+ * -----------------------------------------------------------------------------
+ * Exports
+ * -----------------------------------------------------------------------------
+ */
 exports.use = (req, res, next) => {
 	jam['rec'] = {};
 
@@ -51,14 +62,14 @@ exports.use = (req, res, next) => {
 	}
 
 
-	// Get page data if :id specified in url
+	// Get page rec if :id specified in url
 	if (req.params['id']) {
 
 		// Get the Content record and save it to `jam.rec`
 		let obj = new Parse.Object('Content');
 		obj.set('objectId', req.params.id);
 		obj.fetch().then((result) => {
-			jam.rec = (result) ? result.toJSON() : jam.rec;
+			jam['rec'] = (result) ? result.toJSON() : jam.rec;
 
 			if (jam.rec.hasOwnProperty('publishAt')) {
 				jam.rec['publishAt'] = moment(jam.rec.publishAt.iso).format('L');
@@ -70,7 +81,7 @@ exports.use = (req, res, next) => {
 
 			next();
 
-		}, (err) => {
+		}, () => {
 			res.render('themes/' + jam.theme + '/templates/404');
 		});
 

@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const hbs = require('handlebars');
 const slugify = require('slugify');
+const log = console.log;
 
 $(function () {
 
@@ -24,8 +25,8 @@ $(function () {
 		}
 	};
 
-	const show_success = (message, delay = 3000, target='#admin-alert') => {
-		show_msg(message, 'alert-success');
+	const show_success = (message, delay = 3000, target = '#admin-alert') => {
+		show_msg(message, 'alert-success', 0, target);
 		hide_alert(delay);
 	};
 
@@ -101,7 +102,7 @@ $(function () {
         template: (data) => {
 
 		    // Remove unecessary fields
-            let flds = ['metaboxType', 'type'];
+            let flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type'];
             flds.forEach((fld) => {
                 if (data.hasOwnProperty(fld)) {
                     delete data[fld];
@@ -139,7 +140,7 @@ $(function () {
 		$(this).trigger('clone', [elm]);
 	};
 
-	const slugit = function() {
+	const slugit = function(e) {
 
 		e.type = (e.type === 'focusout') ? 'blur' : e.type;
 		e.type = (e.type === 'focusin') ? 'focus' : e.type;
@@ -169,6 +170,7 @@ $(function () {
 
 		if (s.substr(0, 1) != '/') { s = '/' + s; }
 
+		s = String(s).toLowerCase();
 		$(this).val(s);
 	};
 
@@ -312,7 +314,7 @@ $(function () {
 	});
 
 	// input[name="unpublish"] change listener
-	$(document).on('change', 'input[name="unpublish"]', function (e) {
+	$(document).on('change', 'input[name="unpublish"]', function () {
 
 		let btn = $('[data-submit]');
 		if (btn.length) {
@@ -339,7 +341,7 @@ $(function () {
 	});
 
 	// [data-toggle="attr"] click listener
-	$(document).on('click', '[data-toggle="attr"]', function (e) {
+	$(document).on('click', '[data-toggle="attr"]', function () {
 		let p = $(this).data('attr') || 'disabled';
 
 		let t = $(this).data('target');
@@ -353,28 +355,50 @@ $(function () {
 
 	// #metabox-clone clone listener
 	$(document).on('clone', '#metabox-clone', function (e, elm) {
-		let n = elm.find('input:text');
-		let i = elm.find('input.metabox-id');
-		let v = n.val();
+	    let name = elm.find('input.metabox-name');
+	    let type = elm.find('input.metabox-type');
+		let id = elm.find('input.metabox-id');
 
-		if (String(v).length < 1) { elm.remove(); return; }
+		if (String(name.val()).length < 1) { elm.remove(); return; }
+        if (String(type.val()).length < 1) { elm.remove(); return; }
+        if (String(id.val()).length < 1) { elm.remove(); return; }
 
-		v = slugify(v, '_');
+        let v  = slugify(String(id.val()).toLowerCase(), '_');
+        let n  = slugify(String(name.val()).toLowerCase(), '_');
 
-		// Test if the value is already used
+		// Test if the id is already used
 		let dup = 0;
-		elm.parent().find('input.metabox-id').each(function () {
-			let t = $(this).val();
-			if (t === v) { dup += 1; }
-		});
+		$('.metabox-id').each(function () {
+            if (dup > 1) { return; }
+            let t = $(this).val();
+            t = slugify(t, '_');
+            t = String(t).toLowerCase();
+            dup += (t === v) ? 1 : 0;
+            if (dup > 1) { elm.remove(); }
+        });
+
+		// Test if the name is already used
+
+		dup = 0;
+        $('.metabox-name').each(function () {
+            if (dup > 1) { return; }
+            let t = $(this).val();
+            t = slugify(t, '_');
+            t = String(t).toLowerCase();
+            dup += (t === n) ? 1 : 0;
+            if (dup > 1) { elm.remove(); }
+        });
 
 		if (dup > 1) { elm.remove(); return; }
 
-		i.val(String(v).toLowerCase());
+		id.val(String(v).toLowerCase());
+
+        $('input[name="metaboxName"]').focus();
+
 	});
 
 	// [data-remove] click listener
-	$(document).on('click', '[data-remove]', function (e) {
+	$(document).on('click', '[data-remove]', function () {
 		let def 	= {animation: 'fade', destroy: true, speed: 250};
 		let opts 	= $(this).data('remove') || def;
 		let t 		= $(this).data('target');
@@ -411,13 +435,12 @@ $(function () {
 	$(document).on('click', '[data-submit]', function () {
 		hide_alert();
 
-		let o = $(this).data('submit');
-		let t = (o.hasOwnProperty('target')) ? o.target : 'form';
-		let trg = (t.substr(0, 1) === '#') ? $(t) : $(this).parents().closest(t);
-		let btn = $(this);
-
-		let frm = trg.serializeArray();
-		let data = {};
+		let o       = $(this).data('submit');
+		let t       = (o.hasOwnProperty('target')) ? o.target : 'form';
+		let trg     = (t.substr(0, 1) === '#') ? $(t) : $(this).parents().closest(t);
+		let btn     = $(this);
+		let frm     = trg.serializeArray();
+		let data    = {};
 
 		// Convert the form data into an object
 		frm.forEach((item) => {
@@ -477,8 +500,7 @@ $(function () {
 					if (resp.data.hasOwnProperty('objectId')) {
 
                         if (!data.hasOwnProperty('objectId')) {
-                            let eurl = action + '/' + resp.data.objectId;
-                            window.location.href = eurl;
+                            window.location.href = action + '/' + resp.data.objectId;
                             return;
                         }
 
@@ -518,7 +540,16 @@ $(function () {
 		$(this).addClass('active');
 
 		if ($(this).is('a')) { e.preventDefault(); }
-		let trg = $($(this).data('dropdown-select'));
+
+		let trg = [];
+		let sel = $(this).data('dropdown-select');
+
+		$(this).parents().each(function (i, par) {
+            if (trg.length > 0) { return; }
+		    let fnd = $(par).find(sel);
+            if (fnd.length > 0) { trg = fnd; }
+        });
+
 		if (trg.length < 1) { return; }
 
 		let txt = $(this).data('dropdown-value') || $(this).text();
@@ -527,6 +558,7 @@ $(function () {
 
 	// [data-clone] click listener
 	$(document).on('click', '[data-clone]', clone);
+
 
 	/**
 	 * -------------------------------------------------------------------------
