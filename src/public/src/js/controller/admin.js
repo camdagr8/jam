@@ -6,8 +6,7 @@
 const _          = require('underscore');
 const hbs        = require('handlebars');
 const slugify    = require('slugify');
-const log        = console.log;
-
+const dragula  = require('./dragula.js');
 $(function () {
 
 	/**
@@ -569,4 +568,17 @@ $(function () {
 	 * -------------------------------------------------------------------------
 	 */
 	$('[data-toggle="check"] input').change();
+
+	$('[data-sortable]').each(function () {
+	    let opt = {};
+
+	    let hndl = $(this).find('.gu-handle');
+        if (hndl.length > 0) {
+            opt['moves'] = function (el, cont, handle) {
+                return handle.classList.contains('gu-handle');
+            }
+        }
+        dragula([this], opt);
+	});
+
 });

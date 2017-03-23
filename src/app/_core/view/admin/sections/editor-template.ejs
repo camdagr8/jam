@@ -67,7 +67,7 @@
 				</ul>
 
                 <!-- Template Metabox List -->
-				<ul class="list-group list-group-flush" id="admin-template-metaboxes" style="margin-top: -1px;">
+				<ul class="list-group list-group-flush" id="admin-template-metaboxes" data-sortable style="margin-top: -1px;">
                     <% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
                     <li class="list-group-item">
                         <div class="input-group">
@@ -86,6 +86,7 @@
 								<button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
 							</span>
                         </div>
+                        <div class="gu-handle"><i class="lnr-menu"></i></div>
                     </li>
 					<% }); } -%>
 				</ul>
@@ -124,5 +125,6 @@
                 <button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
             </span>
         </div>
+        <div class="gu-handle"><i class="lnr-menu"></i></div>
     </li>
 </script>

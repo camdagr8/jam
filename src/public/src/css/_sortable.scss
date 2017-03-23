@@ -1,0 +1,38 @@
+.gu-mirror {
+    position: fixed !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    opacity: 0.97;
+    box-shadow: 0 0 10px 1px rgba(0,0,0,0.1);
+}
+.gu-hide {
+    display: none !important;
+}
+.gu-unselectable {
+    user-select: none !important;
+}
+.gu-transit {
+    opacity: 0.15;
+}
+
+.gu-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90px;
+    height: 100%;
+    cursor: move;
+
+    i {
+        position: absolute;
+        font-size: 11px;
+        left: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #E0E0E0;
+    }
+}
+[data-sortable] {
+    position: relative;
+}
