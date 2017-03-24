@@ -51,10 +51,11 @@
                             <span class="input-group-addon bgc-gray-lightest">ID:</span>
                             <input type="text" class="form-control" id="metabox-id" name="metaboxId" placeholder="my_metabox_id" />
                             <div class="input-group-btn">
-                                <input type="text" class="btn btn-secondary" id="metabox-type" style="width: 100px;" value="TYPE" name="metaboxType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" readonly />
+                                <input type="text" class="btn btn-secondary" id="metabox-type" style="min-width: 100px;" value="TYPE" name="metaboxType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" readonly />
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="HTML">HTML</a>
-                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                                    <% meta_types.forEach((type) => { %>
+                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
+                                    <% }); %>
                                 </div>
                             </div>
 							<span class="input-group-btn">
@@ -76,10 +77,11 @@
                             <span class="input-group-addon bgc-gray-lightest">ID:</span>
                             <input type="text" class="form-control metabox-id" name="metabox[id]" value="<%=item.id%>" />
                             <div class="input-group-btn">
-                                <input type="text" readonly class="btn btn-secondary metabox-type" style="width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                                <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="HTML">HTML</a>
-                                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                                    <% meta_types.forEach((type) => { %>
+                                    <a class="dropdown-item <%=(type.value === item.type) ? 'active' : '';%>" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
+                                    <% }); %>
                                 </div>
                             </div>
                             <span class="input-group-btn">
@@ -115,10 +117,11 @@
             <span class="input-group-addon bgc-gray-lightest">ID:</span>
             <input type="text" class="form-control metabox-id" name="metabox[id]" value="{{metaboxId}}" />
             <div class="input-group-btn">
-                <input type="text" readonly class="btn btn-secondary metabox-type" style="width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="HTML">HTML</a>
-                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="TEXT">Plain text</a>
+                    <% meta_types.forEach((type) => { %>
+                    <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
+                    <% }); %>
                 </div>
             </div>
             <span class="input-group-btn">

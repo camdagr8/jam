@@ -19,6 +19,14 @@ module.exports = (req, res, next) => {
     jam['blocks']            = [];
     jam['currentuser']       = null;
     jam['helpers']           = [];
+    jam['is']                = {};
+    jam['meta_types']        = [
+        {name: 'HTML',          value: 'HTML'},
+        {name: 'Plain Text',    value: 'TEXT'},
+        {name: 'Number',        value: 'NUMBER'},
+        {name: 'Object',        value: 'OBJECT'},
+        {name: 'Array',         value: 'ARRAY'}
+    ];
     jam['pages']             = [];
     jam['plugin']            = {};
     jam['plugins']           = [];
@@ -28,7 +36,8 @@ module.exports = (req, res, next) => {
     jam['widgets']           = [];
     jam['template_files']    = [];
     jam['templates']         = [];
-    jam['is']                = {};
+
+
 
     // jam.is.admin boolean
     let base_urls = ['admin', 'dashboard'];

@@ -4,9 +4,10 @@
  * -----------------------------------------------------------------------------
  */
 const _          = require('underscore');
+const dragula    = require('./dragula.js');
 const hbs        = require('handlebars');
 const slugify    = require('slugify');
-const dragula  = require('./dragula.js');
+
 $(function () {
 
 	/**

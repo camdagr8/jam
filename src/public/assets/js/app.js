@@ -2289,9 +2289,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
  * -----------------------------------------------------------------------------
  */
 var _ = __webpack_require__(8);
+var dragula = __webpack_require__(12);
 var hbs = __webpack_require__(6);
 var slugify = __webpack_require__(7);
-var dragula = __webpack_require__(12);
+
 $(function () {
 	var _this = this;
 
