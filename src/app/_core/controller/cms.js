@@ -1,4 +1,3 @@
-
 // 1.0 - ALL | Get the route
 exports.all = (req, res) => {
 
@@ -24,3 +23,4 @@ exports.all = (req, res) => {
 		res.render(tmp, jam);
 	});
 };
+

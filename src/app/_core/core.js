@@ -365,14 +365,14 @@ const timestamper = () => {
 /**
  * Exports
  */
-exports.add_widgets 	= add_widgets;
-exports.ext_remove 		= ext_remove;
-exports.hbsParse 		= hbsParse;
-exports.is_role          = is_role;
-exports.perm_check 		= perm_check;
-exports.plugins 		= plugins;
-exports.query 			= query;
-exports.scan 			= scan;
-exports.skey 			= 'bD6yXAOEX4xq';
-exports.template 		= template;
-exports.timestamper 	= timestamper;
+exports.add_widgets    = add_widgets;
+exports.ext_remove     = ext_remove;
+exports.hbsParse       = hbsParse;
+exports.is_role        = is_role;
+exports.perm_check     = perm_check;
+exports.plugins        = plugins;
+exports.query          = query;
+exports.scan           = scan;
+exports.skey           = 'bD6yXAOEX4xq';
+exports.template       = template;
+exports.timestamper    = timestamper;

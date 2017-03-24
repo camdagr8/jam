@@ -15,6 +15,7 @@ exports.use = (req, res, next) => {
 			jam.users = users;
 			next();
 		}, (err) => {
+		    log(err);
 			next();
 		});
 	}

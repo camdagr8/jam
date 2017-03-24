@@ -14,6 +14,7 @@ const permissions   = ['administrator'];
 const template_save = (req, res) => {
     let nonce = req.body.nonce;
     let output = {data: null, nonce: null};
+    req.session.test = 'another test';
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
