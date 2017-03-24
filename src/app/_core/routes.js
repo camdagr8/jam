@@ -24,6 +24,10 @@ const routes = [
 		"route" 		: ["/admin/template/:id", "/admin/template"],
 		"controller" 	: "/_core/controller/editor-template.js"
 	},
+    {
+        "route"         : ["/admin/templates"],
+        "controller"    : "/_core/controller/list-templates.js"
+    },
 	{
 		"route" 		: ["/signin", "/login"],
 		"controller" 	: "/_core/controller/login.js"

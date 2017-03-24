@@ -18,7 +18,7 @@ module.exports = {
 
 	index: 0,
 
-	perms: ['all'],
+	perms: ['administrator', 'publisher', 'moderator'],
 
 	sections: ['all'],
 

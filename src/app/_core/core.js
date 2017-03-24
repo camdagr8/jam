@@ -7,9 +7,6 @@ const moment 	= require('moment');
 const fs 		= require('fs');
 
 
-
-
-
 /**
  * core.query(params)
  *
@@ -71,49 +68,17 @@ const query = (params) => {
 	return qry;
 };
 
-const perm_check = (perms) => {
-	// level 0 check
-	if (perms === 0) {
-		return true;
-	}
+const perm_check = (perms, user) => {
 
-	// 'all' check
-	if (_.isArray(perms)) {
-		if (perms.indexOf('all') > -1) {
-			return true;
-		}
-	} else {
-		if (perms === 'all') {
-			return true;
-		}
-	}
+    perms = (_.isArray(perms)) ? perms : [perms];
 
-	// user check
-	if (!jam.currentuser) {
-		return false;
-	}
+    for (let i = 0; i < perms.length; i++) {
+        let perm = perms[i];
+        let valid = is_role(perm, user);
+        if (valid === true) { return true; }
+    }
 
-	// roles check
-	let roles = jam.currentuser.get('roles');
-	if (!roles) {
-		return false;
-	}
-
-	// is admin?
-	if (roles.hasOwnProperty('administrator')) {
-		return true;
-	}
-
-	// level
-	if (typeof perms === 'number') {
-		let l = _.max(_.values(roles), 'level');
-		return (l.level >= perms);
-	}
-
-
-	if (!_.isArray(perms)) { perms = [perms]; }
-	let i = _.intersection(perms, _.keys(roles));
-	return (i.length > 0);
+    return false;
 };
 
 /**
@@ -301,6 +266,9 @@ const hbsParse = (source, data) => {
  * @returns {Boolean}
  */
 const is_role = (permission, user) => {
+
+    if (permission === 'all' || permission === 0) { return true; }
+
     user = user || jam['currentuser'];
 
     if (!user) { return false; }

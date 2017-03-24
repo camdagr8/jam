@@ -4,8 +4,7 @@
  * -----------------------------------------------------------------------------
  */
 const _             = require('underscore');
-const permission    = 'administrator';
-
+const permissions   = ['administrator'];
 
 /**
  * -----------------------------------------------------------------------------
@@ -55,9 +54,8 @@ exports.use = (req, res, next) => {
 
     /**
      * Permissions
-     * Minimum user level: administrator
      */
-    if (!core.is_role(permission)) {
+    if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render('themes/' + jam['theme'] + '/templates/404', jam);
         return;

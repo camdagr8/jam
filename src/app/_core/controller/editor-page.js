@@ -5,6 +5,8 @@
  */
 const _ = require('underscore');
 const moment = require('moment');
+const permissions   = ['administrator', 'publisher', 'moderator'];
+
 
 /**
  * -----------------------------------------------------------------------------
@@ -51,6 +53,15 @@ const page_save = (req, res) => {
  */
 exports.use = (req, res, next) => {
 	jam['rec'] = {};
+
+    /**
+     * Permissions
+     */
+    if (!core.perm_check(permissions)) {
+        jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render('themes/' + jam['theme'] + '/templates/404', jam);
+        return;
+    }
 
 	// Get widgets
 	core.add_widgets('page-editor');

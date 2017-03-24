@@ -9,5 +9,8 @@
 		<% plugin.sidebar_pages.recent.forEach((item) => { %>
 		<li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>
 		<% }); %>
+        <li>
+            <a href="<%=baseurl%>/admin/pages" class="list-menu-item">View All</a>
+        </li>
 	</ul>
 </li>

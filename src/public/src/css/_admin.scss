@@ -31,4 +31,31 @@
 	}
 }
 
+.admin-list {
+    .btn-new {
+        text-transform: uppercase;
+
+        @media (max-width: 575px) {
+            width: 100%;
+            padding: 7px;
+            margin: 10px 0 20px 0;
+            font-size: 12px;
+        }
+
+        @media (min-width: 576px) and (max-width: 767px) {
+            padding: 7px 5px;
+            font-size: 12px;
+        }
+    }
+
+    td {
+        vertical-align: middle;
+    }
+
+    td a {
+        width: 100%;
+        display: block;
+        text-decoration: none;
+    }
+}
 
