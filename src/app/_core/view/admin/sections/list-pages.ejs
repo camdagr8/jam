@@ -1,0 +1,39 @@
+<section class="admin-list">
+    <div class="mb-l">
+        <h5 class="d-inline-block"><i class="lnr-file-empty ico"></i> Pages</h5>
+        <a href="<%=baseurl%>/admin/page" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Page</a>
+    </div>
+
+    <table data-dna="table-bordered" class="table table-bordered table-hover">
+        <thead class="thead-default">
+        <tr>
+            <th style="min-width: 25%">Name</th>
+            <th class="hidden-sm-down">Route</th>
+            <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
+            <th class="hidden-sm-down" style="width: 5%;"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% pages.forEach((page) => { %>
+        <% if (page.status === 'delete') { return; } %>
+        <% page['routes'] = page['routes'] || []; %>
+            <tr>
+                <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
+                <td class="hidden-sm-down">
+                    <% page.routes.forEach((route) => { %>
+                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view page" data-placement="left" target="_blank" class="badge badge-primary d-inline">
+                        <%=route%>
+                    </a>
+                    <% }); %>
+                </td>
+                <td class="hidden-sm-down">
+                    <i class="<%=page.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=page.status%>"></i>
+                </td>
+                <td class="hidden-sm-down action">
+                    <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                </td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</section>

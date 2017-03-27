@@ -48,14 +48,20 @@
         }
     }
 
-    td {
+    td, th {
         vertical-align: middle;
+        padding: 0.25rem 0.75rem;
     }
 
     td a {
         width: 100%;
         display: block;
         text-decoration: none;
+    }
+
+    .badge {
+        font-weight: normal;
+        margin-right: 5px;
     }
 }
 

@@ -1,6 +1,12 @@
 const moment = require('moment');
 const _ = require('underscore');
-
+const pubicons = {
+    'draft': 'lnr-pencil',
+    'publish': 'lnr-paper-plane',
+    'publish-later': 'lnr-calendar-31',
+    'delete-later': 'lnr-calendar-cross',
+    'delete': 'lnr-trash'
+};
 /**
  * -----------------------------------------------------------------------------
  * Functions
@@ -30,11 +36,18 @@ const content_get = (request, response) => {
 const content_get_pages = (request, response, results = []) => {
 
 	// 0.1 - Use core.query() to contruct the Parse.Query object
-	let qry = core.query({table: 'Content', skip: request.params.skip, limit: request.params.limit, orderBy: 'udpatedAt'});
+	let qry = core.query({table: 'Content', skip: request.params.skip, limit: request.params.limit, orderBy: 'updatedAt'});
 
 	qry.equalTo('type', 'page');
 	qry.find().then((content) => {
-		results = results.concat(content);
+
+        content.forEach((item) => {
+            let obj = item.toJSON();
+            obj['status_icon'] = pubicons[obj.status];
+            obj['edit_url'] = jam.baseurl + '/admin/page/' + obj.objectId;
+
+            results.push(obj);
+        });
 
 		if (content.length === request.params.limit) {
 			request.params.skip += request.params.limit;
