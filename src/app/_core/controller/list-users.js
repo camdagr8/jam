@@ -13,7 +13,6 @@ exports.use = (req, res, next) => {
 };
 
 exports.all = (req, res) => {
-    jam.content = './sections/list-templates';
-
+    jam.content = './sections/list-users';
     res.render(core.template.admin, jam);
 };

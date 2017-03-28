@@ -10,7 +10,7 @@ exports.all = (req, res) => {
 
 		tmp = result.get('template');
 		tmp = (tmp) ? tmp : 'index';
-		tmp = 'themes/' + jam.theme + '/templates/' + tmp;
+		tmp = core.template.theme + '/' + tmp;
 
 		let output = (req.query.hasOwnProperty('output')) ? req.query.output : 'html';
 

@@ -337,7 +337,8 @@ const scan = (path) => {
  */
 const template = {
 	admin: appdir + '/_core/view/admin/admin',
-	install: appdir + '/_core/view/admin/install'
+	install: appdir + '/_core/view/admin/install',
+    theme: null
 };
 
 

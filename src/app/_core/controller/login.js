@@ -1,8 +1,4 @@
 
-// session token cookie id
-const skey = 'bD6yXAOEX4xq';
-
-
 exports.all = (req, res, next) => {
 	if (jam['currentuser']) {
 		res.redirect('/admin');
@@ -17,7 +13,7 @@ exports.get = (req, res) => {
 };
 
 
-exports.post = (req, res, next) => {
+exports.post = (req, res) => {
 
 	Parse.User.logIn(req.body.username, req.body.password).then((user) => {
 		res.cookie(core.skey, user.getSessionToken());

@@ -57,7 +57,7 @@ exports.use = (req, res, next) => {
      */
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render('themes/' + jam['theme'] + '/templates/404', jam);
+        res.render(core.template.theme + '/404', jam);
         return;
     }
 
@@ -66,7 +66,7 @@ exports.use = (req, res, next) => {
 
         let tmp = _.findWhere(jam['templates'], {objectId: req.params.id});
         if (!tmp) {
-            res.render('themes/' + jam['theme'] + '/templates/404');
+            res.render(core.template.theme + '/404');
         } else {
             jam['rec'] = tmp;
             next();
@@ -84,12 +84,12 @@ exports.get = (req, res) => {
 	Parse.Cloud.run('nonce_create').then((result) => {
 
 		jam['nonce'] = result;
-		res.render(appdir + '/_core/view/admin/admin', jam);
+		res.render(core.template.admin, jam);
 
 	}, (err) => {
 
 		jam['err'] = {code: 400, message: 'Bad Request'};
-		res.status(jam.err.code).render('themes/' + jam.theme + '/templates/404', jam);
+		res.status(jam.err.code).render(core.template.theme + '/404', jam);
 
 	});
 };

@@ -5430,6 +5430,7 @@ var hbs = __webpack_require__(8);
 var slugify = __webpack_require__(10);
 var beautify = __webpack_require__(9).js_beautify;
 var beautify_html = __webpack_require__(9).html;
+
 $(function () {
     var _this = this;
 

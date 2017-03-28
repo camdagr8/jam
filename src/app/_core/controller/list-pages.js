@@ -6,7 +6,7 @@ exports.use = (req, res, next) => {
      */
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render('themes/' + jam['theme'] + '/templates/404', jam);
+        res.render(core.template.theme + '/404', jam);
     }  else {
         next();
     }
@@ -14,5 +14,5 @@ exports.use = (req, res, next) => {
 
 exports.all = (req, res) => {
     jam.content = './sections/list-pages';
-    res.render(appdir + '/_core/view/admin/admin', jam);
+    res.render(core.template.admin, jam);
 };

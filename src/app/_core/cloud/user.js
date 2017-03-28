@@ -1,12 +1,34 @@
+/**
+ *
+ * TODO:
+ * user_post
+ * user_delete
+ * user_set_role
+ */
 
-
-let users_get = (request, response, results = []) => {
+/**
+ *
+ * user_get
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Gets a list of users from the Parse.User table.
+ */
+const users_get = (request, response, results = []) => {
 
 	// 0.1 - Use core.query() to construct the Parse.Query object
 	let qry = core.query({table: '_User', skip: request.params.skip, limit: request.params.limit, orderBy: 'username', order: 'ascending'});
 
 	qry.find({useMasterKey: true}).then((users) => {
-		results = results.concat(users);
+
+        users.forEach((result) => {
+            let user = result.toJSON();
+
+            user['edit_url'] = jam.baseurl + '/admin/user/' + user.objectId;
+
+            results.push(user);
+        });
 
 		if (users.length === request.params.limit) {
 			request.params.skip += request.params.limit;

@@ -12,12 +12,52 @@ exports.use = (req, res, next) => {
 		core.add_widgets('all');
 
 		Parse.Cloud.run('users_get').then((users) => {
-			jam.users = users;
-			next();
+
+		    jam.users = users;
+
 		}, (err) => {
+
 		    log(err);
-			next();
-		});
+
+        }).then(() => { // Get template files
+
+            return core.scan(`${appdir}/view/themes/${jam.theme}/templates/`);
+
+        }).then((files) => { // Get template files success
+            let path = `${appdir}/view/themes/${jam.theme}/templates/`;
+
+            files.forEach((file) => {
+
+                let obj = {
+                    file: file,
+                    name: core.ext_remove(file),
+                    path: path + file
+                };
+
+                jam['template_files'].push(obj);
+            });
+
+        }, (err) => { // Get template files error
+
+            log(err);
+
+        }).then(() => { // Get templates array
+
+            return Parse.Cloud.run('template_get');
+
+        }).then((templates) => {
+
+            jam['templates'] = templates;
+
+        }, (err) => {
+
+            log(err);
+
+        }).then(() => {
+
+            next();
+
+        });
 	}
 };
 

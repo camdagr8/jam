@@ -37,8 +37,6 @@ module.exports = (req, res, next) => {
     jam['template_files']    = [];
     jam['templates']         = [];
 
-
-
     // jam.is.admin boolean
     let base_urls = ['admin', 'dashboard'];
     jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
@@ -49,6 +47,8 @@ module.exports = (req, res, next) => {
 
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
+
+        core.template.theme = `themes/${jam.theme}/templates`;
 
     }, (err) => { // Not able to get the configs
 
@@ -90,40 +90,6 @@ module.exports = (req, res, next) => {
         // User helpers & plugins
         jam['helpers'] = jam.helpers.concat(core.plugins(appdir + '/helper', true));
         jam['plugins'] = jam.plugins.concat(core.plugins(appdir + '/plugin'));
-
-    }).then(() => { // Get template files
-
-        return core.scan(`${appdir}/view/themes/${jam.theme}/templates/`);
-
-    }).then((files) => { // Get template files success
-        let path = `${appdir}/view/themes/${jam.theme}/templates/`;
-
-        files.forEach((file) => {
-
-            let obj = {
-                file: file,
-                name: core.ext_remove(file),
-                path: path + file
-            };
-
-            jam['template_files'].push(obj);
-        });
-
-    }, (err) => { // Get template files error
-
-        log(err);
-
-    }).then(() => { // Get templates array
-
-        return Parse.Cloud.run('template_get');
-
-    }).then((templates) => {
-
-        jam['templates'] = templates;
-
-    }, (err) => {
-
-        log(err);
 
     }).always(() => {
 

@@ -149,7 +149,7 @@ gulp.task('serve', (done) => {
 	browserSync({
 		notify: false,
 		timestamps: true,
-		reloadDelay: 500,
+		reloadDelay: 1000,
 		reloadDebounce: 2000,
 		logPrefix: '00:00:00',
 		port: config.port.browsersync,
@@ -213,7 +213,7 @@ gulp.task('create:plugin', () => {
 		sections: ['all'],
 
 		zone: 'widgets'
-	};`
+	};`;
 	mod = beautify(mod);
 
 	let core = (gutil.env.core) ? '_core/' : '';
@@ -233,7 +233,7 @@ gulp.task('create:widget', ['create:plugin'], () => {
 	let core = (gutil.env.core) ? '_core/' : '';
 	let stream = source('./app/'+core+'plugin/' + id + '/widget.ejs');
 
-	let txt = `<!--// Widget ${id} //-->`
+	let txt = `<!--// Widget ${id} //-->`;
 
 	stream.end(txt);
     return stream.pipe(gulp.dest(config.src));
@@ -248,7 +248,7 @@ gulp.task('create:helper-icon', () => {
 	let core = (gutil.env.core) ? '_core/' : '';
 	let stream = source('./app/'+core+'helper/' + id + '/icon.ejs');
 
-	let txt = `<path d="M10 10 H 90 V 90 H 10 L 10 10" />`
+	let txt = `<path d="M10 10 H 90 V 90 H 10 L 10 10" />`;
 
 	stream.end(txt);
     return stream.pipe(gulp.dest(config.src));
@@ -266,7 +266,7 @@ gulp.task('create:helper', ['create:helper-icon'], () => {
 		wysiwyg: "{{${id} param='fubar'}}",
 
 		helper: () => { return 'something'; }
-	};`
+	};`;
 
 	mod = beautify(mod);
 
@@ -276,8 +276,6 @@ gulp.task('create:helper', ['create:helper-icon'], () => {
 
     stream.end(mod);
     return stream.pipe(gulp.dest(config.src));
-
-	return;
 
 });
 

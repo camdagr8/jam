@@ -4,10 +4,10 @@
 <li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
 	<ul class="list-sub-menu">
 		<li>
-			<a href="#" class="list-menu-item menu-add">New User</a>
+			<a href="<%=baseurl%>/admin/user" class="list-menu-item menu-add">New User</a>
 		</li>
-		<% plugin.sidebar_users.recent.forEach((item) => { %>
-		<li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.username%></a></li>
-		<% }); %>
+        <li>
+            <a href="<%=baseurl%>/admin/users" class="list-menu-item">View All</a>
+        </li>
 	</ul>
 </li>
