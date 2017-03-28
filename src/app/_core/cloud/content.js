@@ -45,6 +45,7 @@ const content_get_pages = (request, response, results = []) => {
             let obj = item.toJSON();
             obj['status_icon'] = pubicons[obj.status];
             obj['edit_url'] = jam.baseurl + '/admin/page/' + obj.objectId;
+            obj['routes'] = obj['routes'] || [];
 
             results.push(obj);
         });

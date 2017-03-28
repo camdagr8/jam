@@ -1,11 +1,6 @@
 const _ = require('underscore');
 
 
-app.use((req, res, next) => {
-	jam['template'] = (_.isArray(jam['template'])) ? jam['template'] : [];
-	next();
-});
-
 
 /**
  * -----------------------------------------------------------------------------

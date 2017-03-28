@@ -16,7 +16,6 @@
         <tbody>
         <% pages.forEach((page) => { %>
         <% if (page.status === 'delete') { return; } %>
-        <% page['routes'] = page['routes'] || []; %>
             <tr>
                 <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
                 <td class="hidden-sm-down">
