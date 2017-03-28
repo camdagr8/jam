@@ -8,13 +8,17 @@
         <thead class="thead-default">
         <tr>
             <th style="min-width: 25%">User</th>
+            <th>Role</th>
             <th class="hidden-sm-down" style="width: 5%;"></th>
         </tr>
         </thead>
         <tbody>
         <% users.forEach((user) => { %>
+        <% let roles = []; %>
+        <% for (let prop in user.roles) { roles.push(prop); } %>
         <tr>
             <td class="title"><a href="<%=user.edit_url%>"><%=user.username%></a></td>
+            <td><%=roles.join(' | ')%></td>
             <td class="hidden-sm-down action">
                 <a href="<%=user.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
             </td>
