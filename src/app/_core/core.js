@@ -256,7 +256,7 @@ const hbsParse = (source, data) => {
  * @author Cam Tullos cam@tullos.ninja
  * @since 1.0.0
  *
- * @description Checks the user's for the specified role or level
+ * @description Checks the user for the specified role or level
  *
  * @param permission {String|Number} The role or level to check for
  * @param user {Object} The Parse.User object to check or jam.currentuser if undefined
@@ -274,6 +274,7 @@ const is_role = (permission, user) => {
     user = (typeof user['toJSON'] !== 'function') ? user : user.toJSON();
 
     if (typeof permission === 'string') {
+        permission = permission.toLowerCase();
         let r = _.keys(user.roles);
         return (r.indexOf(permission) > -1);
     }

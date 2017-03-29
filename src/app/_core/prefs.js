@@ -92,6 +92,15 @@ module.exports = (req, res, next) => {
 
     }).always(() => {
 
+        // register plugin `use` hooks
+        _.keys(jam.plugin).forEach((name) => {
+            let plugin = jam.plugin[name];
+            if (plugin.hasOwnProperty('use')) {
+                app.use(plugin.use);
+            }
+        });
+
+
         next();
 
     });

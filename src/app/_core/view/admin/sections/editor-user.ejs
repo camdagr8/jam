@@ -1,0 +1,91 @@
+<form id="admin-form" action="<%=baseurl%>/admin/user" method="post">
+
+    <input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="type" value="user" />
+    <input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
+
+    <div class="mb-l"><h5><i class="lnr-user ico"></i> User Editor</h5></div>
+    <div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
+        <div class="mb-s">
+            <div class="mb-l">
+                <h6>Email</h6>
+                <div class="form-group">
+                    <input type="email" class="form-control form-control-lg pl-s" placeholder="name@email.com" name="email" autocomplete="off" value="<%=rec['email']%>" />
+                </div>
+            </div>
+            <hr />
+            <div class="mt-l">
+                <h6>Password</h6>
+                <div class="form-group">
+                    <input type="password" class="form-control form-control-lg pl-s" placeholder="********" name="password" autocomplete="off"  />
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control form-control-lg pl-s" placeholder="confirm" name="confirm" autocomplete="off"  />
+                </div>
+            </div>
+
+            <% if (blocks) { %>
+
+            <% blocks.forEach(function (block, i) { %>
+            <div class="mb-l"><%- include(block, {index: i}) -%></div>
+            <% }); %>
+
+            <% } %>
+        </div>
+        <aside>
+            <% if (widgets) { %>
+
+            <% widgets.forEach(function (widget, i) { %>
+            <div class="mb-l"><%- include(widget, {index: i}) -%></div>
+            <% }); %>
+
+            <% } %>
+
+            <div class="mb-l">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-block btn-lg text-uppercase"
+                    data-label="Save User"
+                    data-submit='Saving...'>Save User</button>
+            </div>
+
+            <% if (rec['objectId']) { %>
+            <div>
+                <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminUserDeleteModal">Delete User</button>
+            </div>
+            <% } %>
+        </aside>
+    </div>
+</form>
+<% if (rec['objectId']) { %>
+<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminUserDelete" aria-hidden="true" id="adminUserDeleteModal">
+    <div class="modal-dialog">
+        <form id="admin-delete-form" action="<%=baseurl%>/admin/user" method="delete">
+
+            <input type="hidden" value="<%=rec['objectId']%>" name="objectId" />
+            <input type="hidden" value="<%=rec['username']%>" name="username" />
+            <input type="hidden" value="<%=nonce%>" name="nonce" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-l mt-m">Are you sure you want to delete this user?</div>
+                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-block btn-lg text-uppercase"
+                        data-label="Yes"
+                        data-submit='Deleting...'>Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% } %>

@@ -25,8 +25,6 @@ const user_before_save = (request, response) => {
         }
     }
 
-    request.object.set('username', request.object.get('email'));
-
     response.success();
 };
 
@@ -96,12 +94,18 @@ const user_get = (request, response) => {
  *
  * @description Creates a new user.
  */
-const user_post = (request, response) => {
+const user_save = (request, response) => {
     let roles = (request.params.hasOwnProperty('roles')) ? request.params.roles : undefined;
     delete request.params['roles'];
+    delete request.params['confirm'];
+    delete request.params['nonce'];
+
+    request.params['username'] = request.params['email'];
 
     let user = new Parse.User();
-    user.save(request.params, {useMasterKey: true}).then((u) => {
+    _.keys(request.params).forEach((key) => { user.set(key, request.params[key]); });
+
+    user.save(null, {useMasterKey: true}).then((u) => {
         if (roles) {
             request.params.roles = roles;
             request.user         = u;
@@ -376,7 +380,7 @@ Parse.Cloud.define('user_get', user_get);
 Parse.Cloud.define('user_post', (request, response) => {
     Parse.Cloud.run('user_get', request.params).then((u) => {
         if (!u) {
-            user_post(request, response);
+            user_save(request, response);
         } else {
             response.error(`email address '${request.params.email}' already in use`);
         }
@@ -394,6 +398,8 @@ Parse.Cloud.define('user_pref_set', (request, response) => {
 
     user_pref_set(request, response);
 });
+
+Parse.Cloud.define('user_put', user_save);
 
 Parse.Cloud.define('user_session_get', user_session_get);
 

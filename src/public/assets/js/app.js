@@ -5612,6 +5612,36 @@ $(function () {
             return err !== null ? err : true;
         },
 
+        user: function user(data) {
+            var err = null;
+            var req = {
+                email: 'Email is a required parameter'
+            };
+
+            _.keys(req).forEach(function (fld) {
+                if (err !== null) {
+                    return;
+                }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            if (err === null) {
+                if (data.hasOwnProperty('password')) {
+                    if (!data.hasOwnProperty('confirm')) {
+                        err = 'confirm password';
+                    } else {
+                        if (data.password !== data.confirm) {
+                            err = 'passwords do not match';
+                        }
+                    }
+                }
+            }
+
+            return err !== null ? err : true;
+        },
+
         template: function template(data) {
             var err = null;
             var req = {
@@ -5935,6 +5965,11 @@ $(function () {
         // Do the AJAX thang:
         var action = trg.attr('action');
         var type = data.hasOwnProperty('objectId') ? 'PUT' : 'POST';
+        type = trg.attr('method').toLowerCase() === 'delete' ? 'DELETE' : type;
+
+        var n = data.hasOwnProperty('title') ? data.title : null;
+        n = n === null && data.hasOwnProperty('email') ? data.email : n;
+        n = n === null ? '' : n;
 
         $.ajax({
             data: data,
@@ -5966,10 +6001,23 @@ $(function () {
                     }
                 }
 
+                // Redirect
+                if (resp.hasOwnProperty('redirect')) {
+                    setTimeout(function () {
+                        window.location.href = resp.redirect;
+                    }, 1000);
+                    return;
+                }
+
                 if (resp.hasOwnProperty('error')) {
-                    show_msg('Unable to save ' + data.title + ': ' + resp.error.message);
+                    show_msg('Unable to save ' + n + ': ' + resp.error.message);
                 } else {
-                    show_success('Successfully saved ' + data.title);
+                    if (resp.hasOwnProperty('message')) {
+                        show_success(resp.message);
+                    } else {
+
+                        show_success('Successfully saved ' + n);
+                    }
                 }
             },
             error: function error(err) {
