@@ -8,16 +8,17 @@ exports.all = (req, res) => {
 		jam.body = result.get('body');
 		jam.body = core.hbsParse(jam.body, jam) || jam.body;
 
-		tmp = result.get('template');
-		tmp = (tmp) ? tmp : 'index';
-		tmp = core.template.theme + '/' + tmp;
-
 		let output = (req.query.hasOwnProperty('output')) ? req.query.output : 'html';
 
 		if (output === 'json') {
-			res.json(jam);
-		} else {
-			res.render(tmp, jam);
+            res.json(jam);
+        }
+
+        if (output === 'html') {
+            tmp = result.get('template');
+            tmp = (tmp) ? tmp : 'index';
+            tmp = core.template.theme + '/' + tmp;
+            res.render(tmp, jam);
 		}
 	}, () => {
 		res.render(tmp, jam);
