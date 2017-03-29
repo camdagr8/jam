@@ -1,16 +1,34 @@
-/**
- * -----------------------------------------------------------------------------
- * Imports & Configurations
- * -----------------------------------------------------------------------------
- */
-const _ = require('underscore');
-
 
 /**
  * -----------------------------------------------------------------------------
  * Functions
  * -----------------------------------------------------------------------------
  */
+
+/**
+ *
+ * user_before_save
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Parse.User save validation
+ */
+const user_before_save = (request, response) => {
+    let reqs = {
+        email: 'email is a required parameter'
+    };
+
+    for (let prop in reqs) {
+        if (!request.object.set(prop)) {
+            response.error(reqs[prop]);
+        }
+    }
+
+    request.object.set('username', request.object.get('email'));
+
+    response.success();
+};
 
 /**
  *
@@ -94,31 +112,6 @@ const user_post = (request, response) => {
     }, (err) => {
         response.error(err.message);
     });
-};
-
-/**
- *
- * user_before_save
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 1.0.0
- *
- * @description Parse.User save validation
- */
-const user_before_save = (request, response) => {
-    let reqs = {
-        email: 'email is a required parameter'
-    };
-
-    for (let prop in reqs) {
-        if (!request.object.set(prop)) {
-            response.error(reqs[prop]);
-        }
-    }
-
-    request.object.set('username', request.object.get('email'));
-
-    response.success();
 };
 
 /**

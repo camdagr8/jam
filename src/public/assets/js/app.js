@@ -274,11 +274,11 @@ var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(28);
+var _helpers = __webpack_require__(27);
 
-var _decorators = __webpack_require__(26);
+var _decorators = __webpack_require__(25);
 
-var _logger = __webpack_require__(36);
+var _logger = __webpack_require__(35);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -3629,37 +3629,6 @@ module.exports = exports['default'];
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// USAGE:
-// var handlebars = require('handlebars');
-/* eslint-disable no-var */
-
-// var local = handlebars.create();
-
-var handlebars = __webpack_require__(16)['default'];
-
-var printer = __webpack_require__(24);
-handlebars.PrintVisitor = printer.PrintVisitor;
-handlebars.print = printer.print;
-
-module.exports = handlebars;
-
-// Publish a Node.js require() handler for .handlebars and .hbs files
-function extension(module, filename) {
-  var fs = __webpack_require__(40);
-  var templateString = fs.readFileSync(filename, 'utf8');
-  module.exports = handlebars.compile(templateString);
-}
-/* istanbul ignore else */
-if ("function" !== 'undefined' && (void 0)) {
-  (void 0)['.handlebars'] = extension;
-  (void 0)['.hbs'] = extension;
-}
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
   The MIT License (MIT)
 
@@ -3744,7 +3713,7 @@ if (true) {
 }
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -3856,7 +3825,7 @@ if (true) {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -5411,7 +5380,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5424,12 +5393,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * Imports
  * -----------------------------------------------------------------------------
  */
-var _ = __webpack_require__(11);
-var dragula = __webpack_require__(15);
-var hbs = __webpack_require__(8);
-var slugify = __webpack_require__(10);
-var beautify = __webpack_require__(9).js_beautify;
-var beautify_html = __webpack_require__(9).html;
+var _ = __webpack_require__(10);
+var dragula = __webpack_require__(14);
+var hbs = __webpack_require__(38);
+var slugify = __webpack_require__(9);
+var beautify = __webpack_require__(8).js_beautify;
+var beautify_html = __webpack_require__(8).html;
 
 $(function () {
     var _this = this;
@@ -6145,7 +6114,7 @@ $(function () {
 });
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6183,63 +6152,62 @@ $(function () {
 });
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _ = __webpack_require__(11);
-var hbs = __webpack_require__(8);
-var slugify = __webpack_require__(10);
+var _ = __webpack_require__(10);
+var slugify = __webpack_require__(9);
 
 $(function () {
 
-	$.extend(true, $.trumbowyg, {
-		langs: {
-			en: {
-				plugin: 'Insert Helper'
-			}
-		},
-		plugins: {
-			'plugin': {
-				init: function init(trumbowyg) {
-					trumbowyg.addBtnDef('plugin', {
-						dropdown: pluginDropdown(trumbowyg)
-					});
-				}
-			}
-		}
-	});
+    $.extend(true, $.trumbowyg, {
+        langs: {
+            en: {
+                plugin: 'Insert Helper'
+            }
+        },
+        plugins: {
+            'plugin': {
+                init: function init(trumbowyg) {
+                    trumbowyg.addBtnDef('plugin', {
+                        dropdown: pluginDropdown(trumbowyg)
+                    });
+                }
+            }
+        }
+    });
 
-	var pluginDropdown = function pluginDropdown(trumbowyg) {
+    var pluginDropdown = function pluginDropdown(trumbowyg) {
 
-		for (var prop in wysiwyg_helpers) {
-			var btn = slugify(prop, '_');
-			trumbowyg.addBtnDef(btn, {
-				param: wysiwyg_helpers[btn],
-				fn: function fn(e) {
-					trumbowyg.execCmd('insertText', e);
-					return true;
-				}
-			});
-		}
+        for (var prop in wysiwyg_helpers) {
+            var btn = slugify(prop, '_');
+            trumbowyg.addBtnDef(btn, {
+                param: wysiwyg_helpers[btn],
+                fn: function fn(e) {
+                    trumbowyg.execCmd('insertText', e);
+                    return true;
+                }
+            });
+        }
 
-		return _.keys(wysiwyg_helpers);
-	};
+        return _.keys(wysiwyg_helpers);
+    };
 
-	/**
-   * Wysiwyg
-   */
-	$('[data-wysiwyg]').trumbowyg({
-		autogrow: true,
-		removeformatPasted: true,
-		btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
-	}).css('opacity', 1);
+    /**
+     * Wysiwyg
+     */
+    $('[data-wysiwyg]').trumbowyg({
+        autogrow: true,
+        removeformatPasted: true,
+        btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
+    }).css('opacity', 1);
 });
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7264,7 +7232,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7275,7 +7243,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(17);
+var _handlebarsRuntime = __webpack_require__(16);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -7285,11 +7253,11 @@ var _handlebarsCompilerAst = __webpack_require__(6);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(18);
+var _handlebarsCompilerBase = __webpack_require__(17);
 
-var _handlebarsCompilerCompiler = __webpack_require__(20);
+var _handlebarsCompilerCompiler = __webpack_require__(19);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(22);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(21);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -7336,7 +7304,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7358,7 +7326,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(38);
+var _handlebarsSafeString = __webpack_require__(37);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -7370,7 +7338,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(37);
+var _handlebarsRuntime = __webpack_require__(36);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -7409,7 +7377,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7425,15 +7393,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(23);
+var _parser = __webpack_require__(22);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(25);
+var _whitespaceControl = __webpack_require__(24);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(21);
+var _helpers = __webpack_require__(20);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -7464,7 +7432,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7637,7 +7605,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8216,7 +8184,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8453,7 +8421,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8472,7 +8440,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(19);
+var _codeGen = __webpack_require__(18);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -9588,7 +9556,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10333,7 +10301,7 @@ exports['default'] = handlebars;
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10526,7 +10494,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10754,7 +10722,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10766,7 +10734,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(27);
+var _decoratorsInline = __webpack_require__(26);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -10777,7 +10745,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10813,7 +10781,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10825,31 +10793,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(29);
+var _helpersBlockHelperMissing = __webpack_require__(28);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(30);
+var _helpersEach = __webpack_require__(29);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(31);
+var _helpersHelperMissing = __webpack_require__(30);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(32);
+var _helpersIf = __webpack_require__(31);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(33);
+var _helpersLog = __webpack_require__(32);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(34);
+var _helpersLookup = __webpack_require__(33);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(35);
+var _helpersWith = __webpack_require__(34);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -10866,7 +10834,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10912,7 +10880,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11013,7 +10981,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11045,7 +11013,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11081,7 +11049,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11114,7 +11082,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11133,7 +11101,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11173,7 +11141,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11227,7 +11195,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11531,7 +11499,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11550,6 +11518,37 @@ SafeString.prototype.toString = SafeString.prototype.toHTML = function () {
 exports['default'] = SafeString;
 module.exports = exports['default'];
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2xpYi9oYW5kbGViYXJzL3NhZmUtc3RyaW5nLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7QUFDQSxTQUFTLFVBQVUsQ0FBQyxNQUFNLEVBQUU7QUFDMUIsTUFBSSxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUM7Q0FDdEI7O0FBRUQsVUFBVSxDQUFDLFNBQVMsQ0FBQyxRQUFRLEdBQUcsVUFBVSxDQUFDLFNBQVMsQ0FBQyxNQUFNLEdBQUcsWUFBVztBQUN2RSxTQUFPLEVBQUUsR0FBRyxJQUFJLENBQUMsTUFBTSxDQUFDO0NBQ3pCLENBQUM7O3FCQUVhLFVBQVUiLCJmaWxlIjoic2FmZS1zdHJpbmcuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBCdWlsZCBvdXQgb3VyIGJhc2ljIFNhZmVTdHJpbmcgdHlwZVxuZnVuY3Rpb24gU2FmZVN0cmluZyhzdHJpbmcpIHtcbiAgdGhpcy5zdHJpbmcgPSBzdHJpbmc7XG59XG5cblNhZmVTdHJpbmcucHJvdG90eXBlLnRvU3RyaW5nID0gU2FmZVN0cmluZy5wcm90b3R5cGUudG9IVE1MID0gZnVuY3Rpb24oKSB7XG4gIHJldHVybiAnJyArIHRoaXMuc3RyaW5nO1xufTtcblxuZXhwb3J0IGRlZmF1bHQgU2FmZVN0cmluZztcbiJdfQ==
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// USAGE:
+// var handlebars = require('handlebars');
+/* eslint-disable no-var */
+
+// var local = handlebars.create();
+
+var handlebars = __webpack_require__(15)['default'];
+
+var printer = __webpack_require__(23);
+handlebars.PrintVisitor = printer.PrintVisitor;
+handlebars.print = printer.print;
+
+module.exports = handlebars;
+
+// Publish a Node.js require() handler for .handlebars and .hbs files
+function extension(module, filename) {
+  var fs = __webpack_require__(40);
+  var templateString = fs.readFileSync(filename, 'utf8');
+  module.exports = handlebars.compile(templateString);
+}
+/* istanbul ignore else */
+if ("function" !== 'undefined' && (void 0)) {
+  (void 0)['.handlebars'] = extension;
+  (void 0)['.hbs'] = extension;
+}
 
 
 /***/ }),
@@ -12699,9 +12698,9 @@ module.exports = require("fs");
 "use strict";
 
 
-__webpack_require__(13);
-__webpack_require__(14);
 __webpack_require__(12);
+__webpack_require__(13);
+__webpack_require__(11);
 
 /***/ })
 /******/ ]);

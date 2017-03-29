@@ -3,7 +3,6 @@
  * Imports
  * -----------------------------------------------------------------------------
  */
-const _ = require('underscore');
 const moment = require('moment');
 const permissions   = ['administrator', 'publisher', 'moderator'];
 

@@ -3,7 +3,6 @@
  * Imports & Settings
  * -----------------------------------------------------------------------------
  */
-const _             = require('underscore');
 const permissions   = ['administrator'];
 
 /**

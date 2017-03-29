@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 
 /**
  * Config functions

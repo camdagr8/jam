@@ -1,11 +1,9 @@
 // Includes
-const _ 		= require('underscore');
 const hbs 		= require('handlebars');
 const slugify 	= require('slugify');
 const Promise 	= require('promise');
 const moment 	= require('moment');
 const fs 		= require('fs');
-
 
 /**
  * core.query(params)

@@ -1,5 +1,4 @@
 const moment = require('moment');
-const _ = require('underscore');
 const pubicons = {
     'draft': 'lnr-pencil',
     'publish': 'lnr-paper-plane',

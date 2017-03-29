@@ -1,4 +1,3 @@
-const _ = require('underscore');
 
 const recent = (count = 5) => {
 	let p = jam.pages.slice(0, count);
