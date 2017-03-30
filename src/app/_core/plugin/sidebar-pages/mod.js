@@ -34,7 +34,7 @@ module.exports = {
         jam.plugin['sidebar_pages']['recent'] = recent(3);
         next();
     },
-    
+
     zone: 'sidebar',
 
     recent: []

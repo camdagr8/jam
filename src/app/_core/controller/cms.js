@@ -2,7 +2,6 @@ const moment    = require('moment');
 
 jam['rec']      = {};
 let item        = {};
-let tmp         = 'themes/' + jam.theme + '/templates/404';
 
 exports.use = (req, res, next) => {
 
@@ -17,14 +16,15 @@ exports.use = (req, res, next) => {
         jam['rec']      = item;
 
         if (item.status === 'delete') {
+
             jam['rec']['title'] = '404 Error';
-            res.status(404).render(tmp, jam);
+            res.status(404).render(core.template.theme + '/404', jam);
             return;
         }
 
         if (item.status === 'draft' && core.is_role(50) === false) {
             jam['rec']['title'] = '404 Error';
-            res.status(404).render(tmp, jam);
+            res.status(404).render(core.template.theme + '/404', jam);
             return;
         } else {
             jam['rec']['title'] = 'draft | ' + jam['rec']['title'];
@@ -39,7 +39,7 @@ exports.use = (req, res, next) => {
 
                 if (diff > 0) {
                     jam['rec']['title'] = '404 Error';
-                    res.status(404).render(tmp, jam);
+                    res.status(404).render(core.template.theme + '/404', jam);
                     return;
                 }
             }
@@ -53,7 +53,7 @@ exports.use = (req, res, next) => {
 
             if (diff < 1) {
                 jam['rec']['title'] = '404 Error';
-                res.status(404).render(tmp, jam);
+                res.status(404).render(core.template.theme + '/404', jam);
                 return;
             }
         }
@@ -63,7 +63,7 @@ exports.use = (req, res, next) => {
     }).catch(() => {
 
         jam['rec']['title'] = '404 Error';
-        res.status(404).render(tmp, jam);
+        res.status(404).render(core.template.theme + '/404', jam);
 
     });
 };
@@ -78,7 +78,7 @@ exports.all = (req, res) => {
     }
 
     if (output === 'html') {
-        tmp = item['template'] || 'index';
+        let tmp = item['template'] || 'index';
         tmp = core.template.theme + '/' + tmp;
         res.render(tmp, jam);
     }
