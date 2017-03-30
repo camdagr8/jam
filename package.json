@@ -21,6 +21,7 @@
     "handlebars": "^4.0.6",
     "handlebars-lipsum": "^1.0.7",
     "js-beautify": "^1.6.11",
+    "jsonwebtoken": "^7.3.0",
     "kerberos": "~0.0.x",
     "moment": "*",
     "mongodb": "^2.2.22",

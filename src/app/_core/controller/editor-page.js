@@ -1,15 +1,23 @@
 /**
+ * -----------------------------------------------------------------------------
  * Imports
+ * -----------------------------------------------------------------------------
  */
-const _ = require('underscore');
 const moment = require('moment');
+const permissions   = ['administrator', 'publisher', 'moderator'];
 
+
+/**
+ * -----------------------------------------------------------------------------
+ * Functions
+ * -----------------------------------------------------------------------------
+ */
 const page_save = (req, res) => {
 
 	let nonce = req.body.nonce;
 	let output = {data: null, nonce: null};
 
-	Parse.Cloud.run('nonce_get', {id: nonce}).then((result) => {
+	Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
 		delete req.body.nonce;
 		return Parse.Cloud.run('content_post', req.body);
@@ -37,9 +45,22 @@ const page_save = (req, res) => {
 	});
 };
 
-// Register widgets
+/**
+ * -----------------------------------------------------------------------------
+ * Exports
+ * -----------------------------------------------------------------------------
+ */
 exports.use = (req, res, next) => {
 	jam['rec'] = {};
+
+    /**
+     * Permissions
+     */
+    if (!core.perm_check(permissions)) {
+        jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/404', jam);
+        return;
+    }
 
 	// Get widgets
 	core.add_widgets('page-editor');
@@ -51,14 +72,14 @@ exports.use = (req, res, next) => {
 	}
 
 
-	// Get page data if :id specified in url
+	// Get page rec if :id specified in url
 	if (req.params['id']) {
 
 		// Get the Content record and save it to `jam.rec`
 		let obj = new Parse.Object('Content');
 		obj.set('objectId', req.params.id);
 		obj.fetch().then((result) => {
-			jam.rec = (result) ? result.toJSON() : jam.rec;
+			jam['rec'] = (result) ? result.toJSON() : jam.rec;
 
 			if (jam.rec.hasOwnProperty('publishAt')) {
 				jam.rec['publishAt'] = moment(jam.rec.publishAt.iso).format('L');
@@ -70,8 +91,8 @@ exports.use = (req, res, next) => {
 
 			next();
 
-		}, (err) => {
-			res.render('themes/' + jam.theme + '/templates/404');
+		}, () => {
+			res.render(core.template.theme + '/404');
 		});
 
 	} else {
@@ -86,12 +107,16 @@ exports.get = (req, res) => {
 	Parse.Cloud.run('nonce_create').then((result) => {
 
 		jam.nonce = result;
-		res.render(appdir + '/_core/view/admin/admin', jam);
+		res.render(core.template.admin, jam);
 
 	}, (err) => {
 
 		log(err);
-		res.render(appdir + '/_core/view/admin/admin', jam);
+        jam['err'] = {
+            code: 400,
+            message: 'Bad Request'
+        };
+        res.status(jam.err.code).render(core.template.theme + '/404', jam);
 
 	});
 };

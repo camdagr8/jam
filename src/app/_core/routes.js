@@ -12,18 +12,33 @@ const routes = [
 		"controller" 	: "/_core/_install/uninstaller.js"
 	},
 	{
-		"method" 		: "use",
 		"route" 		: ["/admin", "/dashboard"],
-		"controller" 	: "/_core/controller/admin.js"
+		"controller" 	: "/_core/controller/dashboard.js"
 	},
 	{
 		"route" 		: ["/admin/page/:id", "/admin/page"],
 		"controller" 	: "/_core/controller/editor-page.js"
 	},
+    {
+        "route" 		: ["/admin/user/:id", "/admin/user"],
+        "controller" 	: "/_core/controller/editor-user.js"
+    },
 	{
 		"route" 		: ["/admin/template/:id", "/admin/template"],
 		"controller" 	: "/_core/controller/editor-template.js"
 	},
+    {
+        "route"         : ["/admin/templates"],
+        "controller"    : "/_core/controller/list-templates.js"
+    },
+    {
+        "route"         : ["/admin/pages"],
+        "controller"    : "/_core/controller/list-pages.js"
+    },
+    {
+        "route"         : ["/admin/users"],
+        "controller"    : "/_core/controller/list-users.js"
+    },
 	{
 		"route" 		: ["/signin", "/login"],
 		"controller" 	: "/_core/controller/login.js"
@@ -31,11 +46,6 @@ const routes = [
 	{
 		"route" 		: ["/signout", "/logout"],
 		"controller" 	: "/_core/controller/logout.js"
-	},
-	{
-		"method" 		: "all",
-		"route" 		: ["/admin", "/dashboard"],
-		"controller" 	: "/_core/controller/admin.js"
 	}
 ];
 

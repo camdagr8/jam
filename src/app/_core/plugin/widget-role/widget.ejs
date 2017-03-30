@@ -1,0 +1,17 @@
+<% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
+<!--// Widget widget-role //-->
+<div class="card card-shadow bgc-white bd-0">
+    <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-group-work ico"></i> Roles</h6>
+
+    <ul class="list-group list-group-flush" data-toggle="check">
+        <% roles.forEach((role) => { %>
+        <li class="list-group-item">
+            <label class="check" tabindex="0">
+                <%=role.name%>
+                <input type="checkbox" name="roles[]" autocomplete="off" class="hidden-xs-up" value="<%=role.name.toLowerCase()%>" <%=(core.is_role(role.name, rec)) ? 'checked' : ''%> aria-checked="<%=(core.is_role(role.name, rec))%>">
+            </label>
+        </li>
+        <% }); %>
+    </ul>
+</div>
+<% } %>

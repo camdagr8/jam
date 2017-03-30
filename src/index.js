@@ -8,22 +8,23 @@ global.env 				= (process.env.NODE_ENV) ? process.env : require(basedir + '/env.
 global.appdir 			= basedir + env.APP_MOUNT; // ref to the /app dir
 global.jam 				= {}; // global namespace used to store misc. data
 global.core 			= require(appdir + '/_core/core.js');
-
+global._               = require('underscore');
 
 
 // Node modules
-const express 			= require('express');
-const bodyParser 		= require('body-parser');
-const beautify 			= require('js-beautify').js_beautify;
-const cookieParser 		= require('cookie-parser');
-const cookieSession 	= require('cookie-session');
-const cors 				= require('cors');
-const ParseDashboard 	= require('parse-dashboard');
-const ParseServer 		= require('parse-server').ParseServer;
-const routes 			= require(appdir + '/_core/routes.js');
-const installer 		= require(appdir + '/_core/_install/installer.js');
-const prefs 			= require(appdir + '/_core/prefs.js');
-const moment 			= require('moment');
+const express           = require('express');
+const bodyParser        = require('body-parser');
+const beautify          = require('js-beautify').js_beautify;
+const cookieParser      = require('cookie-parser');
+const cookieSession     = require('cookie-session');
+const cors              = require('cors');
+const ParseDashboard    = require('parse-dashboard');
+const ParseServer       = require('parse-server').ParseServer;
+const routes            = require(appdir + '/_core/routes.js');
+const installer         = require(appdir + '/_core/_install/installer.js');
+const prefs             = require(appdir + '/_core/prefs.js');
+const admin             = require(appdir + '/_core/controller/admin.js');
+const moment            = require('moment');
 
 
 
@@ -101,6 +102,9 @@ app.use(prefs);
 
 // Run install scripts
 app.use(installer);
+
+// admin middleware
+app.use(['/admin', '/dashboard'], admin);
 
 // Initialize routes
 app.use(routes);

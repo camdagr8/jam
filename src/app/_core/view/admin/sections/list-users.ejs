@@ -1,0 +1,29 @@
+<section class="admin-list">
+    <div class="mb-l">
+        <h5 class="d-inline-block"><i class="lnr-users2 ico"></i> Users</h5>
+        <a href="<%=baseurl%>/admin/user" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New User</a>
+    </div>
+
+    <table data-dna="table-bordered" class="table table-bordered table-hover">
+        <thead class="thead-default">
+        <tr>
+            <th style="min-width: 25%">User</th>
+            <th>Role</th>
+            <th class="hidden-sm-down" style="width: 5%;"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% users.forEach((user) => { %>
+        <% let roles = []; %>
+        <% for (let prop in user.roles) { roles.push(prop); } %>
+        <tr>
+            <td class="title"><a href="<%=user.edit_url%>"><%=user.username%></a></td>
+            <td><%=roles.join(' | ')%></td>
+            <td class="hidden-sm-down action">
+                <a href="<%=user.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+            </td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</section>

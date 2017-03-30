@@ -10,14 +10,16 @@ const permissions   = ['administrator'];
  * Functions
  * -----------------------------------------------------------------------------
  */
-const template_save = (req, res) => {
+const user_save = (req, res) => {
+
     let nonce = req.body.nonce;
     let output = {data: null, nonce: null};
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
         delete req.body.nonce;
-        return Parse.Cloud.run('template_post', req.body);
+        let cloudFNC = 'user_' + req.method.toLowerCase();
+        return Parse.Cloud.run(cloudFNC, req.body);
 
     }, (err) => {
 
@@ -42,6 +44,31 @@ const template_save = (req, res) => {
     });
 };
 
+const user_delete = (req, res) => {
+
+    let nonce = req.body.nonce;
+    let output = {
+        message: `Deleted ${req.body.username}`,
+        redirect: `${jam.baseurl}/admin/users`
+    };
+
+    Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
+
+        delete req.body.nonce;
+        return Parse.Cloud.run('user_delete', req.body);
+
+    }, (err) => {
+
+        res.json({error: err});
+
+    }).then(() => {
+
+        res.json(output);
+
+    }, (err) => {
+        res.json({error: err});
+    });
+};
 
 /**
  * -----------------------------------------------------------------------------
@@ -60,38 +87,33 @@ exports.use = (req, res, next) => {
         return;
     }
 
+    // Get widgets
+    core.add_widgets('user-editor');
+
     // Get template rec if :id specified in url
     if (req.params['id']) {
-
-        let tmp = _.findWhere(jam['templates'], {objectId: req.params.id});
-        if (!tmp) {
-            res.render(core.template.theme + '/404', jam);
-        } else {
-            jam['rec'] = tmp;
-            next();
-        }
-
-    } else {
-        next();
+        jam['rec'] = _.findWhere(jam.users, {objectId: req.params.id});
     }
+    next();
 };
 
 exports.get = (req, res) => {
-	jam['content'] = './sections/editor-template';
+    jam['content'] = './sections/editor-user';
 
-	// Get nonce
-	Parse.Cloud.run('nonce_create').then((result) => {
+    // Get nonce
+    Parse.Cloud.run('nonce_create').then((result) => {
 
-		jam['nonce'] = result;
-		res.render(core.template.admin, jam);
+        jam['nonce'] = result;
+        res.render(core.template.admin, jam);
 
-	}, (err) => {
+    }, (err) => {
 
-		jam['err'] = {code: 400, message: 'Bad Request'};
-		res.status(jam.err.code).render(core.template.theme + '/404', jam);
+        jam['err'] = {code: 400, message: 'Bad Request'};
+        res.status(jam.err.code).render(core.template.theme + '/404', jam);
 
-	});
+    });
 };
 
-exports.post    = template_save;
-exports.put     = template_save;
+exports.post      = user_save;
+exports.put       = user_save;
+exports.delete    = user_delete;

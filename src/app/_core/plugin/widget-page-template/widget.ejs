@@ -1,16 +1,17 @@
 <div class="card card-shadow bgc-white bd-0">
-	<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> Template</h6>
-	<ul class="list-group list-group-flush" data-toggle="check">
-		<li class="list-group-item">
-			<select class="form-control" id="admin-template-select" name="template">
-				<option value="">Select</option>
-				<% jam.template.forEach((item) => { %>
-				<option value="<%=item.id%>" <%-(rec['template'] === item.id) ? 'selected' : '' %>><%=item.name%></option>
-				<% }); %>
-			</select>
-		</li>
-	</ul>
-	<div class="card-footer bgc-white" style="margin-top: -1px;">
-		<button type="button" class="btn btn-outline-secondary btn-block text-uppercase" data-preview="">Preview</button>
-	</div>
+    <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> Template</h6>
+    <ul class="list-group list-group-flush" data-toggle="check">
+        <li class="list-group-item">
+            <select class="form-control" id="admin-template-select" name="template" title="Select Template">
+                <option value="">Select</option>
+                <% jam.templates.forEach((item) => { %>
+                <option value="<%= item.template %>" data-template='<%=JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
+                <% }); %>
+            </select>
+        </li>
+    </ul>
+    <div class="card-footer bgc-white" style="margin-top: -1px; display: none;">
+        <button type="button" class="btn btn-outline-secondary btn-block text-uppercase" data-preview="">Preview
+        </button>
+    </div>
 </div>

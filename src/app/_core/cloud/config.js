@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 
 /**
  * Config functions
@@ -13,21 +11,20 @@ const _ = require('underscore');
  * @author Cam Tullos cam@tullos.ninja
  * @since 0.1.0
  *
- * @description Retrieves a single config variable or the entire list.
+ * @description Retrieves the config variables.
  *
- * @param key {String} The name of the config variable to retrieve. Default: null
+ * @param request {Object} The express request object.
+ * @param response {Object} The express response object.
+ * @param skip {Number} The query offset value.
+ * @param output {Array} The query results.
  *
  * @returns {ParseObject}
  */
 
-const config_get = (request, response, skip, output) => {
+const config_get = (request, response, skip = 0, output = {}) => {
 
-	output = output || {};
-	skip = skip || 0;
-
-	let limit = 100;
-
-	let qry = core.query({table: 'Config', skip: skip, limit: limit});
+	let limit   = 1000;
+	let qry     = core.query({table: 'Config', skip: skip, limit: limit});
 
 	if (request.params.hasOwnProperty('key')) { // Single config object query
 		qry.equalTo('key', request.params.key.toLowerCase());

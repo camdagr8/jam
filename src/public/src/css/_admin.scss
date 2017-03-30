@@ -30,3 +30,45 @@
 		padding-top: .4rem;
 	}
 }
+
+.admin-list {
+    .btn-new {
+        text-transform: uppercase;
+
+        @media (max-width: 575px) {
+            width: 100%;
+            padding: 7px;
+            margin: 10px 0 20px 0;
+            font-size: 12px;
+        }
+
+        @media (min-width: 576px) and (max-width: 767px) {
+            padding: 7px 5px;
+            font-size: 12px;
+        }
+    }
+
+    td, th {
+        vertical-align: middle;
+        padding: 0.25rem 0.75rem;
+    }
+
+    td a {
+        width: 100%;
+        display: block;
+        text-decoration: none;
+    }
+
+    .badge {
+        font-weight: normal;
+        margin-right: 5px;
+    }
+}
+
+.code {
+    font-family: monospace;
+}
+
+.sub-active:after {
+    border-left: none !important;
+}

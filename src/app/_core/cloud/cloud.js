@@ -1,6 +1,6 @@
-const fs = require('fs');
-const dir = appdir + '/cloud';
-const coredir = appdir + '/_core/cloud';
+const fs         = require('fs');
+const dir        = appdir + '/cloud';
+const coredir    = appdir + '/_core/cloud';
 
 // 0.1 - Read core Parse Cloud modules
 fs.readdirSync(coredir).forEach((file) => {

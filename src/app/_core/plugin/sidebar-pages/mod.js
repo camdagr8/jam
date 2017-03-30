@@ -1,28 +1,41 @@
+const moment = require('moment');
+
 const recent = (count = 5) => {
-	let output = [];
+    let output    = [];
+    let now       = moment();
+    let p         = _.clone(jam.pages);
+    let w         = _.where(p, {status: 'delete'});
+    p             = _.difference(p, w).slice(0, count);
 
-	let p = jam.pages.slice(0, count);
+    p.forEach((page) => {
 
-	p.forEach((item) => {
-		item = item.toJSON();
-		item['edit_url'] = jam.baseurl + '/admin/page/' + item.objectId;
-		output.push(item);
-	});
+        let date = moment(page.updatedAt);
 
-	return output;
+        let diff = now.diff(date, 'days');
+        if (diff <= 7) {
+            output.push(page);
+        }
+    });
+
+    return output;
 };
 
 
 module.exports = {
-	id: 'sidebar-pages',
+    id: 'sidebar-pages',
 
-	index: 0,
+    index: 0,
 
-	perms: ['all'],
+    perms: ['administrator', 'publisher', 'moderator'],
 
-	sections: ['all'],
+    sections: ['all'],
 
-	zone: 'sidebar',
+    use_admin: (req, res, next) => {
+        jam.plugin['sidebar_pages']['recent'] = recent(3);
+        next();
+    },
 
-	recent: recent()
+    zone: 'sidebar',
+
+    recent: []
 };

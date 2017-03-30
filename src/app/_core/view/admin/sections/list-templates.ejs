@@ -1,0 +1,31 @@
+<section class="admin-list">
+    <div class="mb-l">
+        <h5 class="d-inline-block"><i class="lnr-file-code ico"></i> Templates</h5>
+        <a href="<%=baseurl%>/admin/template" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Template</a>
+    </div>
+
+    <table data-dna="table-bordered" class="table table-bordered table-hover">
+        <thead class="thead-default">
+            <tr>
+                <th style="min-width: 25%">Name</th>
+                <th style="min-width: 15%;" class="hidden-sm-down">File</th>
+                <th style="width: 5%;" class="hidden-sm-down"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <% templates.forEach((template) => { %>
+                <td class="title">
+                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>"><%=template.title%></a>
+                </td>
+                <td class="hidden-sm-down">
+                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>"><i class="lnr-file-code"></i> <%=template.template%>.ejs</a>
+                </td>
+                <td class="action hidden-sm-down">
+                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                </td>
+                <% }); %>
+            </tr>
+        </tbody>
+    </table>
+</section>

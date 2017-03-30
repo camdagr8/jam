@@ -8,6 +8,7 @@
  * @description Create a `Nonce` record.
  */
 Parse.Cloud.define('nonce_create', (request, response) => {
+
 	let obj = new Parse.Object('Nonce');
 
 	obj.save().then((rec) => {
@@ -38,7 +39,7 @@ Parse.Cloud.define('nonce_delete', (request, response) => {
 
 	let obj = new Parse.Object('Nonce');
 	obj.set('objectId', request.params.id);
-	obj.destroy().then((result) => {
+	obj.destroy().then(() => {
 		response.success(true);
 	}, (err) => {
 		response.error(err);

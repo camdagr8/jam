@@ -1,15 +1,5 @@
 const recent = (count = 5) => {
-	let output = [];
-
-	let p = jam.users.slice(0, count);
-
-	p.forEach((item) => {
-		item = item.toJSON();
-		item['edit_url'] = jam.baseurl + '/admin/user/' + item.objectId;
-		output.push(item);
-	});
-
-	return output;
+	return jam.users.slice(0, count);
 };
 
 

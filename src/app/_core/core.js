@@ -1,13 +1,9 @@
 // Includes
-const _ 		= require('underscore');
 const hbs 		= require('handlebars');
 const slugify 	= require('slugify');
 const Promise 	= require('promise');
 const moment 	= require('moment');
 const fs 		= require('fs');
-
-
-
 
 
 /**
@@ -31,23 +27,23 @@ const fs 		= require('fs');
 const query = (params) => {
 
 	// 0.1 - Set up some defaults
-	var table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
-	var skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
-	var limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
+	let table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
+	let skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
+	let limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
 		limit 	= (limit > 1000) ? 1000 : limit;
 
 	// 0.2 - Exit if no table specified
 	if (table === null) { return null; }
 
 	// 1.0 - The Parse.Query constructor
-	var qry = new Parse.Query(table);
+	let qry = new Parse.Query(table);
 		qry.limit(limit);
 		qry.skip(skip);
 
 	// 2.0 - Set the order
-	var orders 	= ['ascending', 'descending'];
-	var orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
-	var order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
+	let orders 	= ['ascending', 'descending'];
+	let orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
+	let order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
 		order 	= order.toLowerCase();
 		order 	= (orders.indexOf(order) > -1) ? order : 'descending';
 
@@ -58,7 +54,7 @@ const query = (params) => {
 	 * into the max object query of 100000
 	 */
 	if (params['timestamp']) {
-		var d = moment(params['timestamp']).toDate();
+		let d = moment(params['timestamp']).toDate();
 
 		if (order === 'descending') {
 			qry.lessThan('createdAt', d);
@@ -71,51 +67,30 @@ const query = (params) => {
 	return qry;
 };
 
-const perm_check = (perms) => {
-	// level 0 check
-	if (perms === 0) {
-		return true;
-	}
+/**
+ *
+ * perm_check
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Checks a list of permissions against a user's permissions
+ * @param perms {Array|String} The list of permissions to check
+ * @param user {Object} The user to check
+ *
+ * @returns {Boolean} True|False: the user does/doesn't have the proper permissions
+ */
+const perm_check = (perms, user) => {
 
-	// 'all' check
-	if (_.isArray(perms)) {
-		if (perms.indexOf('all') > -1) {
-			return true;
-		}
-	} else {
-		if (perms === 'all') {
-			return true;
-		}
-	}
+    perms = (_.isArray(perms)) ? perms : [perms];
 
-	// user check
-	if (!jam.currentuser) {
-		return false;
-	}
+    for (let i = 0; i < perms.length; i++) {
+        let perm = perms[i];
+        let valid = is_role(perm, user);
+        if (valid === true) { return true; }
+    }
 
-	// roles check
-	let roles = jam.currentuser.get('roles');
-	if (!roles) {
-		return false;
-	}
-
-	// is admin?
-	if (roles.hasOwnProperty('administrator')) {
-		return true;
-	}
-
-	// level
-	if (typeof perms === 'number') {
-		let l = _.max(_.values(roles), 'level');
-		return (l.level >= perms);
-	}
-
-
-	if (!_.isArray(perms)) { perms = [perms]; }
-	let i = _.intersection(perms, _.keys(roles));
-	return (i.length > 0);
-
-	return false;
+    return false;
 };
 
 /**
@@ -168,7 +143,6 @@ const add_widgets = (sections) => {
 	});
 };
 
-
 /**
  *
  * core.helpers(helpers_path)
@@ -178,7 +152,7 @@ const add_widgets = (sections) => {
  *
  * @description Function that reads the helpers directory and creates an object array of the results.
  * @param mod_path {String} The helpers directory to scan.
- * @returns {ObjectArray} List of modules.
+ * @returns {Array} List of module objects.
  */
 const plugins = (mod_path) => {
     if (!fs.existsSync(mod_path)) {
@@ -193,14 +167,14 @@ const plugins = (mod_path) => {
 	mods.forEach((dir) => {
 
 		if (dir.substr(0, 1) === '.') { return; }
+        if (dir.substr(0, 1) === '_') { return; }
 
 		let name 	= slugify(dir);
 		let obj 	= {name: name, index: 1000000};
-		let path 	= mod_path+'/' + dir;
+		let path 	= mod_path + '/' + dir;
 		let files 	= fs.readdirSync(path);
 
 		if (files.length < 1) { return; }
-
 
 		files.forEach((file) => {
 			if (file.substr(0, 1) === '.') { return; }
@@ -211,17 +185,12 @@ const plugins = (mod_path) => {
 
 		if (obj.hasOwnProperty('mod')) {
 
-			let m = require(obj.mod);
-
-			obj.name = (m.hasOwnProperty('id')) ? m.id : obj.name;
-
-			let i = (m.hasOwnProperty('index')) ? m.index : obj.index;
-
-			obj.index = (typeof i !== 'number') ? obj.index : i;
-
-			let p = obj.name.split('-').join('_');
-
-			obj['func'] = p;
+			let m          = require(obj.mod);
+			obj.name       = (m.hasOwnProperty('id')) ? m.id : obj.name;
+			let i          = (m.hasOwnProperty('index')) ? m.index : obj.index;
+			obj.index      = (typeof i !== 'number') ? obj.index : i;
+			let p          = obj.name.split('-').join('_');
+			obj['func']    = p;
 
 			if (!jam.plugin.hasOwnProperty(p)) {
 				jam.plugin[p] = m;
@@ -238,7 +207,6 @@ const plugins = (mod_path) => {
 
 	return output;
 };
-
 
 /**
  *
@@ -293,6 +261,46 @@ const hbsParse = (source, data) => {
 	return template(data);
 };
 
+/**
+ *
+ * is_role(permission, user)
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Checks the user for the specified role or level
+ *
+ * @param permission {String|Number} The role or level to check for
+ * @param user {Object} The Parse.User object to check or jam.currentuser if undefined
+ *
+ * @returns {Boolean}
+ */
+const is_role = (permission, user) => {
+
+    if (permission === 'all' || permission === 0) { return true; }
+
+    user = user || jam['currentuser'];
+
+    if (!user) { return false; }
+
+    user = (typeof user['toJSON'] !== 'function') ? user : user.toJSON();
+
+    if (typeof permission === 'string') {
+        permission = permission.toLowerCase();
+        let r = _.keys(user.roles);
+        return (r.indexOf(permission) > -1);
+    }
+
+    if (typeof permission === 'number') {
+        let v = _.values(user.roles);
+        let l = _.pluck(v, 'level');
+        let lvl = _.max(l);
+        return Boolean(lvl >= permission);
+        //return (l.indexOf(permission) > -1);
+    }
+
+    return false;
+};
 
 /**
  * Remove the file ext from a file path.
@@ -304,7 +312,6 @@ const ext_remove = (str) => {
 
 	return str;
 };
-
 
 /**
  *
@@ -320,21 +327,29 @@ const ext_remove = (str) => {
 const scan = (path) => {
 	return new Promise((fulfill, reject) => {
 		fs.readdir(path, 'utf8', (err, files) => {
-			if (err) { reject(err); }
-			else { fulfill(files); }
+			if (err) {
+			    reject(err);
+			} else {
+			    let farr = [];
+			    files.forEach((file) => {
+                    if (file.substr(0, 1) !== '_') {
+                        farr.push(file);
+                    }
+                });
+			    fulfill(farr);
+			}
 		});
 	});
 };
-
 
 /**
  * Core templates
  */
 const template = {
 	admin: appdir + '/_core/view/admin/admin',
-	install: appdir + '/_core/view/admin/install'
+	install: appdir + '/_core/view/admin/install',
+    theme: null
 };
-
 
 /**
  *
@@ -345,7 +360,7 @@ const template = {
  *
  * @description Function that updates the timestamp.json file when content is changed in the CMS
  */
-const timestamper = (request, response) => {
+const timestamper = () => {
 	let p = appdir + '/model/timestamp.json';
 		p = p.replace(/dist/, 'src');
 
@@ -356,17 +371,17 @@ const timestamper = (request, response) => {
 };
 
 
-
 /**
  * Exports
  */
-exports.add_widgets 	= add_widgets;
-exports.ext_remove 		= ext_remove;
-exports.hbsParse 		= hbsParse;
-exports.perm_check 		= perm_check;
-exports.plugins 		= plugins;
-exports.query 			= query;
-exports.scan 			= scan;
-exports.skey 			= 'bD6yXAOEX4xq';
-exports.template 		= template;
-exports.timestamper 	= timestamper;
+exports.add_widgets    = add_widgets;
+exports.ext_remove     = ext_remove;
+exports.hbsParse       = hbsParse;
+exports.is_role        = is_role;
+exports.perm_check     = perm_check;
+exports.plugins        = plugins;
+exports.query          = query;
+exports.scan           = scan;
+exports.skey           = 'bD6yXAOEX4xq';
+exports.template       = template;
+exports.timestamper    = timestamper;

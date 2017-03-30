@@ -1,4 +1,3 @@
-const _ = require('underscore');
 
 /**
  *
@@ -14,28 +13,47 @@ module.exports = (req, res, next) => {
     let url = req.url.split('/');
     url.shift();
 
-    jam['baseurl']     = req.protocol + '://' + req.get('host');
-    jam['theme']       = 'default';
-    jam['blocks']      = [];
-    jam['currentuser'] = null;
-    jam['helpers']     = [];
-    jam['pages']       = [];
-    jam['plugin']      = {};
-    jam['plugins']     = [];
-    jam['sidebar']     = [];
-    jam['url']         = url;
-    jam['users']       = [];
-    jam['widgets']     = [];
+    jam['baseurl']           = req.protocol + '://' + req.get('host');
+    jam['theme']             = 'default';
+    jam['blocks']            = [];
+    jam['currentuser']       = null;
+    jam['helpers']           = [];
+    jam['is']                = {};
+    jam['meta_types']        = [
+        {name: 'HTML',          value: 'HTML'},
+        {name: 'Plain Text',    value: 'TEXT'},
+        {name: 'Number',        value: 'NUMBER'},
+        {name: 'Object',        value: 'OBJECT'},
+        {name: 'Array',         value: 'ARRAY'}
+    ];
+    jam['pages']             = [];
+    jam['plugin']            = {};
+    jam['plugins']           = [];
+    jam['sidebar']           = [];
+    jam['url']               = url;
+    jam['users']             = [];
+    jam['widgets']           = [];
+    jam['template_files']    = [];
+    jam['templates']         = [];
 
-    Parse.Cloud.run('config_get').then((result) => { // Get Config objects
+    // jam.is.admin boolean
+    let base_urls = ['admin', 'dashboard'];
+    jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
+
+    // Start the process
+    let prm = Parse.Promise.when(Parse.Cloud.run('config_get'));
+    prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
 
-    }, () => { // Not able to get the configs
+        core.template.theme = `themes/${jam.theme}/templates`;
 
-        jam.installed = false;
-        next();
+    }, (err) => { // Not able to get the configs
+
+        log(err);
+        jam['installed'] = false;
+        prm.reject();
 
     }).then(() => { // Get the current user from session token
 
@@ -44,25 +62,13 @@ module.exports = (req, res, next) => {
 
     }).then((user) => { // Set the currentuser value: Parse.User || null
 
-        jam.currentuser = user;
+        jam['currentuser'] = user;
 
     }, (err) => { // No current user: Keep going
 
         log(err);
 
-    }).then(() => {
-
-        return Parse.Cloud.run('content_get_pages');
-
-    }).then((pages) => {
-
-        jam['pages'] = pages;
-
-    }, (err) => {
-
-        log(err);
-
-    }).then(() => {
+    }).then(() => { // Get helpers and plugins
 
         // Core helpers & plugins
         jam['helpers'] = core.plugins(appdir + '/_core/helper', true);
@@ -71,11 +77,19 @@ module.exports = (req, res, next) => {
         // User helpers & plugins
         jam['helpers'] = jam.helpers.concat(core.plugins(appdir + '/helper', true));
         jam['plugins'] = jam.plugins.concat(core.plugins(appdir + '/plugin'));
-    }, (err) => {
 
-        log('helpers error');
+    }).always(() => {
 
-    }).then(() => { // Done!
+        // register plugin `use` hooks
+        _.keys(jam.plugin).forEach((name) => {
+            let plugin = jam.plugin[name];
+            if (plugin.hasOwnProperty('use')) {
+                app.use(plugin.use);
+            }
+        });
+
         next();
+
     });
+
 };
