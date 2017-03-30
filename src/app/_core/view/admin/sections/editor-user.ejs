@@ -49,7 +49,7 @@
                     data-submit='Saving...'>Save User</button>
             </div>
 
-            <% if (rec['objectId']) { %>
+            <% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
             <div>
                 <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminUserDeleteModal">Delete User</button>
             </div>
@@ -57,7 +57,8 @@
         </aside>
     </div>
 </form>
-<% if (rec['objectId']) { %>
+
+<% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
 <div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminUserDelete" aria-hidden="true" id="adminUserDeleteModal">
     <div class="modal-dialog">
         <form id="admin-delete-form" action="<%=baseurl%>/admin/user" method="delete">
@@ -81,6 +82,7 @@
                     <button
                         type="button"
                         class="btn btn-danger btn-block btn-lg text-uppercase"
+                        aria-label="Delete user"
                         data-label="Yes"
                         data-submit='Deleting...'>Yes</button>
                 </div>

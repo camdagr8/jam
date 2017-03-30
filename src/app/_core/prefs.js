@@ -68,18 +68,6 @@ module.exports = (req, res, next) => {
 
         log(err);
 
-    }).then(() => { // Get Content/Pages
-
-        return Parse.Cloud.run('content_get_pages');
-
-    }).then((pages) => { // Get Content/Pages success
-
-        jam['pages'] = pages;
-
-    }, (err) => { // Get Content/Pages error
-
-        log(err);
-
     }).then(() => { // Get helpers and plugins
 
         // Core helpers & plugins
@@ -99,7 +87,6 @@ module.exports = (req, res, next) => {
                 app.use(plugin.use);
             }
         });
-
 
         next();
 

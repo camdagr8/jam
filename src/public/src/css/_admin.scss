@@ -68,3 +68,7 @@
 .code {
     font-family: monospace;
 }
+
+.sub-active:after {
+    border-left: none !important;
+}

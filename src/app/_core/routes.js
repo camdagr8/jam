@@ -12,9 +12,8 @@ const routes = [
 		"controller" 	: "/_core/_install/uninstaller.js"
 	},
 	{
-		"method" 		: "use",
 		"route" 		: ["/admin", "/dashboard"],
-		"controller" 	: "/_core/controller/admin.js"
+		"controller" 	: "/_core/controller/dashboard.js"
 	},
 	{
 		"route" 		: ["/admin/page/:id", "/admin/page"],
@@ -47,11 +46,6 @@ const routes = [
 	{
 		"route" 		: ["/signout", "/logout"],
 		"controller" 	: "/_core/controller/logout.js"
-	},
-	{
-		"method" 		: "all",
-		"route" 		: ["/admin", "/dashboard"],
-		"controller" 	: "/_core/controller/admin.js"
 	}
 ];
 

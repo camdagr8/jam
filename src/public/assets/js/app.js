@@ -6132,6 +6132,9 @@ $(function () {
                     if (this.checked === true) {
                         $(t).stop().slideDown(200);
                     } else {
+                        if (this.name === 'unpublish') {
+                            $(t).find('input').val('');
+                        }
                         $(t).stop().slideUp(200);
                     }
                 }

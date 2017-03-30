@@ -6,9 +6,14 @@
 		<li>
 			<a href="<%=baseurl%>/admin/page" class="list-menu-item menu-add">New Page</a>
 		</li>
+        <% if (plugin.sidebar_pages.recent.length > 0) { %>
+        <li class="list-menu-heading active sub-active" >
+            <h6><i class="lnr-history2 ico"></i>Recent Pages</h6>
+        </li>
 		<% plugin.sidebar_pages.recent.forEach((item) => { %>
 		<li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>
 		<% }); %>
+        <% } %>
         <li>
             <a href="<%=baseurl%>/admin/pages" class="list-menu-item">View All</a>
         </li>

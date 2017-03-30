@@ -5,6 +5,7 @@ const Promise 	= require('promise');
 const moment 	= require('moment');
 const fs 		= require('fs');
 
+
 /**
  * core.query(params)
  *
@@ -66,6 +67,19 @@ const query = (params) => {
 	return qry;
 };
 
+/**
+ *
+ * perm_check
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Checks a list of permissions against a user's permissions
+ * @param perms {Array|String} The list of permissions to check
+ * @param user {Object} The user to check
+ *
+ * @returns {Boolean} True|False: the user does/doesn't have the proper permissions
+ */
 const perm_check = (perms, user) => {
 
     perms = (_.isArray(perms)) ? perms : [perms];
@@ -128,7 +142,6 @@ const add_widgets = (sections) => {
 		jam[z] = _.uniq(jam[z]);
 	});
 };
-
 
 /**
  *
@@ -194,7 +207,6 @@ const plugins = (mod_path) => {
 
 	return output;
 };
-
 
 /**
  *
@@ -282,12 +294,13 @@ const is_role = (permission, user) => {
     if (typeof permission === 'number') {
         let v = _.values(user.roles);
         let l = _.pluck(v, 'level');
-        return (l.indexOf(permission) > -1);
+        let lvl = _.max(l);
+        return Boolean(lvl >= permission);
+        //return (l.indexOf(permission) > -1);
     }
 
     return false;
 };
-
 
 /**
  * Remove the file ext from a file path.
@@ -299,7 +312,6 @@ const ext_remove = (str) => {
 
 	return str;
 };
-
 
 /**
  *
@@ -330,7 +342,6 @@ const scan = (path) => {
 	});
 };
 
-
 /**
  * Core templates
  */
@@ -339,7 +350,6 @@ const template = {
 	install: appdir + '/_core/view/admin/install',
     theme: null
 };
-
 
 /**
  *
@@ -359,7 +369,6 @@ const timestamper = () => {
 
 	fs.writeFile(p, t, 'utf8', () => {});
 };
-
 
 
 /**

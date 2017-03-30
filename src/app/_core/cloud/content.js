@@ -11,6 +11,19 @@ const pubicons = {
  * Functions
  * -----------------------------------------------------------------------------
  */
+/**
+ *
+ * content_get
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 0.1.0
+ *
+ * @description Gets the specified `route` from the `Content` table.
+ *
+ * @param request.params.route {String} The url route to query. Example: /page/test or /
+ *
+ * @returns {ParseObject}
+ */
 const content_get = (request, response) => {
     // 0.1 - Use core.query() to contruct the Parse.Query object
     let qry = core.query({table: 'Content'});
@@ -32,10 +45,30 @@ const content_get = (request, response) => {
     });
 };
 
+/**
+ *
+ * content_get_pages
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 0.1.0
+ *
+ * @description Gets the list of pages from the Content table.
+ *
+ * @param request.params.skip {Number} The starting index. Default: 0.
+ * @param request.params.limit {Number} The number of pages to return. Default: 1000.
+ *
+ * @returns {Array} Returns an array of Parse.Objects.
+ */
 const content_get_pages = (request, response, results = []) => {
 
 	// 0.1 - Use core.query() to contruct the Parse.Query object
-	let qry = core.query({table: 'Content', skip: request.params.skip, limit: request.params.limit, orderBy: 'updatedAt'});
+	let qry = core.query({
+        table: 'Content',
+        skip: request.params.skip,
+        limit: request.params.limit,
+        orderBy: 'updatedAt',
+        order: 'descending'
+	});
 
 	qry.equalTo('type', 'page');
 	qry.find().then((content) => {
@@ -62,6 +95,16 @@ const content_get_pages = (request, response, results = []) => {
 	});
 };
 
+/**
+ *
+ * content_post
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 0.1.0
+ *
+ * @description Creates a new `Content` object.
+ *
+ */
 const content_post = (request, response) => {
     delete request.params.nonce;
 
@@ -71,6 +114,10 @@ const content_post = (request, response) => {
         obj.set(key, request.params[key]);
     });
 
+    if (!request.params.hasOwnProperty('unpublishAt')) {
+        obj.unset('unpublishAt');
+    }
+
     obj.save(null).then((result) => {
         response.success(result);
     }, (err) => {
@@ -79,6 +126,15 @@ const content_post = (request, response) => {
 
 };
 
+/**
+ *
+ * Before Content Save
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 0.1.0
+ *
+ * @description Formats certain fields before inserting.
+ */
 const content_before_save = (request, response) => {
 
     let publishAt = request.object.get('publishAt');
@@ -110,36 +166,9 @@ const content_before_save = (request, response) => {
  * Cloud Definitions
  * -----------------------------------------------------------------------------
  */
-/**
- *
- * content_get
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Gets the specified `route` from the `Content` table.
- *
- * @param route {String} The url route to query. Example: /page/test or /
- *
- * @returns {ParseObject}
- */
+
 Parse.Cloud.define('content_get', content_get);
 
-
-/**
- *
- * content_get_pages
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Gets the list of pages from the Content table.
- *
- * @param skip {Number} The starting index. Default: 0.
- * @param limit {Number} The number of pages to return. Default: 1000.
- *
- * @returns {Array} Returns an array of Parse.Objects.
- */
 Parse.Cloud.define('content_get_pages', (request, response) => {
 	request.params['skip'] = (request.params.hasOwnProperty('skip')) ? request.params.skip : 0;
 	request.params['limit'] = (request.params.hasOwnProperty('limit')) ? request.params.limit : 1000;
@@ -148,22 +177,9 @@ Parse.Cloud.define('content_get_pages', (request, response) => {
 	content_get_pages(request, response);
 });
 
-
-/**
- *
- * content_post
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Creates a new `Content` object.
- *
- */
 Parse.Cloud.define('content_post', content_post);
 
-
-
-
+Parse.Cloud.beforeSave('Content', content_before_save);
 
 /**
  * After Content save function that creates a timestamp in the local build so that
@@ -172,15 +188,3 @@ Parse.Cloud.define('content_post', content_post);
 //Parse.Cloud.afterSave('Content', core.timestamper);
 
 
-
-
-/**
- *
- * Before Content Save
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Formats certain fields before inserting.
- */
-Parse.Cloud.beforeSave('Content', content_before_save);

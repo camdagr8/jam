@@ -6,6 +6,6 @@ module.exports = {
     perms: ['administrator'],
 
     sections: ['all'],
-    
+
     zone: 'sidebar'
 };
