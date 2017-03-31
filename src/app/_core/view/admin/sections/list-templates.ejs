@@ -13,8 +13,8 @@
             </tr>
         </thead>
         <tbody>
+            <% templates.forEach((template) => { %>
             <tr>
-                <% templates.forEach((template) => { %>
                 <td class="title">
                     <a href="<%=baseurl%>/admin/template/<%=template.objectId%>"><%=template.title%></a>
                 </td>
@@ -24,8 +24,8 @@
                 <td class="action hidden-sm-down">
                     <a href="<%=baseurl%>/admin/template/<%=template.objectId%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
                 </td>
-                <% }); %>
             </tr>
+            <% }); %>
         </tbody>
     </table>
 </section>

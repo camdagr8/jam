@@ -92,7 +92,6 @@
                     </li>
 					<% }); } -%>
 				</ul>
-
 			</div>
 
 		</div>
@@ -105,6 +104,11 @@
 					data-confirm="Are you sure?"
 					data-submit='Saving...'>Save Template</button>
 			</div>
+            <% if (rec['objectId']) { %>
+            <div>
+                <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminTemplateDeleteModal">Delete Template</button>
+            </div>
+            <% } %>
 		</aside>
 	</div>
 </form>
@@ -131,3 +135,36 @@
         <div class="gu-handle"><i class="lnr-menu"></i></div>
     </li>
 </script>
+
+<% if (rec['objectId']) { %>
+<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminTemplateDelete" aria-hidden="true" id="adminTemplateDeleteModal">
+    <div class="modal-dialog">
+        <form id="admin-delete-form" action="<%=baseurl%>/admin/template" method="delete">
+
+            <input type="hidden" value="<%=rec['objectId']%>" name="objectId" />
+            <input type="hidden" value="<%=nonce%>" name="nonce" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-l mt-m">Deleting cannot be undone. Are you sure?</div>
+                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-block btn-lg text-uppercase"
+                        aria-label="Delete Template"
+                        data-label="Yes"
+                        data-submit='Deleting...'>Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% } %>

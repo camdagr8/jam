@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 /**
  *
  * nonce_create
@@ -78,3 +80,44 @@ Parse.Cloud.define('nonce_get', (request, response) => {
 		response.error(err);
 	});
 });
+
+
+/**
+ *
+ * nonce_purge
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Purges nonces older than the specified number of days.
+ * @param request.days {Number} The number of days back to start the purge.
+ * @param request.hours {Number} The number of hours back to start the purge.
+ */
+const nonce_purge = (request, response) =>{
+    let params = request.params;
+    let date;
+
+    if (params.hasOwnProperty('hours') || !date) {
+        let hours = (params.hasOwnProperty('hours')) ? params.hours : 72;
+        date = moment().subtract(hours, 'hours').startOf('hour');
+    }
+
+    if (params.hasOwnProperty('days') || !date) {
+        let days = (params.hasOwnProperty('days')) ? params.days : 7;
+        date = moment().subtract(days, 'days').startOf('day');
+    }
+
+    let qry = new Parse.Query('Nonce');
+    qry.lessThan('createdAt', date.toDate());
+    return qry.each((results) => {
+        return (typeof results !== 'undefined') ? results.destroy() : null;
+    }).then(() => {
+        return response.success('Nonce purge complete!');
+    }).catch((err) => {
+        return response.error(err.message);
+    }).always(() => {
+        return response.success('Nonce purge complete!');
+    });
+};
+
+Parse.Cloud.job('nonce_purge', nonce_purge);

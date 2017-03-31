@@ -43,34 +43,59 @@
     </div>
     <table data-dna="table-bordered" class="table table-bordered table-hover">
         <thead class="thead-default">
-        <tr>
-            <th style="width: 50%">Name</th>
-            <th class="hidden-sm-down">Route</th>
-            <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
-            <th class="hidden-sm-down" style="width: 5%;"></th>
-        </tr>
+            <tr>
+                <th style="width: 50%">Name</th>
+                <th class="hidden-sm-down">Route</th>
+                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
+                <th class="hidden-sm-down" style="width: 5%;"></th>
+            </tr>
         </thead>
         <tbody>
         <% pages.forEach((page) => { %>
         <% if (page.status !== 'delete') { return; } %>
-        <tr>
-            <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
-            <td class="hidden-sm-down">
-                <% page.routes.forEach((route) => { %>
-                <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view page" data-placement="left" target="_blank" class="badge badge-primary d-inline">
-                    <%=route%>
-                </a>
-                <% }); %>
-            </td>
-            <td class="hidden-sm-down">
-                <i class="<%=page.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=page.status%>"></i>
-            </td>
-            <td class="hidden-sm-down action">
-                <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
-            </td>
-        </tr>
+            <tr>
+                <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
+                <td class="hidden-sm-down">
+                    <% page.routes.forEach((route) => { %>
+                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view page" data-placement="left" target="_blank" class="badge badge-primary d-inline">
+                        <%=route%>
+                    </a>
+                    <% }); %>
+                </td>
+                <td class="hidden-sm-down">
+                    <i class="<%=page.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=page.status%>"></i>
+                </td>
+                <td class="hidden-sm-down action">
+                    <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                </td>
+            </tr>
         <% }); %>
         </tbody>
     </table>
+    <div class="text-center p-l">
+        <button type="submit" class="btn btn-outline-danger text-uppercase" data-toggle="modal" data-target="#adminPagesDeleteModal">Permanently Delete Pages</button>
+    </div>
     <% } %>
 </section>
+
+<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminPagesDelete" aria-hidden="true" id="adminPagesDeleteModal">
+    <div class="modal-dialog">
+        <form id="admin-delete-form" action="<%=baseurl%>/admin/purge/pages" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Pages</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-l mt-m">Permanently deleting is irreversable.<br />Are you sure?</div>
+                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-block btn-lg text-uppercase">Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

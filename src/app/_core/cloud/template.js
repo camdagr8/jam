@@ -83,6 +83,37 @@ const template_before_save = (request, response) => {
 };
 
 /**
+ *
+ * template_delete
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Deletes a single Template object or an array of them.
+ * @param request.params.objectId {String|Array} The objectId(s) to delete.
+ */
+const template_delete = (request, response) => {
+    let params    = request.params;
+    let ids       = params['objectId'];
+
+    if (typeof ids === 'string') {
+        ids = [ids];
+    }
+
+    let objs = [];
+    ids.forEach((id) => {
+        let obj = new Parse.Object('Template');
+        obj.set('objectId', id);
+        objs.push(obj);
+    });
+
+    Parse.Object.destroyAll(objs, {useMasterKey: true}).then(() => {
+        response.success(true);
+    }).catch((err) => {
+        resonse.error(err.message);
+    });
+};
+/**
  * -----------------------------------------------------------------------------
  * Cloud Definitions
  * -----------------------------------------------------------------------------
@@ -90,6 +121,8 @@ const template_before_save = (request, response) => {
 Parse.Cloud.define('template_get', template_get);
 
 Parse.Cloud.define('template_post', template_post);
+
+Parse.Cloud.define('template_delete', template_delete);
 
 /**
  *

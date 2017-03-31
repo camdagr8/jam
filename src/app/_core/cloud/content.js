@@ -1,10 +1,10 @@
-const moment = require('moment');
+const moment   = require('moment');
 const pubicons = {
-    'draft': 'lnr-pencil',
-    'publish': 'lnr-paper-plane',
+    'draft':         'lnr-pencil',
+    'publish':       'lnr-paper-plane',
     'publish-later': 'lnr-calendar-31',
-    'delete-later': 'lnr-calendar-cross',
-    'delete': 'lnr-trash'
+    'delete-later':  'lnr-calendar-cross',
+    'delete':        'lnr-trash'
 };
 /**
  * -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ const pubicons = {
  *
  * @param request.params.route {String} The url route to query. Example: /page/test or /
  *
- * @returns {ParseObject}
+ * @returns {Object} Returns a Parse.Object
  */
 const content_get = (request, response) => {
     // 0.1 - Use core.query() to contruct the Parse.Query object
@@ -45,6 +45,18 @@ const content_get = (request, response) => {
     });
 };
 
+const content_purge = (request, response) => {
+    let qry = core.query({table: "Content", limit: 1000});
+    qry.equalTo('status', 'delete');
+    qry.find().then((results) => {
+        return Parse.Object.destroyAll(results);
+    }).catch((err) => {
+        response.error(err.message);
+    }).then(() => {
+        response.success(true);
+    });
+};
+
 /**
  *
  * content_get_pages
@@ -61,38 +73,38 @@ const content_get = (request, response) => {
  */
 const content_get_pages = (request, response, results = []) => {
 
-	// 0.1 - Use core.query() to contruct the Parse.Query object
-	let qry = core.query({
-        table: 'Content',
-        skip: request.params.skip,
-        limit: request.params.limit,
+    // 0.1 - Use core.query() to contruct the Parse.Query object
+    let qry = core.query({
+        table:   'Content',
+        skip:    request.params.skip,
+        limit:   request.params.limit,
         orderBy: 'updatedAt',
-        order: 'descending'
-	});
+        order:   'descending'
+    });
 
-	qry.equalTo('type', 'page');
-	qry.find().then((content) => {
+    qry.equalTo('type', 'page');
+    qry.find().then((content) => {
 
         content.forEach((item) => {
-            let obj = item.toJSON();
+            let obj            = item.toJSON();
             obj['status_icon'] = pubicons[obj.status];
-            obj['edit_url'] = jam.baseurl + '/admin/page/' + obj.objectId;
-            obj['routes'] = obj['routes'] || [];
+            obj['edit_url']    = jam.baseurl + '/admin/page/' + obj.objectId;
+            obj['routes']      = obj['routes'] || [];
 
             results.push(obj);
         });
 
-		if (content.length === request.params.limit) {
-			request.params.skip += request.params.limit;
-			content_get_pages(request, response, results);
-		} else {
-			response.success(results);
-		}
+        if (content.length === request.params.limit) {
+            request.params.skip += request.params.limit;
+            content_get_pages(request, response, results);
+        } else {
+            response.success(results);
+        }
 
-	}, (err) => {
-	    log(err);
-		response.success(results);
-	});
+    }, (err) => {
+        log(err);
+        response.success(results);
+    });
 };
 
 /**
@@ -170,14 +182,16 @@ const content_before_save = (request, response) => {
 Parse.Cloud.define('content_get', content_get);
 
 Parse.Cloud.define('content_get_pages', (request, response) => {
-	request.params['skip'] = (request.params.hasOwnProperty('skip')) ? request.params.skip : 0;
-	request.params['limit'] = (request.params.hasOwnProperty('limit')) ? request.params.limit : 1000;
-	request.params['limit'] = (request.params.limit > 1000) ? 1000 : request.params.limit;
+    request.params['skip']  = (request.params.hasOwnProperty('skip')) ? request.params.skip : 0;
+    request.params['limit'] = (request.params.hasOwnProperty('limit')) ? request.params.limit : 1000;
+    request.params['limit'] = (request.params.limit > 1000) ? 1000 : request.params.limit;
 
-	content_get_pages(request, response);
+    content_get_pages(request, response);
 });
 
 Parse.Cloud.define('content_post', content_post);
+
+Parse.Cloud.define('content_purge', content_purge);
 
 Parse.Cloud.beforeSave('Content', content_before_save);
 

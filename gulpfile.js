@@ -149,7 +149,7 @@ gulp.task('serve', (done) => {
 	browserSync({
 		notify: false,
 		timestamps: true,
-		reloadDelay: 1000,
+		reloadDelay: 2000,
 		reloadDebounce: 2000,
 		logPrefix: '00:00:00',
 		port: config.port.browsersync,
