@@ -699,7 +699,28 @@ $(function () {
             }
 
             let tmp = hbs.compile($('#metabox-hbs-' + box.type).html());
-            cont.append(tmp(box));
+            //cont.append(tmp(box));
+            let elm = $(tmp(box)).appendTo(cont);
+
+            if (box.type === 'HTML') {
+                let txt = elm.find('textarea');
+                txt.trumbowyg({
+                    autogrow:           true,
+                    removeformatPasted: true,
+                    btns:               [
+                        ['viewHTML'],
+                        ['formatting'],
+                        'btnGrp-semantic',
+                        ['superscript', 'subscript'],
+                        'btnGrp-justify',
+                        'btnGrp-lists',
+                        ['horizontalRule'],
+                        ['removeformat'],
+                        ['plugin'],
+                        ['fullscreen']
+                    ]
+                }).css('opacity', 1);
+            }
         });
     });
 

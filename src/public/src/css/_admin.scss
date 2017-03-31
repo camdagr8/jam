@@ -72,3 +72,10 @@
 .sub-active:after {
     border-left: none !important;
 }
+
+.card {
+    .trumbowyg-box, .trumbowyg-editor {
+        border: 0;
+        margin: 0;
+    }
+}

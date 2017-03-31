@@ -79,6 +79,11 @@ const template_before_save = (request, response) => {
         }
     }
 
+    let usr = request.user || jam.currentuser;
+    if (usr) {
+        request.object.set('creator', usr);
+    }
+
     response.success();
 };
 

@@ -64,15 +64,6 @@
     </div>
 </script>
 
-<script id="metabox-hbs-HTML" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control code" rows="15" data-type="{{type}}">{{val}}</textarea>
-        </div>
-    </div>
-</script>
-
 <script id="metabox-hbs-OBJECT" type="text/x-handlebars-template">
     <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
         <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
@@ -99,3 +90,6 @@
         </div>
     </div>
 </script>
+
+
+<%- include ../partials/metabox/wysiwyg -%>

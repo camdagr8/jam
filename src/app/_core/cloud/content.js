@@ -169,6 +169,11 @@ const content_before_save = (request, response) => {
         request.object.set('routes', routes);
     }
 
+    let usr = request.user || jam.currentuser;
+    if (usr) {
+        request.object.set('creator', usr);
+    }
+
     response.success();
 
 };
@@ -200,5 +205,3 @@ Parse.Cloud.beforeSave('Content', content_before_save);
  * browsersync will cause a reload when the database is changed.
  */
 //Parse.Cloud.afterSave('Content', core.timestamper);
-
-
