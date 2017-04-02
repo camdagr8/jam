@@ -5452,6 +5452,18 @@ $(function () {
         }
     };
 
+    var init_wysiwyg = function init_wysiwyg(elm) {
+        if (!elm) {
+            return;elm;
+        }
+
+        return elm.trumbowyg({
+            autogrow: true,
+            removeformatPasted: true,
+            btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
+        }).css('opacity', 1);
+    };
+
     var parse_data = {
         page: function page(data) {
 
@@ -5506,7 +5518,7 @@ $(function () {
         template: function template(data) {
 
             // Remove unecessary fields
-            var flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type'];
+            var flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue'];
             flds.forEach(function (fld) {
                 if (data.hasOwnProperty(fld)) {
                     delete data[fld];
@@ -5828,46 +5840,62 @@ $(function () {
             return;
         }
 
-        var v = slugify(String(id.val()).toLowerCase(), '_');
-        var n = slugify(String(name.val()).toLowerCase(), '_');
+        //let n = slugify(String(name.val()).toLowerCase(), '_');
 
-        // Test if the id is already used
-        var dup = 0;
-        $('.metabox-id').each(function () {
-            if (dup > 1) {
-                return;
-            }
-            var t = $(this).val();
-            t = slugify(t, '_');
-            t = String(t).toLowerCase();
-            dup += t === v ? 1 : 0;
-            if (dup > 1) {
-                elm.remove();
-            }
-        });
+        /*
+                if (type.val() !== 'CHECKBOX' && type.val() !== 'RADIO') {
+                    if (String(name.val()).length < 1) {
+                        elm.remove();
+                        return;
+                    }
+                    if (String(type.val()).length < 1) {
+                        elm.remove();
+                        return;
+                    }
+                    if (String(id.val()).length < 1) {
+                        elm.remove();
+                        return;
+                    }
+        
+                    // Test if the id is already used
+                    let dup = 0;
+                    $('.metabox-id').each(function () {
+                        if (dup > 1) {
+                            return;
+                        }
+                        let t = $(this).val();
+                        t     = slugify(t, '_');
+                        t     = String(t).toLowerCase();
+                        dup += (t === v) ? 1 : 0;
+                        if (dup > 1) {
+                            elm.remove();
+                        }
+                    });
+        
+                    // Test if the name is already used
+        
+                    dup = 0;
+                    $('.metabox-name').each(function () {
+                        if (dup > 1) {
+                            return;
+                        }
+                        let t = $(this).val();
+                        t     = slugify(t, '_');
+                        t     = String(t).toLowerCase();
+                        dup += (t === n) ? 1 : 0;
+                        if (dup > 1) {
+                            elm.remove();
+                        }
+                    });
+        
+                    if (dup > 1) {
+                        elm.remove();
+                        return;
+                    }
+                }
+        */
 
-        // Test if the name is already used
-
-        dup = 0;
-        $('.metabox-name').each(function () {
-            if (dup > 1) {
-                return;
-            }
-            var t = $(this).val();
-            t = slugify(t, '_');
-            t = String(t).toLowerCase();
-            dup += t === n ? 1 : 0;
-            if (dup > 1) {
-                elm.remove();
-            }
-        });
-
-        if (dup > 1) {
-            elm.remove();
-            return;
-        }
-
-        id.val(String(v).toLowerCase());
+        id.val(slugify(String(id.val()).toLowerCase(), '_'));
 
         $('input[name="metaboxName"]').focus();
     });
@@ -5951,6 +5979,10 @@ $(function () {
 
         if (parse_data.hasOwnProperty(data.type)) {
             data = parse_data[data.type](data);
+
+            if (!data['metabox']) {
+                data['metabox'] = [];
+            }
 
             if (typeof data === 'string') {
                 show_msg(data);
@@ -6076,41 +6108,113 @@ $(function () {
 
     // #admin-template-select change listener
     $(document).on('change', '#admin-template-select', function (e) {
-        var cont = $('#admin-meta-boxes');
-        if (cont.length < 1) {
-            return;
-        }
-
-        cont.html('');
-
         var d = $(e.target).find('option:selected').data('template');
+        var blocks = $('#admin-meta-box-blocks');
+        var widgets = $('#admin-meta-box-widgets');
+
+        blocks.html('');
+        widgets.html('');
 
         if (!d) {
             return;
         }
 
+        var zones = {
+            'ARRAY': blocks,
+            'CHECKBOX': widgets,
+            'HTML': blocks,
+            'NUMBER': widgets,
+            'OBJECT': blocks,
+            'RADIO': widgets,
+            'TEXT': blocks
+        };
+
         // Draw metaboxes
-        d.metabox.forEach(function (box) {
+        d.metabox.forEach(function (box, i) {
+            box['i'] = i;
+            box['group'] = slugify(box.name);
+            box['group'] = box.group.toLowerCase();
             box['val'] = typeof window['meta'][box.id] !== 'undefined' ? window.meta[box.id] : undefined;
+
             if (box.val) {
                 box['val'] = box.type === 'OBJECT' ? beautify(JSON.stringify(box.val)) : box.val;
                 box['val'] = box.type === 'ARRAY' ? beautify(JSON.stringify(box.val)) : box.val;
                 box['val'] = box.type === 'HTML' ? beautify_html(box.val) : box.val;
             }
 
+            if (box['val'].indexOf(String(box.value)) > -1) {
+                box['checked'] = 'checked="checked"';
+            }
+
+            // Check if there is a card with data-metabox="NAME" in the dom already.
+            var group = $('[data-metabox="' + box.group + '"]');
+            var cont = zones[box.type] || widgets;
             var tmp = hbs.compile($('#metabox-hbs-' + box.type).html());
-            //cont.append(tmp(box));
-            var elm = $(tmp(box)).appendTo(cont);
+            var elm = $(tmp(box)).appendTo(cont).hide();
+
+            if (group.length > 0) {
+                var t = ['OBJECT', 'ARRAY', 'HTML'];
+                var _e = t.indexOf(box.type) > -1 ? elm.find('textarea') : elm.find('.list-group-item');
+                var g = t.indexOf(box.type) > -1 ? group.find('.collapse') : group.find('.list-group');
+
+                if (_e.length > 0 && g.length > 0) {
+                    elm = _e.appendTo(g);
+                }
+            }
 
             if (box.type === 'HTML') {
-                var txt = elm.find('textarea');
-                txt.trumbowyg({
-                    autogrow: true,
-                    removeformatPasted: true,
-                    btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
-                }).css('opacity', 1);
+                var txt = elm.find('[data-wysiwyg]');
+                init_wysiwyg(txt);
             }
+
+            elm.find('[type="checkbox"]').change();
+            elm.show();
         });
+    });
+
+    // [data-toggle="slide-toggle"] click listener
+    $(document).on('click', '[data-toggle="slide-toggle"]', function () {
+        var t = $(this).data('target');
+        var tarr = t.split(' > ');
+        var trg = null;
+        if (tarr[0] === 'parents') {
+            $(this).parents().each(function () {
+                if (trg !== null) {
+                    return;
+                }
+
+                var f = $(this).find(tarr[1]);
+                if (f.length > 0) {
+                    trg = f;
+                }
+            });
+        }
+
+        if (trg !== null) {
+            trg.slideToggle(250);
+        }
+    });
+
+    $(document).on('click', '[data-toggle="buttons"] label', function (e) {
+        var chk = $(e.target).find('input');
+        if (chk.length > 0) {
+            if (chk[0].type === 'radio') {
+                var found = false;
+                $(e.target).parents().each(function () {
+                    if (found === true) {
+                        return;
+                    }
+                    if ($(this).data('toggle') === 'buttons') {
+                        found = true;
+                        $(this).find('input').attr('checked', false);
+                    }
+                });
+                chk.attr('checked', true);
+            } else {
+                chk.attr('checked', !chk.attr('checked'));
+            }
+            chk.change();
+        }
     });
 
     // Status toggles

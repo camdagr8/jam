@@ -21,10 +21,12 @@ module.exports = (req, res, next) => {
     jam['is']                = {};
     jam['meta_types']        = [
         {name: 'HTML',          value: 'HTML'},
-        {name: 'Plain Text',    value: 'TEXT'},
+        {name: 'Plain Text',    value: 'TEXT', checked: true},
         {name: 'Number',        value: 'NUMBER'},
         {name: 'Object',        value: 'OBJECT'},
-        {name: 'Array',         value: 'ARRAY'}
+        {name: 'Array',         value: 'ARRAY'},
+        {name: 'Checkbox',      value: 'CHECKBOX'},
+        {name: 'Radio',         value: 'RADIO'}
     ];
     jam['pages']             = [];
     jam['plugin']            = {};
@@ -39,6 +41,9 @@ module.exports = (req, res, next) => {
     // jam.is.admin boolean
     let base_urls = ['admin', 'dashboard'];
     jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
+
+    // Sort metabox types
+    jam['meta_types'] = _.sortBy(jam.meta_types, 'name');
 
     // Start the process
     let prm = Parse.Promise.when(Parse.Cloud.run('config_get'));

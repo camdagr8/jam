@@ -1,13 +1,17 @@
-<script id="metabox-hbs-HTML" type="text/x-handlebars-template">
+<script id="metabox-hbs-NUMBER" type="text/x-handlebars-template">
     <div class="card card-shadow bgc-white bd-0 metabox-{{type}}" data-metabox="{{group}}">
         <h6 class="card-header">
             <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_{{type}}_{{i}}" aria-expanded="true">
                 <i class="lnr-chevron-up"></i>
             </button>
-            <i class="ico lnr-chevrons-expand-horizontal"></i> {{name}}
+            <i class="ico lnr-calculator"></i> {{name}}
         </h6>
         <div class="collapse show" id="collapse_{{type}}_{{i}}">
-            <textarea name="meta[{{id}}]" title="{{name}}" data-type="{{type}}" data-wysiwyg style="opacity: 0">{{val}}</textarea>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <input type="number" name="meta[{{id}}]" title="{{name}}" value="{{val}}" class="form-control" data-type="{{type}}" />
+                </li>
+            </ul>
         </div>
     </div>
 </script>
