@@ -4,7 +4,10 @@
     "author": "Cam Tullos",
     "private": true,
     "scripts": {
-        "start": "node index.js"
+        "build": "gulp",
+        "prestart": "npm install",
+        "start": "node index.js",
+        "test": "npm install && gulp --dev"
     },
     "dependencies": {
         "aws-sdk": "*",
