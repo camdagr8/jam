@@ -1,3 +1,1 @@
-require('./controller/main');
-require('./controller/wysiwyg');
-require('./controller/admin');
+require('./_core/main');

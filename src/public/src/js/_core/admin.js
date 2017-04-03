@@ -3,6 +3,7 @@
  * Imports
  * -----------------------------------------------------------------------------
  */
+
 const _                = require('underscore');
 const dragula          = require('./dragula.js');
 const hbs              = require('handlebars');
@@ -749,9 +750,15 @@ $(function () {
                 box['val'] = (box.type === 'HTML') ? beautify_html(box.val) : box.val;
             }
 
+            if (box.hasOwnProperty('value')) {
 
-            if (box['val'].indexOf(String(box.value)) > -1) {
-                box['checked'] = 'checked="checked"';
+                if (!_.isArray(box['val'])) {
+                    box['val'] = [box.val];
+                }
+
+                if (box['val'].indexOf(String(box.value)) > -1) {
+                    box['checked'] = 'checked="checked"';
+                }
             }
 
             // Check if there is a card with data-metabox="NAME" in the dom already.
@@ -776,6 +783,7 @@ $(function () {
             }
 
             elm.find('[type="checkbox"]').change();
+            elm.find('[type="radio"]').change();
             elm.show();
         });
     });

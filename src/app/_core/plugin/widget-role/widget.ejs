@@ -1,17 +1,26 @@
-<% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
+<% if (currentuser['id'] !== rec['objectId']) { %>
 <!--// Widget widget-role //-->
-<div class="card card-shadow bgc-white bd-0">
-    <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-group-work ico"></i> Roles</h6>
+<div class="card card-shadow bgc-white bd-0 mb-l" id="widget-role">
+    <h6 class="card-header">
+        <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_widget-role" aria-expanded="true">
+            <i class="lnr-chevron-up"></i>
+        </button>
+        <i class="lnr-group-work ico"></i> Roles
+    </h6>
 
-    <ul class="list-group list-group-flush" data-toggle="check">
-        <% roles.forEach((role) => { %>
-        <li class="list-group-item">
-            <label class="check" tabindex="0">
-                <%=role.name%>
-                <input type="checkbox" name="roles[]" autocomplete="off" class="hidden-xs-up" value="<%=role.name.toLowerCase()%>" <%=(core.is_role(role.name, rec)) ? 'checked' : ''%> aria-checked="<%=(core.is_role(role.name, rec))%>">
-            </label>
-        </li>
-        <% }); %>
-    </ul>
+    <div class="collapse show" id="collapse_widget-role">
+        <ul class="list-group list-group-flush" data-toggle="check">
+            <% if (roles) { %>
+            <% roles.forEach((role) => { %>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <%=role.name%>
+                    <input type="checkbox" name="roles[]" autocomplete="off" class="hidden-xs-up" value="<%=role.name.toLowerCase()%>" <%=(core.is_role(role.name, rec)) ? 'checked' : ''%> aria-checked="<%=(core.is_role(role.name, rec))%>">
+                </label>
+            </li>
+            <% }); %>
+            <% } %>
+        </ul>
+    </div>
 </div>
 <% } %>

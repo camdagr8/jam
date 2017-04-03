@@ -41,6 +41,11 @@ const config = {
 		src		: 'src/public/src/js/app.js',
 		watch	: 'src/public/src/js/**/*'
 	},
+    core: {
+        dest	: 'src/public/assets/js',
+        src		: 'src/public/src/js/core.js',
+        watch	: 'src/public/src/js/**/*'
+    },
 	styles: {
 		dest	: 'src/public/assets/css',
 		src		: 'src/public/src/css/style.scss',

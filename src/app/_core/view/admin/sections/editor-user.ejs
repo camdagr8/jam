@@ -24,19 +24,21 @@
                 </div>
             </div>
 
-            <% if (blocks) { %>
+            <div class="blocks">
+                <% if (blocks) { %>
 
-            <% blocks.forEach(function (block, i) { %>
-            <div class="mb-l"><%- include(block, {index: i}) -%></div>
-            <% }); %>
+                <% blocks.forEach(function (block, i) { %>
+                <div class="mb-m"><%- include(block, {index: i}) -%></div>
+                <% }); %>
 
-            <% } %>
+                <% } %>
+            </div>
         </div>
-        <aside>
+        <aside class="widgets">
             <% if (widgets) { %>
 
             <% widgets.forEach(function (widget, i) { %>
-            <div class="mb-l"><%- include(widget, {index: i}) -%></div>
+            <div class="mb-m"><%- include(widget, {index: i}) -%></div>
             <% }); %>
 
             <% } %>

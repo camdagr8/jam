@@ -93,21 +93,6 @@
             line-height: 2.35;
         }
     }
-
-    .card-header {
-        position: relative;
-        .float-right {
-            position: absolute;
-            float: none;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-        }
-
-        [data-toggle="collapse"] {
-            width: 46px;
-        }
-    }
 }
 .blocks {
     .card-header {
@@ -120,6 +105,21 @@
         [data-toggle="collapse"] {
             width: 62px;
         }
+    }
+}
+
+.card-header {
+    position: relative;
+    .float-right {
+        position: absolute;
+        float: none;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }
+
+    [data-toggle="collapse"] {
+        width: 46px;
     }
 }
 
