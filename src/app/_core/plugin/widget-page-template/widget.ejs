@@ -1,17 +1,28 @@
-<div class="card card-shadow bgc-white bd-0">
-    <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> Template</h6>
-    <ul class="list-group list-group-flush" data-toggle="check">
-        <li class="list-group-item">
-            <select class="form-control" id="admin-template-select" name="template" title="Select Template">
-                <option value="">Select</option>
-                <% jam.templates.forEach((item) => { %>
-                <option value="<%= item.template %>" data-template='<%=JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
-                <% }); %>
-            </select>
-        </li>
-    </ul>
-    <div class="card-footer bgc-white" style="margin-top: -1px; display: none;">
-        <button type="button" class="btn btn-outline-secondary btn-block text-uppercase" data-preview="">Preview
+<div class="card card-shadow bgc-white bd-0" id="widget-page-template">
+    <h6 class="card-header">
+        <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_widget-page-template" aria-expanded="true">
+            <i class="lnr-chevron-up"></i>
         </button>
+        <i class="lnr-file-code ico"></i> Template
+    </h6>
+    <div class="collapse show" id="collapse_widget-page-template">
+        <ul class="list-group list-group-flush" data-toggle="check">
+            <li class="list-group-item">
+                <select class="form-control" id="admin-template-select" name="template" title="Select Template">
+                    <option value="">Select</option>
+                    <% jam.templates.forEach((item) => { %>
+                    <option value="<%= item.template %>" data-template='<%=JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
+                    <% }); %>
+                </select>
+            </li>
+        </ul>
+        <% if (rec['objectId']) { %>
+        <div class="card-footer bgc-gray-lightest" style="margin-top: -1px;">
+            <a
+                target="_preview"
+                href="<%=baseurl%><%=rec['routes'][0]%>"
+                class="btn btn-outline-primary btn-block text-uppercase">Preview</a>
+        </div>
+        <% } %>
     </div>
 </div>

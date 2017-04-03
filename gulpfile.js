@@ -41,6 +41,11 @@ const config = {
 		src		: 'src/public/src/js/app.js',
 		watch	: 'src/public/src/js/**/*'
 	},
+    core: {
+        dest	: 'src/public/assets/js',
+        src		: 'src/public/src/js/core.js',
+        watch	: 'src/public/src/js/**/*'
+    },
 	styles: {
 		dest	: 'src/public/assets/css',
 		src		: 'src/public/src/css/style.scss',
@@ -149,7 +154,7 @@ gulp.task('serve', (done) => {
 	browserSync({
 		notify: false,
 		timestamps: true,
-		reloadDelay: 1000,
+		reloadDelay: 2000,
 		reloadDebounce: 2000,
 		logPrefix: '00:00:00',
 		port: config.port.browsersync,

@@ -22,12 +22,14 @@ exports.use = (req, res, next) => {
             return;
         }
 
-        if (item.status === 'draft' && core.is_role(50) === false) {
-            jam['rec']['title'] = '404 Error';
-            res.status(404).render(core.template.theme + '/404', jam);
-            return;
-        } else {
-            jam['rec']['title'] = 'draft | ' + jam['rec']['title'];
+        if (item.status === 'draft') {
+            if (core.is_role(50) === false) {
+                jam['rec']['title'] = '404 Error';
+                res.status(404).render(core.template.theme + '/404', jam);
+                return;
+            } else {
+                jam['rec']['title'] = 'draft | ' + jam['rec']['title'];
+            }
         }
 
         // Publish later
@@ -78,7 +80,7 @@ exports.all = (req, res) => {
     }
 
     if (output === 'html') {
-        let tmp = item['template'] || 'index';
+        let tmp = jam.rec['template'] || 'index';
         tmp = core.template.theme + '/' + tmp;
         res.render(tmp, jam);
     }

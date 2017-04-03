@@ -66,14 +66,6 @@ module.exports = (req, res, next) => {
 
         }).then(() => {
 
-            // register plugin `use_admin` hooks
-            _.keys(jam.plugin).forEach((name) => {
-                let plugin = jam.plugin[name];
-                if (plugin.hasOwnProperty('use_admin')) {
-                    app.use(plugin.use_admin);
-                }
-            });
-
             next();
 
         });

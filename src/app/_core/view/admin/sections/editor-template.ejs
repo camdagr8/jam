@@ -39,61 +39,95 @@
 				</ul>
 			</div>
 
-            <!-- Template Metabox Add -->
-			<div class="card card-shadow bgc-white bd-0 mb-l">
-				<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> Metaboxes</h6>
+            <div>
+                <!-- Template Metabox Add -->
+                <div class="card card-shadow bgc-white bd-0 mb-l">
+                    <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> Metaboxes</h6>
 
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item">
-						<div class="input-group">
-							<span class="input-group-addon bgc-gray-lightest">Name:</span>
-							<input type="text" class="form-control" id="metabox-name" name="metaboxName" placeholder="My Metabox Name" />
-                            <span class="input-group-addon bgc-gray-lightest">ID:</span>
-                            <input type="text" class="form-control" id="metabox-id" name="metaboxId" placeholder="my_metabox_id" />
-                            <div class="input-group-btn">
-                                <input type="text" class="btn btn-secondary" id="metabox-type" style="min-width: 100px;" value="TYPE" name="metaboxType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" readonly />
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <% meta_types.forEach((type) => { %>
-                                    <a class="dropdown-item" href="#" data-dropdown-select="#metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
-                                    <% }); %>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div data-dna="btn-group-radio" class="btn-group float-center" data-toggle="buttons">
+                                <% meta_types.forEach((type) => { %>
+                                <label class="btn btn-secondary <%=(type['checked'] === true) ? 'active' : ''%>">
+                                    <input <%=(type['checked'] === true) ? 'checked="checked"' : ''%> type="radio" name="metaboxType" autocomplete="off" value="<%=type.value%>"> <%=type.name%>
+                                </label>
+                                <% }); %>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <span class="input-group-addon bgc-gray-lightest text-right" style="width: 95px;">Metabox:</span>
+                                <input type="text" class="form-control" id="metabox-name" name="metaboxName" />
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <span class="input-group-addon bgc-white text-right" style="width: 95px;">Label:</span>
+                                <input type="text" class="form-control" id="metabox-label" name="metaboxLabel" />
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <span class="input-group-addon bgc-white text-right" style="width: 95px;">Key:</span>
+                                <input type="text" class="form-control" id="metabox-id" name="metaboxId" />
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <span class="input-group-addon bgc-white text-right" style="width: 95px;">Value:</span>
+                                <input type="text" class="form-control" id="metabox-value" name="metaboxValue" />
+                                <span class="input-group-btn">
+                                    <button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType'], input[name='metaboxId'], input[name='metaboxValue'], input[name='metaboxLabel']">
+                                        <i class="lnr-plus"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Template Metabox List -->
+                    <ul class="list-group list-group-flush" id="admin-template-metaboxes" data-sortable style="margin-top: -1px;">
+                        <% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
+                        <li class="list-group-item">
+                            <div class="input-group">
+                                <span class="input-group-addon bgc-gray-lightest text-right">Metabox:</span>
+                                <input type="text" class="form-control metabox-name" name="metabox[name]" value="<%=item.name%>" />
+                                <span class="input-group-addon bgc-gray-lightest">Label:</span>
+                                <input type="text" class="form-control metabox-id" name="metabox[label]" value="<%=item['label']%>" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" type="button" style="width: 50px;" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
+                                </span>
+                                <div class="input-group-btn">
+                                    <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <% meta_types.forEach((type) => { %>
+                                        <a class="dropdown-item <%=(type.value === item.type) ? 'active' : '';%>" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
+                                </span>
+                            </div>
+
+                            <div class="slide-toggle">
+                                <div class="input-group mt-m">
+                                    <span class="input-group-addon bgc-white text-right" style="width: 95px;">Key:</span>
+                                    <input type="text" class="form-control metabox-id" name="metabox[id]" value="<%=item['id']%>" />
+                                </div>
+                                <div class="input-group mt-m">
+                                    <span class="input-group-addon bgc-white text-right" style="width: 95px;">Value:</span>
+                                    <input type="text" class="form-control metabox-value" name="metabox[value]" value="<%=item['value']%>" />
                                 </div>
                             </div>
-							<span class="input-group-btn">
-								<button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType'], input[name='metaboxId']">
-									<i class="lnr-plus"></i>
-								</button>
-							</span>
-						</div>
-					</li>
-				</ul>
 
-                <!-- Template Metabox List -->
-				<ul class="list-group list-group-flush" id="admin-template-metaboxes" data-sortable style="margin-top: -1px;">
-                    <% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
-                    <li class="list-group-item">
-                        <div class="input-group">
-                            <span class="input-group-addon bgc-gray-lightest">Name:</span>
-                            <input type="text" class="form-control metabox-name" name="metabox[name]" value="<%=item.name%>" />
-                            <span class="input-group-addon bgc-gray-lightest">ID:</span>
-                            <input type="text" class="form-control metabox-id" name="metabox[id]" value="<%=item.id%>" />
-                            <div class="input-group-btn">
-                                <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <% meta_types.forEach((type) => { %>
-                                    <a class="dropdown-item <%=(type.value === item.type) ? 'active' : '';%>" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
-                                    <% }); %>
-                                </div>
-                            </div>
-                            <span class="input-group-btn">
-								<button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
-							</span>
-                        </div>
-                        <div class="gu-handle"><i class="lnr-menu"></i></div>
-                    </li>
-					<% }); } -%>
-				</ul>
+                            <div class="gu-handle"><i class="lnr-menu"></i></div>
+                        </li>
 
-			</div>
+                        <% }); } -%>
+                    </ul>
+                </div>
+            </div>
 
 		</div>
 		<aside>
@@ -105,6 +139,11 @@
 					data-confirm="Are you sure?"
 					data-submit='Saving...'>Save Template</button>
 			</div>
+            <% if (rec['objectId']) { %>
+            <div>
+                <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminTemplateDeleteModal">Delete Template</button>
+            </div>
+            <% } %>
 		</aside>
 	</div>
 </form>
@@ -112,10 +151,13 @@
 <script id="metabox-hbs" type="text/x-handlebars-template">
     <li class="list-group-item">
         <div class="input-group">
-            <span class="input-group-addon bgc-gray-lightest">Name:</span>
+            <span class="input-group-addon bgc-gray-lightest">Metabox:</span>
             <input type="text" class="form-control metabox-name" name="metabox[name]" value="{{metaboxName}}" />
-            <span class="input-group-addon bgc-gray-lightest">ID:</span>
-            <input type="text" class="form-control metabox-id" name="metabox[id]" value="{{metaboxId}}" />
+            <span class="input-group-addon bgc-gray-lightest">Label:</span>
+            <input type="text" class="form-control metabox-label" name="metabox[label]" value="{{metaboxLabel}}" />
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" style="width: 50px;" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
+            </span>
             <div class="input-group-btn">
                 <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                 <div class="dropdown-menu dropdown-menu-right">
@@ -128,6 +170,51 @@
                 <button class="btn btn-secondary" type="button" style="width: 50px;" data-target=".list-group-item" data-remove><i class="lnr-cross"></i></button>
             </span>
         </div>
+
+        <div class="slide-toggle">
+            <div class="input-group mt-m">
+                <span class="input-group-addon bgc-white text-right" style="width: 95px;">Key:</span>
+                <input type="text" class="form-control metabox-id" name="metabox[id]" value="{{metaboxId}}" />
+            </div>
+            <div class="input-group mt-m">
+                <span class="input-group-addon bgc-white text-right" style="width: 95px;">Value:</span>
+                <input type="text" class="form-control metabox-value" name="metabox[value]" value="{{metaboxValue}}" />
+            </div>
+        </div>
+
         <div class="gu-handle"><i class="lnr-menu"></i></div>
     </li>
 </script>
+
+<% if (rec['objectId']) { %>
+<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminTemplateDelete" aria-hidden="true" id="adminTemplateDeleteModal">
+    <div class="modal-dialog">
+        <form id="admin-delete-form" action="<%=baseurl%>/admin/template" method="delete">
+
+            <input type="hidden" value="<%=rec['objectId']%>" name="objectId" />
+            <input type="hidden" value="<%=nonce%>" name="nonce" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Template</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-l mt-m">Deleting cannot be undone.<br />Are you sure?</div>
+                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-block btn-lg text-uppercase"
+                        aria-label="Delete Template"
+                        data-label="Yes"
+                        data-submit='Deleting...'>Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% } %>

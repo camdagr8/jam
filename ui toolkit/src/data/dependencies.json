@@ -220,6 +220,16 @@
       "dependents": {},
       "dependencies": {}
     },
+    "src/materials/button/button-clear.html": {
+      "dna": ["btn-clear", "btn-outline-clear"],
+      "id": "btn-clear",
+      "dependents": {
+        "src/views/templates/login-page.html": [".btn-clear"]
+      },
+      "dependencies": {
+        "src/materials/button/button-secondary.html": ["data-dna=btn-outline-secondary"]
+      }
+    },
     "src/materials/button/button-danger.html": {
       "dna": ["btn-danger", "btn-outline-danger"],
       "id": "btn-danger",
@@ -276,6 +286,7 @@
         "src/materials/admin/admin-template-select.html": [".btn-outline-secondary"],
         "src/materials/button-states/button-active.html": [".btn-secondary", ".btn-outline-secondary"],
         "src/materials/button-states/button-disabled.html": [".btn-secondary"],
+        "src/materials/button/button-clear.html": ["data-dna=btn-outline-secondary"],
         "src/materials/form/input-group.html": [".btn-secondary"],
         "src/materials/modals/modal-lg.html": [".btn-secondary"],
         "src/materials/modals/modal-sm.html": [".btn-secondary"],
@@ -838,6 +849,7 @@
       "dependents": {},
       "dependencies": {
         "src/materials/alerts/alert-danger.html": [".alert-danger"],
+        "src/materials/button/button-clear.html": [".btn-clear"],
         "src/materials/button/button-danger.html": [".btn-danger"],
         "src/materials/form/input-group.html": [".input-group", ".input-group-addon"],
         "src/materials/misc/card.html": [".card", ".card-block"],

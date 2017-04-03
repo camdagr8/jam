@@ -30,8 +30,10 @@ module.exports = {
 
     sections: ['all'],
 
-    use_admin: (req, res, next) => {
-        jam.plugin['sidebar_pages']['recent'] = recent(3);
+    use: (req, res, next) => {
+        if (jam.is.admin) {
+            jam.plugin['sidebar_pages']['recent'] = recent(3);
+        }
         next();
     },
 

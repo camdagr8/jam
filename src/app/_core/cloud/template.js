@@ -48,6 +48,9 @@ const template_post = (request, response) => {
        obj.set(key, request.params[key]);
     });
 
+    if (!request.params.hasOwnProperty('metabox')) {
+        obj.unset('metabox');
+    }
     obj.save(null).then((result) => {
         response.success(result);
     }, (err) => {
@@ -56,22 +59,27 @@ const template_post = (request, response) => {
 };
 
 const template_before_save = (request, response) => {
+
     // Format metabox value
     let metabox = request.object.get('metabox');
     if (typeof metabox !== 'undefined') {
 
         if (!_.isArray(metabox)) {
-            let names = metabox.name;
-            let types = metabox.type;
-            let ids   = metabox.id;
+            let names    = metabox.name;
+            let types    = metabox.type;
+            let ids      = metabox.id;
+            let lbls     = metabox.label;
+            let vals     = metabox.value;
 
             if (!_.isArray(names)) { names = [names]; }
             if (!_.isArray(types)) { types = [types]; }
             if (!_.isArray(ids)) { ids = [ids]; }
+            if (!_.isArray(lbls)) { lbls = [lbls]; }
+            if (!_.isArray(vals)) { vals = [vals]; }
 
             let obj_arr = [];
             for (let i = 0; i < names.length; i++) {
-                let obj = {name: names[i], type: types[i], id: ids[i]};
+                let obj = {name: names[i], type: types[i], id: ids[i], label: lbls[i], value: vals[i]};
                 obj_arr.push(obj);
             }
 
@@ -79,9 +87,45 @@ const template_before_save = (request, response) => {
         }
     }
 
+    let usr = request.user || jam.currentuser;
+    if (usr) {
+        request.object.set('creator', usr);
+    }
+
     response.success();
 };
 
+/**
+ *
+ * template_delete
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.0
+ *
+ * @description Deletes a single Template object or an array of them.
+ * @param request.params.objectId {String|Array} The objectId(s) to delete.
+ */
+const template_delete = (request, response) => {
+    let params    = request.params;
+    let ids       = params['objectId'];
+
+    if (typeof ids === 'string') {
+        ids = [ids];
+    }
+
+    let objs = [];
+    ids.forEach((id) => {
+        let obj = new Parse.Object('Template');
+        obj.set('objectId', id);
+        objs.push(obj);
+    });
+
+    Parse.Object.destroyAll(objs, {useMasterKey: true}).then(() => {
+        response.success(true);
+    }).catch((err) => {
+        resonse.error(err.message);
+    });
+};
 /**
  * -----------------------------------------------------------------------------
  * Cloud Definitions
@@ -90,6 +134,8 @@ const template_before_save = (request, response) => {
 Parse.Cloud.define('template_get', template_get);
 
 Parse.Cloud.define('template_post', template_post);
+
+Parse.Cloud.define('template_delete', template_delete);
 
 /**
  *

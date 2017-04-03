@@ -3,6 +3,7 @@
  * Imports
  * -----------------------------------------------------------------------------
  */
+
 const _                = require('underscore');
 const dragula          = require('./dragula.js');
 const hbs              = require('handlebars');
@@ -59,6 +60,27 @@ $(function () {
         }
     };
 
+    const init_wysiwyg = (elm) => {
+        if (!elm) { return; elm; }
+
+        return elm.trumbowyg({
+            autogrow:           true,
+            removeformatPasted: true,
+            btns:               [
+                ['viewHTML'],
+                ['formatting'],
+                'btnGrp-semantic',
+                ['superscript', 'subscript'],
+                'btnGrp-justify',
+                'btnGrp-lists',
+                ['horizontalRule'],
+                ['removeformat'],
+                ['plugin'],
+                ['fullscreen']
+            ]
+        }).css('opacity', 1);
+    };
+
     const parse_data = {
         page: (data) => {
 
@@ -113,7 +135,7 @@ $(function () {
         template: (data) => {
 
             // Remove unecessary fields
-            let flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type'];
+            let flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue'];
             flds.forEach((fld) => {
                 if (data.hasOwnProperty(fld)) {
                     delete data[fld];
@@ -411,9 +433,9 @@ $(function () {
 
     // #metabox-clone clone listener
     $(document).on('clone', '#metabox-clone', function (e, elm) {
-        let name = elm.find('input.metabox-name');
-        let type = elm.find('input.metabox-type');
-        let id   = elm.find('input.metabox-id');
+        let name    = elm.find('input.metabox-name');
+        let type    = elm.find('input.metabox-type');
+        let id      = elm.find('input.metabox-id');
 
         if (String(name.val()).length < 1) {
             elm.remove();
@@ -428,46 +450,62 @@ $(function () {
             return;
         }
 
-        let v = slugify(String(id.val()).toLowerCase(), '_');
-        let n = slugify(String(name.val()).toLowerCase(), '_');
+        //let n = slugify(String(name.val()).toLowerCase(), '_');
 
-        // Test if the id is already used
-        let dup = 0;
-        $('.metabox-id').each(function () {
-            if (dup > 1) {
+/*
+        if (type.val() !== 'CHECKBOX' && type.val() !== 'RADIO') {
+            if (String(name.val()).length < 1) {
+                elm.remove();
                 return;
             }
-            let t = $(this).val();
-            t     = slugify(t, '_');
-            t     = String(t).toLowerCase();
-            dup += (t === v) ? 1 : 0;
-            if (dup > 1) {
+            if (String(type.val()).length < 1) {
                 elm.remove();
-            }
-        });
-
-        // Test if the name is already used
-
-        dup = 0;
-        $('.metabox-name').each(function () {
-            if (dup > 1) {
                 return;
             }
-            let t = $(this).val();
-            t     = slugify(t, '_');
-            t     = String(t).toLowerCase();
-            dup += (t === n) ? 1 : 0;
+            if (String(id.val()).length < 1) {
+                elm.remove();
+                return;
+            }
+
+            // Test if the id is already used
+            let dup = 0;
+            $('.metabox-id').each(function () {
+                if (dup > 1) {
+                    return;
+                }
+                let t = $(this).val();
+                t     = slugify(t, '_');
+                t     = String(t).toLowerCase();
+                dup += (t === v) ? 1 : 0;
+                if (dup > 1) {
+                    elm.remove();
+                }
+            });
+
+            // Test if the name is already used
+
+            dup = 0;
+            $('.metabox-name').each(function () {
+                if (dup > 1) {
+                    return;
+                }
+                let t = $(this).val();
+                t     = slugify(t, '_');
+                t     = String(t).toLowerCase();
+                dup += (t === n) ? 1 : 0;
+                if (dup > 1) {
+                    elm.remove();
+                }
+            });
+
             if (dup > 1) {
                 elm.remove();
+                return;
             }
-        });
-
-        if (dup > 1) {
-            elm.remove();
-            return;
         }
+*/
 
-        id.val(String(v).toLowerCase());
+        id.val(slugify(String(id.val()).toLowerCase(), '_'));
 
         $('input[name="metaboxName"]').focus();
 
@@ -552,6 +590,10 @@ $(function () {
 
         if (parse_data.hasOwnProperty(data.type)) {
             data = parse_data[data.type](data);
+
+            if (!data['metabox']) {
+                data['metabox'] = [];
+            }
 
             if (typeof data === 'string') {
                 show_msg(data);
@@ -676,31 +718,117 @@ $(function () {
 
     // #admin-template-select change listener
     $(document).on('change', '#admin-template-select', function (e) {
-        let cont = $('#admin-meta-boxes');
-        if (cont.length < 1) {
-            return;
-        }
+        let d          = $(e.target).find('option:selected').data('template');
+        let blocks     = $('#admin-meta-box-blocks');
+        let widgets    = $('#admin-meta-box-widgets');
 
-        cont.html('');
+        blocks.html('');
+        widgets.html('');
 
-        let d = $(e.target).find('option:selected').data('template');
+        if (!d) { return; }
 
-        if (!d) {
-            return;
-        }
+        let zones = {
+            'ARRAY'       : blocks,
+            'CHECKBOX'    : widgets,
+            'HTML'        : blocks,
+            'NUMBER'      : widgets,
+            'OBJECT'      : blocks,
+            'RADIO'       : widgets,
+            'TEXT'        : blocks
+        };
 
         // Draw metaboxes
-        d.metabox.forEach((box) => {
-            box['val'] = (typeof window['meta'][box.id] !== 'undefined') ? window.meta[box.id] : undefined;
+        d.metabox.forEach((box, i) => {
+            box['i']        = i;
+            box['group']    = slugify(box.name);
+            box['group']    = box.group.toLowerCase();
+            box['val']      = (typeof window['meta'][box.id] !== 'undefined') ? window.meta[box.id] : undefined;
+
             if (box.val) {
                 box['val'] = (box.type === 'OBJECT') ? beautify(JSON.stringify(box.val)) : box.val;
                 box['val'] = (box.type === 'ARRAY') ? beautify(JSON.stringify(box.val)) : box.val;
                 box['val'] = (box.type === 'HTML') ? beautify_html(box.val) : box.val;
             }
 
-            let tmp = hbs.compile($('#metabox-hbs-' + box.type).html());
-            cont.append(tmp(box));
+            if (box.hasOwnProperty('value')) {
+
+                if (!_.isArray(box['val'])) {
+                    box['val'] = [box.val];
+                }
+
+                if (box['val'].indexOf(String(box.value)) > -1) {
+                    box['checked'] = 'checked="checked"';
+                }
+            }
+
+            // Check if there is a card with data-metabox="NAME" in the dom already.
+            let group    = $('[data-metabox="'+box.group+'"]');
+            let cont     = zones[box.type] || widgets;
+            let tmp      = hbs.compile($('#metabox-hbs-' + box.type).html());
+            let elm      = $(tmp(box)).appendTo(cont).hide();
+
+            if (group.length > 0) {
+                let t    = ['OBJECT', 'ARRAY', 'HTML'];
+                let e    = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
+                let g    = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
+
+                if (e.length > 0 && g.length > 0) {
+                    elm = e.appendTo(g);
+                }
+            }
+
+            if (box.type === 'HTML') {
+                let txt = elm.find('[data-wysiwyg]');
+                init_wysiwyg(txt);
+            }
+
+            elm.find('[type="checkbox"]').change();
+            elm.find('[type="radio"]').change();
+            elm.show();
         });
+    });
+
+    // [data-toggle="slide-toggle"] click listener
+    $(document).on('click', '[data-toggle="slide-toggle"]', function () {
+        let t    = $(this).data('target');
+        let tarr = t.split(' > ');
+        let trg  = null;
+        if (tarr[0] === 'parents') {
+            $(this).parents().each(function () {
+                if (trg !== null) {
+                    return;
+                }
+
+                let f = $(this).find(tarr[1]);
+                if (f.length > 0) {
+                    trg = f;
+                }
+            });
+        }
+
+        if (trg !== null) {
+            trg.slideToggle(250);
+        }
+    });
+
+    $(document).on('click', '[data-toggle="buttons"] label', function (e) {
+        let chk = $(e.target).find('input');
+        if (chk.length > 0) {
+            if (chk[0].type === 'radio') {
+                let found = false;
+                $(e.target).parents().each(function () {
+                    if (found === true) { return; }
+                    if ($(this).data('toggle') === 'buttons') {
+                        found = true;
+                        $(this).find('input').attr('checked', false);
+                    }
+                });
+                chk.attr('checked', true);
+            } else {
+                chk.attr('checked', !chk.attr('checked'));
+            }
+            chk.change();
+        }
     });
 
 
@@ -763,4 +891,5 @@ $(function () {
         }
         dragula([this], opt);
     });
+
 });

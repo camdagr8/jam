@@ -1,0 +1,13 @@
+<script id="metabox-hbs-ARRAY" type="text/x-handlebars-template">
+    <div class="card card-shadow bgc-white bd-0 metabox-{{type}}" data-metabox="{{group}}">
+        <h6 class="card-header">
+            <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_{{type}}_{{i}}" aria-expanded="true">
+                <i class="lnr-chevron-up"></i>
+            </button>
+            <i class="ico lnr-list2"></i> {{name}}
+        </h6>
+        <div class="collapse show" id="collapse_{{type}}_{{i}}">
+            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control bd-0" rows="5" data-type="{{type}}">{{val}}</textarea>
+        </div>
+    </div>
+</script>

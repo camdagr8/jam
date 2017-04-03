@@ -72,3 +72,80 @@
 .sub-active:after {
     border-left: none !important;
 }
+
+.card {
+    .trumbowyg-box, .trumbowyg-editor {
+        border: 0;
+        margin: 0;
+    }
+}
+
+.blocks,
+.widgets {
+    .card:not(:last-child) {
+        margin-bottom: 24px;
+    }
+
+    .metabox-OBJECT,
+    .metabox-ARRAY {
+        textarea {
+            font-family: monospace;
+            line-height: 2.35;
+        }
+    }
+}
+.blocks {
+    .card-header {
+        padding-left: .9rem;
+        padding-right: .9rem;
+    }
+}
+.widgets {
+    .card-header {
+        [data-toggle="collapse"] {
+            width: 62px;
+        }
+    }
+}
+
+.card-header {
+    position: relative;
+    .float-right {
+        position: absolute;
+        float: none;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }
+
+    [data-toggle="collapse"] {
+        width: 46px;
+    }
+}
+
+[data-toggle="collapse"] {
+    i {
+        transition: transform .5s;
+        transform: rotateX(0deg);
+    }
+
+    &[aria-expanded="false"] {
+        i {
+            display: block;
+            transform: rotateX(180deg);
+        }
+    }
+}
+
+.float-center {
+    margin: 0 auto;
+
+    label {
+        margin-bottom: 0;
+    }
+}
+
+.slide-toggle {
+    width: 100%;
+    display: none;
+}

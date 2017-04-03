@@ -7,7 +7,7 @@
 	<div class="mb-l"><h5><i class="lnr-pencil ico"></i> Page Editor</h5></div>
 
 	<div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
-		<div class="mb-s">
+		<div class="blocks">
 
 			<div class="input-group mb-xs">
 				<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
@@ -17,23 +17,25 @@
 			<% if (blocks) { %>
 
 			<% blocks.forEach(function (block, i) { %>
-			<div class="mb-l"><%- include(block, {index: i}) -%></div>
+			<%- include(block, {index: i}) -%>
 			<% }); %>
 
 			<% } %>
-            <div id="admin-meta-boxes">
 
-            </div>
+            <div id="admin-meta-box-blocks"></div>
 		</div>
-		<aside>
+
+		<aside class="widgets">
 
 			<% if (widgets) { %>
 
 			<% widgets.forEach(function (widget, i) { %>
-			<div class="mb-l"><%- include(widget, {index: i}) -%></div>
+			<%- include(widget, {index: i}) -%>
 			<% }); %>
 
 			<% } %>
+
+            <div id="admin-meta-box-widgets" class="mb-l"></div>
 
 			<div class="mb-l">
 				<button
@@ -47,55 +49,4 @@
 	</div>
 </form>
 
-<script type="text/javascript">
-<% if (rec['meta']) { %>
-    window.meta = <%-JSON.stringify(rec['meta'])%>;
-<% } else { %>
-    window.meta = {};
-<% } %>
-</script>
-
-<script id="metabox-hbs-TEXT" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control" rows="15" data-type="{{type}}">{{val}}</textarea>
-        </div>
-    </div>
-</script>
-
-<script id="metabox-hbs-HTML" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control code" rows="15" data-type="{{type}}">{{val}}</textarea>
-        </div>
-    </div>
-</script>
-
-<script id="metabox-hbs-OBJECT" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control code" rows="15" data-type="{{type}}">{{val}}</textarea>
-        </div>
-    </div>
-</script>
-
-<script id="metabox-hbs-ARRAY" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <textarea name="meta[{{id}}]" title="{{name}}" class="form-control code" rows="15" data-type="{{type}}">{{val}}</textarea>
-        </div>
-    </div>
-</script>
-
-<script id="metabox-hbs-NUMBER" type="text/x-handlebars-template">
-    <div class="card card-shadow bgc-white bd-0 mb-4" id="metabox_{{id}}">
-        <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-cube ico"></i> {{name}}</h6>
-        <div class="card-body p-4">
-            <input type="number" name="meta[{{id}}]" title="{{name}}" value="{{val}}" class="form-control" data-type="{{type}}" />
-        </div>
-    </div>
-</script>
+<%- include ../partials/metaboxes -%>

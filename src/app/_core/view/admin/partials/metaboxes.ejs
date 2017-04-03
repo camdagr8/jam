@@ -1,0 +1,15 @@
+<script type="text/javascript">
+    <% if (rec['meta']) { %>
+    window.meta = <%-JSON.stringify(rec['meta'])%>;
+    <% } else { %>
+    window.meta = {};
+    <% } %>
+</script>
+
+<%- include ../partials/metabox/array -%>
+<%- include ../partials/metabox/checkbox -%>
+<%- include ../partials/metabox/number -%>
+<%- include ../partials/metabox/radio -%>
+<%- include ../partials/metabox/object -%>
+<%- include ../partials/metabox/text -%>
+<%- include ../partials/metabox/wysiwyg -%>

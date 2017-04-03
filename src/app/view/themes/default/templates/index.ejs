@@ -3,11 +3,13 @@
 <head>
     <% include ../partials/head %>
 </head>
-<body class="container">
+<body>
 
     <% include ../partials/header %>
 
-    <%-rec['body']%>
+    <% if (rec['meta']['body']) { %>
+    <%-core.hbsParse(rec.meta.body)%>
+    <% } %>
 
     <% include ../partials/footer %>
 

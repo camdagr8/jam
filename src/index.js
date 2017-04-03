@@ -109,7 +109,6 @@ app.use(['/admin', '/dashboard'], admin);
 // Initialize routes
 app.use(routes);
 
-
 // Run the server
 app.listen(env.PORT, '0.0.0.0', function() {
 	log('Server running on port:', env.PORT);

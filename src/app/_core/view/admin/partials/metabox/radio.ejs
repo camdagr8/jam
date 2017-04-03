@@ -1,0 +1,20 @@
+<script id="metabox-hbs-RADIO" type="text/x-handlebars-template">
+    <div class="card card-shadow bgc-white bd-0 metabox-{{type}}" data-metabox="{{group}}">
+        <h6 class="card-header">
+            <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_{{type}}_{{i}}" aria-expanded="true">
+                <i class="lnr-chevron-up"></i>
+            </button>
+            <i class="ico lnr-calculator"></i> {{name}}
+        </h6>
+        <div class="collapse show" id="collapse_{{type}}_{{i}}">
+            <ul class="list-group list-group-flush" data-toggle="check">
+                <li class="list-group-item">
+                    <label class="check" tabindex="0">
+                        {{label}}
+                        <input type="radio" {{{checked}}} name="meta[{{id}}]" title="{{name}}" value="{{value}}" class="hidden-xs-up" data-type="{{type}}">
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+</script>

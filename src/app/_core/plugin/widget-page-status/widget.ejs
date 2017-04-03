@@ -1,54 +1,61 @@
 
-<div class="card card-shadow bgc-white bd-0" id="admin-status">
-	<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-power-switch ico"></i> Status</h6>
-	<ul class="list-group list-group-flush" data-toggle="check">
-		<li class="list-group-item">
-			<label class="check" tabindex="0">
-				<i class="lnr-pencil ico mt-xxs"></i> Draft
-				<% if (!rec['objectId'] || !rec['status']) { %>
-				<input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="draft" checked aria-checked="true">
-				<% } else { %>
-				<input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="draft" <%=(rec['status'] === 'draft') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'draft')%>">
-				<% } %>
-			</label>
-		</li>
-		<li class="list-group-item">
-			<label class="check" tabindex="0">
-				<i class="lnr-paper-plane ico mt-xxs"></i> Publish
-				<input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="publish" <%=(rec['status'] === 'publish') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'publish')%>">
-			</label>
-		</li>
-		<li class="list-group-item">
-			<label class="check" tabindex="0">
-				<i class="lnr-calendar-31 ico mt-xxs"></i> Publish Later
-				<input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="publish-later" data-toggle="slide" data-target="#publish-later" <%=(rec['status'] === 'publish-later') ? 'checked' : ''%> aria-checked="<%-(rec['status'] === 'publish-later')%>">
-			</label>
-		</li>
-		<li class="list-group-item" id="publish-later" data-toggle-target  <%-(rec['status'] === 'publish-later') ? 'style="display: block;"' : 'style="display: none;"'%> >
-			<div class="input-group">
-				<input type="text" class="form-control" name="publishAt" data-datepicker="" value="<%-rec['publishAt']%>">
-				<span class="input-group-addon"><i class="lnr-calendar-31"></i></span>
-			</div>
-		</li>
-	</ul>
-	<ul class="list-group list-group-flush" data-toggle="check">
-		<li class="list-group-item">
-			<label class="check" tabindex="0">
-				<i class="lnr-calendar-cross ico mt-xxs"></i> Unpublish Later
-				<input type="checkbox" name="unpublish" autocomplete="off" class="hidden-xs-up" value="delete-later" data-toggle="slide" data-target="#unpublish-later" <%-(rec['unpublishAt']) ? 'checked' : ''%> aria-checked="<%-(rec['unpublishAt'])%>">
-			</label>
-		</li>
-		<li class="list-group-item" id="unpublish-later" data-toggle-target <%-(rec['unpublishAt']) ? 'style="display: block;"' : 'style="display: none;"'%>>
-			<div class="input-group">
-				<input type="text" class="form-control" name="unpublishAt" data-datepicker="" value="<%-rec['unpublishAt']%>" />
-				<span class="input-group-addon"><i class="lnr-calendar-31"></i></span>
-			</div>
-		</li>
-		<li class="list-group-item">
-			<label class="check" tabindex="0">
-				<i class="lnr-trash ico mt-xxs"></i> Delete
-				<input type="checkbox" name="unpublish" autocomplete="off" class="hidden-xs-up" value="delete" <%=(rec['status'] === 'delete') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'delete')%>">
-			</label>
-		</li>
-	</ul>
+<div class="card card-shadow bgc-white bd-0" id="widget-page-status">
+	<h6 class="card-header">
+        <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_widget-page-status" aria-expanded="true">
+            <i class="lnr-chevron-up"></i>
+        </button>
+        <i class="lnr-power-switch ico"></i> Status
+    </h6>
+    <div class="collapse show" id="collapse_widget-page-status">
+        <ul class="list-group list-group-flush" data-toggle="check">
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <i class="lnr-pencil ico mt-xxs"></i> Draft
+                    <% if (!rec['objectId'] || !rec['status']) { %>
+                    <input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="draft" checked aria-checked="true">
+                    <% } else { %>
+                    <input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="draft" <%=(rec['status'] === 'draft') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'draft')%>">
+                    <% } %>
+                </label>
+            </li>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <i class="lnr-paper-plane ico mt-xxs"></i> Publish
+                    <input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="publish" <%=(rec['status'] === 'publish') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'publish')%>">
+                </label>
+            </li>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <i class="lnr-calendar-31 ico mt-xxs"></i> Publish Later
+                    <input type="radio" name="publish" autocomplete="off" class="hidden-xs-up" value="publish-later" data-toggle="slide" data-target="#publish-later" <%=(rec['status'] === 'publish-later') ? 'checked' : ''%> aria-checked="<%-(rec['status'] === 'publish-later')%>">
+                </label>
+            </li>
+            <li class="list-group-item" id="publish-later" data-toggle-target  <%-(rec['status'] === 'publish-later') ? 'style="display: block;"' : 'style="display: none;"'%> >
+                <div class="input-group">
+                    <input type="text" class="form-control" name="publishAt" data-datepicker="" value="<%-rec['publishAt']%>">
+                    <span class="input-group-addon"><i class="lnr-calendar-31"></i></span>
+                </div>
+            </li>
+        </ul>
+        <ul class="list-group list-group-flush" data-toggle="check">
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <i class="lnr-calendar-cross ico mt-xxs"></i> Unpublish Later
+                    <input type="checkbox" name="unpublish" autocomplete="off" class="hidden-xs-up" value="delete-later" data-toggle="slide" data-target="#unpublish-later" <%-(rec['unpublishAt']) ? 'checked' : ''%> aria-checked="<%-(rec['unpublishAt'])%>">
+                </label>
+            </li>
+            <li class="list-group-item" id="unpublish-later" data-toggle-target <%-(rec['unpublishAt']) ? 'style="display: block;"' : 'style="display: none;"'%>>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="unpublishAt" data-datepicker="" value="<%-rec['unpublishAt']%>" />
+                    <span class="input-group-addon"><i class="lnr-calendar-31"></i></span>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <i class="lnr-trash ico mt-xxs"></i> Delete
+                    <input type="checkbox" name="unpublish" autocomplete="off" class="hidden-xs-up" value="delete" <%=(rec['status'] === 'delete') ? 'checked' : ''%> aria-checked="<%=(rec['status'] === 'delete')%>">
+                </label>
+            </li>
+        </ul>
+    </div>
 </div>

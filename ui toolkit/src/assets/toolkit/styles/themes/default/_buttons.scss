@@ -11,12 +11,19 @@
     z-index: 1000;
   }
 
-  &-clear {
-    border: none;
-    background-color: transparent;
+    &-clear {
+        @extend .btn-secondary;
+        border: none;
+        background-color: transparent;
 
-    i {
-      line-height: 1.5;
+        i {
+            line-height: 1.5;
+        }
     }
-  }
+    &-outline-clear {
+        @extend .btn-outline-secondary;
+        i {
+            line-height: 1.5;
+        }
+    }
 }
