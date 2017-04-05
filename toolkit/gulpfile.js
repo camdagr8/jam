@@ -45,7 +45,7 @@ const config = {
 			watch: 'src/assets/fabricator/styles/**/*.scss',
 		},
 		toolkit: {
-			src: 'src/assets/toolkit/styles/toolkit.scss',
+			src: 'src/assets/toolkit/styles/*.scss',
 			dest: 'dist/assets/toolkit/styles',
 			watch: 'src/assets/toolkit/styles/**/*.scss',
 		}
@@ -250,7 +250,7 @@ gulp.task('serve', () => {
 			baseDir: config.dest,
 		},
 		notify: false,
-		logPrefix: 'FABRICATOR',
+		logPrefix: 'BUTTER',
 	});
 
 	gulp.task('styles:watch', ['styles']);
@@ -354,9 +354,8 @@ const create_material = (params) => {
 
 		fs.writeFileSync(vfile, view);
 	}
+};
 
-    return;
-}
 gulp.task('create:material', () => {
 
 	if (!gutil.env.name) { return; }
@@ -394,13 +393,11 @@ gulp.task('create:template', () => {
 
 	let tmp = `---
 		title: "${name}"
-		---`
+		---`;
 
 	tmp = tmp.replace(/\t/g, '');
 
 	fs.writeFileSync(file, tmp);
-
-	return;
 
 });
 
@@ -435,13 +432,11 @@ gulp.task('create:helper', () => {
 		---
 		<header class="mb-3">
 		  <h1>{{title}}</h1>
-		</header>`
+		</header>`;
 
 	tmp = tmp.replace(/\t/g, '');
 
 	fs.writeFileSync(file, tmp);
-
-	return;
 
 });
 

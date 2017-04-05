@@ -37,18 +37,18 @@ const config = {
 	src: 'src',
 	dev: gutil.env.dev,
 	scripts: {
-		dest	    : 'src/public/assets/js',
+		dest	: 'src/public/assets/js',
 		src		: 'src/public/src/js/app.js',
 		watch	: 'src/public/src/js/**/*'
 	},
     core: {
-        dest	    : 'src/public/assets/js',
+        dest	: 'src/public/assets/js',
         src		: 'src/public/src/js/core.js',
         watch	: 'src/public/src/js/**/*'
     },
 	styles: {
-		dest	    : 'src/public/assets/css',
-		src		: 'src/public/src/css/style.scss',
+		dest	: 'src/public/assets/css',
+		src		: 'src/public/src/css/*.scss',
 		watch	: 'src/public/src/css/**/*.scss'
 	},
 	toolkit: {
@@ -58,8 +58,8 @@ const config = {
             'toolkit/dist/assets/toolkit/**/*'
         ],
         watch   : [
-            'toolkit/dist/assets/toolkit/**/*',
-            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**}'
+            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**/*}',
+            'toolkit/dist/assets/toolkit/**/*'
         ]
     },
 	build: {
@@ -139,8 +139,10 @@ gulp.task('toolkit', (done) => {
 
     del.sync([config.toolkit.dest]);
 
-    return gulp.src(config.toolkit.src)
+    gulp.src(config.toolkit.src)
     .pipe(gulp.dest(config.toolkit.dest));
+
+    done();
 });
 
 

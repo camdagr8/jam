@@ -1,10 +1,8 @@
 
 /**
- * Install page styles
+ * Admin section styles
  */
-$admin-menu-padding: px2rem(10) px2rem(10) px2rem(10) px2rem(20);
-$admin-menu-width: px2rem(240);
-$admin-header-height: px2rem(46);
+
 .admin {
 	position: relative;
 	$input-border-radius: 0;
@@ -227,4 +225,98 @@ $admin-header-height: px2rem(46);
 			margin-bottom: px2rem(-9);
 		}
 	}
+}
+
+#admin-alert {
+    display: none;
+}
+
+.form-control[readonly] {
+    background-color: #FFF;
+}
+
+.input-group label {
+    margin-bottom: 0;
+}
+
+#admin-form {
+    h1, h2, h3, h4, h5, h6 {
+        .ico {
+            float: left;
+            margin-top: 2px;
+            margin-right: 16px;
+        }
+    }
+
+    .input-group .btn {
+        padding-top: .4rem;
+    }
+}
+
+.admin-list {
+    .btn-new {
+        text-transform: uppercase;
+
+        @media (max-width: 575px) {
+            width: 100%;
+            padding: 7px;
+            margin: 10px 0 20px 0;
+            font-size: 12px;
+        }
+
+        @media (min-width: 576px) and (max-width: 767px) {
+            padding: 7px 5px;
+            font-size: 12px;
+        }
+    }
+
+    td, th {
+        vertical-align: middle;
+        padding: 0.25rem 0.75rem;
+    }
+
+    td a {
+        width: 100%;
+        display: block;
+        text-decoration: none;
+    }
+
+    .badge {
+        font-weight: normal;
+        margin-right: 5px;
+    }
+}
+
+.sub-active:after {
+    border-left: none !important;
+}
+
+.blocks,
+.widgets {
+    .card:not(:last-child) {
+        margin-bottom: 24px;
+    }
+
+    .metabox-OBJECT,
+    .metabox-ARRAY {
+        textarea {
+            font-family: monospace;
+            line-height: 2.35;
+        }
+    }
+}
+
+.blocks {
+    .card-header {
+        padding-left: .9rem;
+        padding-right: .9rem;
+    }
+}
+
+.widgets {
+    .card-header {
+        [data-toggle="collapse"] {
+            width: 62px;
+        }
+    }
 }

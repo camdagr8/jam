@@ -1,0 +1,115 @@
+[data-uploader] {
+    position: relative;
+    height: px2rem(250);
+    cursor: pointer;
+    user-select: none;
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: px2rem($s);
+        left: px2rem($s);
+        width: calc(100% - #{px2rem($s)} * 2);
+        height: calc(100% - #{px2rem($s)} * 2);
+        pointer-events: none;
+        border: 4px dashed $gray-lighter;
+    }
+
+    label,
+    .label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        text-align: center;
+        font-size: px2rem($m);
+        font-weight: 400;
+        font-family: 'Raleway', sans-serif;
+        color: $gray-light;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.upload-item {
+    min-height: px2rem(110);
+    padding-left: px2rem(120);
+    overflow: hidden;
+
+    .upload-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: px2rem(110);
+        height: px2rem(112);
+        overflow: hidden;
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: 100%;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    .upload-meta {
+        width: 100%;
+
+        .form-group {
+            margin-bottom: px2rem(10);
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .btn-edit {
+        display: none;
+        background-color: rgba(255, 255, 255, 0.90);
+        color: $gray-light;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        border-radius: 0;
+
+        i {
+            font-size: px2rem($m);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: px2rem(8);
+        display: none;
+
+        &, .progress-bar { border-radius: 0; }
+    }
+
+    .dz-processing {
+        .progress { display: block; }
+    }
+
+    .dz-success {
+        .btn-edit {
+            display: block;
+        }
+    }
+}
+
+[data-upload-remove] {
+    margin: 0;
+}
+

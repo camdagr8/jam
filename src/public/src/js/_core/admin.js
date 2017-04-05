@@ -31,7 +31,13 @@ $(function () {
         let input = {};
         if ($(this).data('input')) {
             $(this).parents().find($(this).data('input')).each(function () {
-                input[$(this).attr('name')] = $(this).val();
+                if ($(this).is('input:checkbox') || $(this).is('input:radio')) {
+                    if ($(this).is(':checked')) {
+                        input[$(this).attr('name')] = $(this).val();
+                    }
+                } else {
+                    input[$(this).attr('name')] = $(this).val();
+                }
 
                 if ($(this).is('input:text') || $(this).is('textarea')) {
                     $(this).val('');
@@ -39,13 +45,12 @@ $(function () {
             });
         }
 
-
         let src = $(c).html();
         let tmp = hbs.compile(src);
         let trg = $(t);
         let elm = $(tmp(input)).appendTo(trg);
 
-        $(this).trigger('clone', [elm]);
+        $(this).trigger('clone', [elm, input]);
     };
 
     const hide_alert = (delay = 0, target = '#admin-alert') => {
@@ -100,6 +105,11 @@ $(function () {
                 delete data.unpublish;
             }
 
+
+            if (!data.hasOwnProperty('meta')) {
+                data['meta'] = {};
+            }
+
             // Meta:
             let k = _.keys(data);
             for (let i = 0; i < k.length; i++) {
@@ -135,15 +145,51 @@ $(function () {
         template: (data) => {
 
             // Remove unecessary fields
-            let flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue'];
+            let flds = [
+                'metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue',
+                'metabox[id]', 'metabox[name]', 'metabox[label]', 'metabox[type]', 'metabox[value]'
+            ];
             flds.forEach((fld) => {
                 if (data.hasOwnProperty(fld)) {
                     delete data[fld];
                 }
             });
 
+            let mbox = [];
+            $('#admin-template-metaboxes .list-group-item').each(function () {
+                let obj = {};
+                $(this).find('input').each(function () {
+                    let n  = $(this).attr('name');
+                    n      = n.replace(/metabox\[(.*?)\]/g, "$1");
+                    obj[n] = $(this).val() || null;
+                });
+                mbox.push(obj);
+            });
+            data['metabox'] = mbox;
+
             return data;
         }
+    };
+
+    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
+        let t = $(target);
+        let a = t.find('.alert');
+        a.removeClass('alert-warning alert-info alert-success alert-danger')
+        a.addClass(cls);
+        a.find('.message').html(message);
+
+        if (delay > 0) {
+            setTimeout(() => {
+                t.stop().slideDown(250)
+            }, delay);
+        } else {
+            t.stop().slideDown(250);
+        }
+    };
+
+    const show_success = (message, delay = 3000, target = '#admin-alert') => {
+        show_msg(message, 'alert-success', 0, target);
+        hide_alert(delay);
     };
 
     const slugit = function (e) {
@@ -190,27 +236,6 @@ $(function () {
 
         s = String(s).toLowerCase();
         $(this).val(s);
-    };
-
-    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
-        let t = $(target);
-        let a = t.find('.alert');
-        a.removeClass('alert-warning alert-info alert-success alert-danger')
-        a.addClass(cls);
-        a.find('.message').html(message);
-
-        if (delay > 0) {
-            setTimeout(() => {
-                t.stop().slideDown(250)
-            }, delay);
-        } else {
-            t.stop().slideDown(250);
-        }
-    };
-
-    const show_success = (message, delay = 3000, target = '#admin-alert') => {
-        show_msg(message, 'alert-success', 0, target);
-        hide_alert(delay);
     };
 
     const validate = {
@@ -433,6 +458,7 @@ $(function () {
 
     // #metabox-clone clone listener
     $(document).on('clone', '#metabox-clone', function (e, elm) {
+
         let name    = elm.find('input.metabox-name');
         let type    = elm.find('input.metabox-type');
         let id      = elm.find('input.metabox-id');
@@ -449,61 +475,6 @@ $(function () {
             elm.remove();
             return;
         }
-
-        //let n = slugify(String(name.val()).toLowerCase(), '_');
-
-/*
-        if (type.val() !== 'CHECKBOX' && type.val() !== 'RADIO') {
-            if (String(name.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-            if (String(type.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-            if (String(id.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-
-            // Test if the id is already used
-            let dup = 0;
-            $('.metabox-id').each(function () {
-                if (dup > 1) {
-                    return;
-                }
-                let t = $(this).val();
-                t     = slugify(t, '_');
-                t     = String(t).toLowerCase();
-                dup += (t === v) ? 1 : 0;
-                if (dup > 1) {
-                    elm.remove();
-                }
-            });
-
-            // Test if the name is already used
-
-            dup = 0;
-            $('.metabox-name').each(function () {
-                if (dup > 1) {
-                    return;
-                }
-                let t = $(this).val();
-                t     = slugify(t, '_');
-                t     = String(t).toLowerCase();
-                dup += (t === n) ? 1 : 0;
-                if (dup > 1) {
-                    elm.remove();
-                }
-            });
-
-            if (dup > 1) {
-                elm.remove();
-                return;
-            }
-        }
-*/
 
         id.val(slugify(String(id.val()).toLowerCase(), '_'));
 
@@ -590,10 +561,6 @@ $(function () {
 
         if (parse_data.hasOwnProperty(data.type)) {
             data = parse_data[data.type](data);
-
-            if (!data['metabox']) {
-                data['metabox'] = [];
-            }
 
             if (typeof data === 'string') {
                 show_msg(data);
@@ -734,7 +701,8 @@ $(function () {
             'NUMBER'      : widgets,
             'OBJECT'      : blocks,
             'RADIO'       : widgets,
-            'TEXT'        : blocks
+            'TEXT'        : blocks,
+            'UPLOAD'      : blocks
         };
 
         // Draw metaboxes
@@ -806,11 +774,21 @@ $(function () {
             });
         }
 
+        let exp = $(this).prop('aria-expanded');
+        let state = Boolean(exp === true || exp === 'true');
+
         if (trg !== null) {
             trg.slideToggle(250);
+            trg.prop('aria-expanded', !state);
+            trg.attr('aria-expanded', !state);
         }
+
+        $(this).prop('aria-expanded', !state);
+        $(this).attr('aria-expanded', !state);
+
     });
 
+    // [data-toggle="buttons"] click listener for toggle button groups
     $(document).on('click', '[data-toggle="buttons"] label', function (e) {
         let chk = $(e.target).find('input');
         if (chk.length > 0) {
@@ -830,7 +808,6 @@ $(function () {
             chk.change();
         }
     });
-
 
     // Status toggles
     setTimeout(function () {

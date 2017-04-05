@@ -19,7 +19,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 90px;
+    width: 19px;
     height: 100%;
     cursor: move;
 
@@ -31,6 +31,16 @@
         transform: translateY(-50%);
         pointer-events: none;
         color: #E0E0E0;
+    }
+
+    &.right {
+        left: auto;
+        right: 0;
+
+        i {
+            left: auto;
+            right: 4px;
+        }
     }
 }
 [data-sortable] {

@@ -43,3 +43,11 @@ body {
 .flex-xs-row {
 	flex-direction: row;
 }
+
+.float-center {
+    margin: 0 auto;
+
+    label {
+        margin-bottom: 0;
+    }
+}

@@ -224,6 +224,7 @@
       "dna": ["btn-clear", "btn-outline-clear"],
       "id": "btn-clear",
       "dependents": {
+        "src/materials/misc/uploader.html": [".btn-clear"],
         "src/views/templates/login-page.html": [".btn-clear"]
       },
       "dependencies": {
@@ -241,6 +242,7 @@
         "src/materials/button-states/button-disabled.html": [".btn-danger"],
         "src/materials/misc/dropdown.html": [".btn-danger", ".btn-outline-danger"],
         "src/materials/misc/popover.html": [".btn-danger"],
+        "src/materials/misc/uploader.html": [".btn-outline-danger"],
         "src/views/templates/login-page.html": [".btn-danger"]
       },
       "dependencies": {}
@@ -451,7 +453,8 @@
         "src/materials/admin/admin-template-select.html": [".list-group", ".list-group-item"],
         "src/materials/admin/admin-unpublish.html": [".list-group", ".list-group-item"],
         "src/materials/admin/install-form.html": [".list-group", ".list-group-item"],
-        "src/materials/misc/card.html": [".list-group", ".list-group-item"]
+        "src/materials/misc/card.html": [".list-group", ".list-group-item"],
+        "src/materials/misc/uploader.html": [".list-group", ".list-group-item"]
       },
       "dependencies": {
         "src/materials/badges/badge-danger.html": [".badge-danger"],
@@ -484,6 +487,7 @@
         "src/materials/admin/login-form.html": [".card", ".card-block"],
         "src/materials/misc/accordion.html": ["data-dna=card", ".card", ".card-header", ".card-block"],
         "src/materials/misc/collapse.html": [".card", ".card-block"],
+        "src/materials/misc/uploader.html": [".card", ".card-header"],
         "src/views/templates/home.html": [".card", ".card-img-top", ".card-block", ".card-title", ".card-text", ".card-footer"],
         "src/views/templates/login-page.html": [".card", ".card-block"]
       },
@@ -499,6 +503,7 @@
         "src/materials/admin/login-form.html": [".collapse"],
         "src/materials/header.html": [".collapse"],
         "src/materials/misc/accordion.html": [".collapse"],
+        "src/materials/misc/uploader.html": [".collapse"],
         "src/materials/navbars/navbar-danger.html": [".collapse"],
         "src/materials/navbars/navbar-inverse.html": [".collapse"],
         "src/materials/navbars/navbar-light.html": [".collapse"],
@@ -563,7 +568,9 @@
     "src/materials/misc/progress.html": {
       "dna": ["progress", "progress-bar", "progress-bar-striped", "progress-bar-animated"],
       "id": "progress",
-      "dependents": {},
+      "dependents": {
+        "src/materials/misc/uploader.html": [".progress", ".progress-bar", ".progress-bar-animated", ".progress-bar-striped"]
+      },
       "dependencies": {}
     },
     "src/materials/misc/tabs.html": {
@@ -581,6 +588,19 @@
       "dependencies": {
         "src/materials/button-groups/button-group-horizontal.html": [".btn-group"],
         "src/materials/button/button-primary.html": [".btn-outline-primary"]
+      }
+    },
+    "src/materials/misc/uploader.html": {
+      "dna": ["uploader-metabox"],
+      "id": "uploader-metabox",
+      "dependents": {},
+      "dependencies": {
+        "src/materials/button/button-clear.html": [".btn-clear"],
+        "src/materials/button/button-danger.html": [".btn-outline-danger"],
+        "src/materials/lists/99.list-group.html": [".list-group", ".list-group-item"],
+        "src/materials/misc/card.html": [".card", ".card-header"],
+        "src/materials/misc/collapse.html": [".collapse"],
+        "src/materials/misc/progress.html": [".progress", ".progress-bar", ".progress-bar-animated", ".progress-bar-striped"]
       }
     },
     "src/materials/modals/modal-lg.html": {

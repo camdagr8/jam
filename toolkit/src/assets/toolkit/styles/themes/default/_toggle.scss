@@ -1,0 +1,30 @@
+.slide-toggle {
+    width: 100%;
+    display: none;
+}
+
+[data-toggle="collapse"],
+[data-toggle="slide-toggle"] {
+    i {
+        transition: transform .25s;
+        display: inline-block;
+    }
+}
+
+[data-toggle="collapse"] {
+    &[aria-expanded="false"] {
+        i.lnr-chevron-up {
+            transform: rotateX(180deg);
+        }
+    }
+}
+
+[data-toggle="slide-toggle"] {
+    &[aria-expanded="true"] {
+        i.lnr-cog {
+            transform: rotateZ(20deg);
+        }
+    }
+}
+
+
