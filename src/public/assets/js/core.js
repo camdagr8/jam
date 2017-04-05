@@ -5442,7 +5442,7 @@ if (typeof Parse !== 'undefined') {
 
     var uploader = {
         on: {
-            addedfile: function addedfile(file, me) {
+            addedfile: function addedfile(e, file) {
                 var narr = file.name.split('.');
                 var ext = String(narr.pop()).toLowerCase();
                 var nam = slugify(narr.join('.')) + '-' + Date.now() + '.' + ext;
@@ -5475,7 +5475,11 @@ if (typeof Parse !== 'undefined') {
             var me = this;
             me.__uploader = new dz("#" + id, opts);
             me.__uploader.on('addedfile', function (file) {
-                uploader.on.addedfile(file, me);
+                var evt = {
+                    type: 'addedfile',
+                    target: me
+                };
+                uploader.on.addedfile(evt, file);
             });
             // this.__uploader.on('removedfile', uploader.on.removedfile);
         });

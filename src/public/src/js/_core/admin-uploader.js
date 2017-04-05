@@ -18,7 +18,7 @@ if (typeof Parse !== 'undefined') {
 
     const uploader = {
         on: {
-            addedfile: (file, me) => {
+            addedfile: (e, file) => {
                 let narr = file.name.split('.');
                 let ext = String(narr.pop()).toLowerCase();
                 let nam = slugify(narr.join('.')) + '-' + Date.now() + '.' + ext;
@@ -51,7 +51,11 @@ if (typeof Parse !== 'undefined') {
             let me = this;
             me.__uploader = new dz("#" + id, opts);
             me.__uploader.on('addedfile', (file) => {
-                uploader.on.addedfile(file, me);
+                let evt = {
+                    type: 'addedfile',
+                    target: me
+                };
+                uploader.on.addedfile(evt, file);
             });
             // this.__uploader.on('removedfile', uploader.on.removedfile);
         });
