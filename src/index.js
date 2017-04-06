@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 
 // Global vars
-global.basedir 			= __dirname; // ref to this directory as root
-global.env 				= (process.env.NODE_ENV) ? process.env : require(basedir + '/env.json');
-global.appdir 			= basedir + env.APP_MOUNT; // ref to the /app dir
-global.jam 				= {}; // global namespace used to store misc. data
-global.core 			= require(appdir + '/_core/core.js');
-global._               = require('underscore');
+global.basedir          = __dirname; // ref to this directory as root
+global.env              = (process.env.NODE_ENV) ? process.env : require(basedir + '/env.json');
+global.appdir           = basedir + env.APP_MOUNT; // ref to the /app dir
+global.jam              = {}; // global namespace used to store misc. data
+global.core             = require(appdir + '/_core/core.js');
+global._                = require('underscore');
 
 
 // Node modules
@@ -61,25 +61,6 @@ const api = new ParseServer({
 });
 
 
-// Parse Dashboard setup
-const users = (typeof env.PARSE_DASHBOARD_USERS === 'string') ? JSON.parse(env.PARSE_DASHBOARD_USERS) : env.PARSE_DASHBOARD_USERS;
-
-const dashboard = new ParseDashboard({
-	"allowInsecureHTTP"	: true,
-	"trustProxy"  		: 1,
-	"users"				: users,
-	"apps"				: [
-		{
-			appId		: env.APP_ID,
-			appName		: env.APP_NAME,
-			masterKey	: env.MASTER_KEY,
-			serverURL	: env.SERVER_URI + env.PARSE_MOUNT,
-
-		}
-	]
-}, true);
-
-
 // Express app setup
 global.app = express();
 
@@ -95,7 +76,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(cookieSession({name: '4lqaOOlW1', keys: ['Q2FtZXJvbiBSdWxlcw', 'vT3GtyZKbnoNSdWxlcw']}));
 app.use(env.PARSE_MOUNT, api);
-app.use(env.PARSE_DASHBOARD_MOUNT, dashboard);
+
+
+// Parse Dashboard setup
+if (env.PARSE_DASHBOARD === true || env.PARSE_DASHBOARD === 'true') {
+    let users        = (typeof env.PARSE_DASHBOARD_USERS === 'string') ? JSON.parse(env.PARSE_DASHBOARD_USERS) : env.PARSE_DASHBOARD_USERS;
+    let dashboard    = new ParseDashboard({
+        "allowInsecureHTTP"    : true,
+        "trustProxy"           : 1,
+        "users"                : users,
+        "apps"                 : [
+            {
+                appId          : env.APP_ID,
+                appName        : env.APP_NAME,
+                masterKey      : env.MASTER_KEY,
+                serverURL      : env.SERVER_URI + env.PARSE_MOUNT,
+
+            }
+        ]
+    }, true);
+
+    app.use(env.PARSE_DASHBOARD_MOUNT, dashboard);
+}
 
 // Get config variables
 app.use(prefs);
