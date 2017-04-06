@@ -273,6 +273,7 @@
         "src/materials/misc/collapse.html": [".btn-primary"],
         "src/materials/misc/jumbotron.html": [".btn-primary"],
         "src/materials/misc/tooltip.html": [".btn-outline-primary"],
+        "src/materials/misc/uploader.html": [".btn-outline-primary"],
         "src/materials/modals/modal-lg.html": [".btn-primary"],
         "src/materials/modals/modal-sm.html": [".btn-primary"],
         "src/materials/modals/modal-xl.html": [".btn-primary"],
@@ -597,6 +598,7 @@
       "dependencies": {
         "src/materials/button/button-clear.html": [".btn-clear"],
         "src/materials/button/button-danger.html": [".btn-outline-danger"],
+        "src/materials/button/button-primary.html": [".btn-outline-primary"],
         "src/materials/lists/99.list-group.html": [".list-group", ".list-group-item"],
         "src/materials/misc/card.html": [".card", ".card-header"],
         "src/materials/misc/collapse.html": [".collapse"],

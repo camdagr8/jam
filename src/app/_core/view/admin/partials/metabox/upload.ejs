@@ -12,6 +12,9 @@
                 <span class="label">
                     {{{label}}}
                 </span>
+                <button type="button" class="btn btn-outline-primary btn-library" data-dz="#uploader_{{type}}_{{i}}" data-container="#uploads_{{type}}_{{i}}" data-toggle="modal" data-target="#adminMediaLibrary-modal">
+                    Select from Media Library
+                </button>
             </div>
             <ul class="list-group list-group-flush" data-sortable id="uploads_{{type}}_{{i}}"></ul>
         </div>
@@ -34,12 +37,55 @@
             </div>
         </div>
         <div class="upload-meta">
+            <input type="hidden" data-id="" />
+            <input type="hidden" data-url="" />
             <div class="form-group">
-                <input type="text" class="form-control" name="title" placeholder="title" autocomplete="off" />
+                <input type="text" class="form-control" data-title="" placeholder="title" autocomplete="off" />
             </div>
             <div class="form-group">
-                <textarea type="text" class="form-control" name="caption" placeholder="caption" rows="1" autocomplete="off"></textarea>
+                <textarea type="text" class="form-control" data-caption="" placeholder="caption" rows="1" autocomplete="off"></textarea>
             </div>
         </div>
     </li>
 </script>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminMediaLibrary" aria-hidden="true" id="adminMediaLibrary-modal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Media Library</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="btn-group float-center" data-toggle="buttons">
+                    <form id="adminMediaLibrary-filter">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="filter" autocomplete="off" value="jpg,jpeg,png,gif,svg">Images
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="filter" autocomplete="off" value="mpg,ogg,mp4,wav">Videos
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="filter" autocomplete="off" value="other">Other
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-tiles"></div>
+            <div class="modal-footer">
+                <input id="adminMediaLibrary-container" type="hidden" />
+                <input id="adminMediaLibrary-dz" type="hidden" />
+                <button type="button" class="btn btn-primary text-uppercase" data-dismiss="modal" aria-label="Close media library">
+                    Done
+                </button>
+            </div>
+        </div>
+        <div class="modal-loading">
+            <div class="loader">loading</div>
+        </div>
+    </div>
+</div>

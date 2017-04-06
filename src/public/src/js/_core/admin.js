@@ -719,7 +719,6 @@ $(function () {
             }
 
             if (box.hasOwnProperty('value')) {
-
                 if (!_.isArray(box['val'])) {
                     box['val'] = [box.val];
                 }

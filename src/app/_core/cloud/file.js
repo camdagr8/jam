@@ -3,18 +3,67 @@ Parse.Cloud.define('file_get', (request, response) => {
     let usr = request.user || jam.currentuser;
 
     if (!usr) {
-        response.error('invalid user permissions');
+        response.error('request.user is a required parameter');
         return;
     }
 
-    request.user = usr;
-    response.success({message: 'OK', user: request.user.toJSON()});
+    let skip = request.params.hasOwnProperty('skip') ? request.params.skip : 0;
+    let qry = core.query({table: 'File', order: 'descending', orderBy: 'createdAt', limit: 1000, skip: skip});
+
+    if (request.params.hasOwnProperty('name')) {
+        qry.equalTo('name', request.params.name);
+    }
+
+    if (request.params.hasOwnProperty('extension')) {
+        let exts = request.params.extension;
+        if (!_.isArray(exts)) {
+            exts = [exts];
+        }
+        qry.containedIn('extension', exts);
+    }
+
+/*
+
+    if (request.params.hasOwnProperty('date')) {
+        let d = new Date(request.params.data);
+        qry.lessThan('createdAt', d);
+    }
+*/
+
+    qry.find().then((results) => {
+        response.success(results);
+    }).catch((err) => {
+        response.error(err.message);
+    });
 });
 
-Parse.Cloud.beforeSave(Parse.File, (request, response) => {
-    if (!request.user) {
-        response.error('invalid user permissions');
-    } else {
-        reponse.success();
+
+Parse.Cloud.define('file_post', (request, response) => {
+    let usr = request.user || jam.currentuser;
+
+    if (!usr) {
+        response.error('request.user is a required parameter');
+        return;
     }
+
+    let obj = new Parse.Object('File');
+
+    Parse.Cloud.run('file_get', {name: request.params.name}).then((results) => {
+        if (results.length > 0) {
+            log(request.params.name + ' already exists');
+            obj.set('objectId', results[0].id);
+        }
+    }).catch((err) => {
+        response.error(err.message);
+    }).then(() => {
+        _.keys(request.params).forEach((key) => {
+            obj.set(key, request.params[key]);
+        });
+
+        return obj.save();
+    }).then((result) => {
+        response.success(result);
+    }).catch((err) => {
+        response.error(err.message);
+    });
 });
