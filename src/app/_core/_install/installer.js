@@ -135,6 +135,24 @@ const install_post = (req, res, next) => {
         res.status(500).json(err);
 
     }).then(() => {
+        let items = require(appdir + '/_core/model/Template.json');
+        let objs  = [];
+
+        items.forEach((item) => {
+            let obj  = new Parse.Object('Template');
+            let keys = _.keys(item);
+
+            keys.forEach((key) => {
+                obj.set(key, item[key]);
+            });
+
+            objs.push(obj);
+        });
+
+        return Parse.Object.saveAll(objs);
+    }, (err) => {
+        res.status(500).json(err);
+    }).then(() => {
         next();
     });
 
@@ -149,15 +167,12 @@ module.exports = (req, res, next) => {
         next();
     } else {
         if (req.method === 'POST') {
-            log('INSTALL POST');
             install_post(req, res, next);
-            //res.json(req.body);
         } else {
             // Check if the install config has been set
             if (jam['installed'] === true) {
                 next();
             } else {
-                log('INSTALL GET');
                 install_get(req, res);
             }
         }

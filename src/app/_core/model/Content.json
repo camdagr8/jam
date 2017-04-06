@@ -1,11 +1,12 @@
 [
 	{
-		"type": "page",
-        "title": "Welcome",
-		"template": "index",
-		"routes": ["/","/index.html","/home.html"],
-		"meta": {},
-        "status": "publish",
-		"body": "<main><div class='jumbotron'><h1>Welcome to Jam</h1></div></main>"
+        "type"        : "page",
+        "title"       : "Welcome",
+        "template"    : "index",
+        "routes"      : ["/"],
+        "status"      : "publish",
+        "meta"        : {
+            "body"    : "<main><div class=\"jumbotron\"><h1>Welcome to My Jam Session</h1></div></main>"
+        }
 	}
 ]
