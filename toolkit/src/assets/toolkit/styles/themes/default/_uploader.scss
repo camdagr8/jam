@@ -40,16 +40,16 @@
 }
 
 .upload-item {
-    min-height      : px2rem(110);
-    padding-left    : px2rem(120);
+    min-height      : px2rem(152);
+    padding-left    : px2rem(162);
     overflow        : hidden;
 
     .upload-image {
         position         : absolute;
         top              : 0;
         left             : 0;
-        width            : px2rem(110);
-        height           : px2rem(112);
+        width            : px2rem(152);
+        height           : px2rem(152);
         overflow         : hidden;
         border-right     : 1px solid $gray-lighter;
         border-bottom    : 1px solid $gray-lighter;
