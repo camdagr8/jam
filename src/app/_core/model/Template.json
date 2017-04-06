@@ -1,6 +1,15 @@
 [
     {
-        "name": "Default",
-        "file": "index.ejs"
+        "name"             : "Default",
+        "file"             : "index.ejs",
+        "metabox"          : [
+            {
+                "name"     : "Body",
+                "label"    : "",
+                "type"     : "HTML",
+                "id"       : "body",
+                "value"    : ""
+            }
+        ]
     }
 ]

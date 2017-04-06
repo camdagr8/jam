@@ -147,7 +147,7 @@ gulp.task('toolkit', (done) => {
 
 
 // assemble
-gulp.task('assemble', ['toolkit', 'styles', 'scripts'], () => {
+gulp.task('assemble', ['styles', 'scripts'], () => {
 	return gulp.src(config.build.src)
 	.pipe(gulp.dest(config.dest));
 });
@@ -315,12 +315,12 @@ gulp.task('create:helper', ['create:helper-icon'], () => {
 gulp.task('default', (done) => {
 
 	if (config.dev) {
-		runSequence(['clean'], ['assemble'], ['nodemon'], () => {
+		runSequence(['clean'], ['assemble'], ['toolkit'], ['nodemon'], () => {
 			gulp.start('serve');
 			done();
 		});
 	} else {
-		runSequence(['clean'], ['assemble'], () => {
+		runSequence(['clean'], ['assemble'], ['toolkit'], () => {
 			done();
 		});
 	}

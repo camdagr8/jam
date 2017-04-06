@@ -41,7 +41,13 @@ exports.all = (req, res) => {
 		qry.limit(1000);
 		return qry.find();
 	}).then(function (content) {
-		return Parse.Object.destroyAll(content, {useMasterKey: true});
+        return Parse.Object.destroyAll(content, {useMasterKey: true});
+    }).then(function () {
+        let qry = new Parse.Query('Template');
+        qry.limit(1000);
+        return qry.find();
+    }).then(function (templates) {
+        return Parse.Object.destroyAll(templates, {useMasterKey: true});
 	}).then(function () {
 		res.redirect('/install');
 	});
