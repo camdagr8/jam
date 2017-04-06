@@ -60,33 +60,6 @@ const template_post = (request, response) => {
 
 const template_before_save = (request, response) => {
 
-    // Format metabox value
-    let metabox = request.object.get('metabox');
-    if (typeof metabox !== 'undefined') {
-
-        if (!_.isArray(metabox)) {
-            let names    = metabox.name;
-            let types    = metabox.type;
-            let ids      = metabox.id;
-            let lbls     = metabox.label;
-            let vals     = metabox.value;
-
-            if (!_.isArray(names)) { names = [names]; }
-            if (!_.isArray(types)) { types = [types]; }
-            if (!_.isArray(ids)) { ids = [ids]; }
-            if (!_.isArray(lbls)) { lbls = [lbls]; }
-            if (!_.isArray(vals)) { vals = [vals]; }
-
-            let obj_arr = [];
-            for (let i = 0; i < names.length; i++) {
-                let obj = {name: names[i], type: types[i], id: ids[i], label: lbls[i], value: vals[i]};
-                obj_arr.push(obj);
-            }
-
-            request.object.set('metabox', obj_arr);
-        }
-    }
-
     let usr = request.user || jam.currentuser;
     if (usr) {
         request.object.set('creator', usr);

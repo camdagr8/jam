@@ -1,0 +1,220 @@
+[data-uploader] {
+    position       : relative;
+    height         : px2rem(250);
+    cursor         : pointer;
+    user-select    : none;
+
+    &:before {
+        content           : "";
+        position          : absolute;
+        top               : px2rem($s);
+        left              : px2rem($s);
+        width             : calc(100% - #{px2rem($s)} * 2);
+        height            : calc(100% - #{px2rem($s)} * 2);
+        pointer-events    : none;
+        border            : 4px dashed $gray-lighter;
+    }
+
+    label,
+    .label {
+        position          : absolute;
+        top               : 50%;
+        left              : 50%;
+        width             : 80%;
+        margin-top        : px2rem(-20);
+        text-align        : center;
+        font-size         : px2rem($m);
+        font-weight       : 400;
+        font-family       : 'Raleway', sans-serif;
+        color             : $gray-light;
+        pointer-events    : none;
+        transform         : translate(-50%, -50%);
+    }
+
+    .btn-library {
+        position     : absolute;
+        left         : 50%;
+        bottom       : px2rem(50);
+        transform    : translateX(-50%);
+    }
+}
+
+.upload-item {
+    min-height      : px2rem(152);
+    padding-left    : px2rem(162);
+    overflow        : hidden;
+
+    .upload-image {
+        position         : absolute;
+        top              : 0;
+        left             : 0;
+        width            : px2rem(152);
+        height           : px2rem(152);
+        overflow         : hidden;
+        border-right     : 1px solid $gray-lighter;
+        border-bottom    : 1px solid $gray-lighter;
+
+        img {
+            position     : absolute;
+            top          : 50%;
+            left         : 50%;
+            width        : auto;
+            height       : 100%;
+            opacity      : .5;
+            transform    : translate(-50%, -50%);
+        }
+    }
+
+    .upload-meta {
+        width: 100%;
+
+        .form-group {
+            margin-bottom: px2rem(10);
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .btn-edit {
+        display             : none;
+        background-color    : rgba(255, 255, 255, 0.90);
+        color               : $gray-light;
+        position            : absolute;
+        top                 : 0;
+        left                : 0;
+        width               : 100%;
+        height              : 100%;
+        opacity             : 0;
+        border-radius       : 0;
+
+        i {
+            font-size: px2rem($m);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .progress {
+        position    : absolute;
+        bottom      : 0;
+        left        : 0;
+        width       : 100%;
+        height      : px2rem(8);
+        display     : none;
+
+        &, .progress-bar { border-radius: 0; }
+    }
+
+    &.dz-processing {
+        .progress { display: block; }
+    }
+
+    &.dz-success,
+    &.dz-complete {
+        .btn-edit {
+            display: block;
+        }
+
+        .upload-image img {
+            opacity: 1;
+        }
+    }
+}
+
+[data-upload-remove] {
+    margin: 0;
+}
+
+#adminMediaLibrary-modal {
+    .modal-tiles {
+        min-height         : px2rem(400);
+        display            : flex;
+        justify-content    : center;
+        align-items        : flex-start;
+        padding-right      : px2rem($l);
+        flex-wrap          : wrap;
+
+        * > { flex-grow: 0; }
+    }
+
+    .modal-loading {
+        width        : px2rem(100);
+        height       : px2rem(100);
+        position     : absolute;
+        top          : 50%;
+        left         : 50%;
+        transform    : translate(-50%, -50%);
+    }
+
+    .tile {
+        position         : relative;
+        width            : px2rem(150);
+        height           : px2rem(150);
+        overflow         : hidden;
+        cursor           : pointer;
+        margin-bottom    : px2rem($m);
+        border-radius    : 2px;
+        user-select      : none;
+        border           : 1px solid $gray-lighter;
+
+        &:not(first-child) {
+            margin-left: px2rem($l);
+        }
+
+        &:hover {
+            &:after {
+                content     : "";
+                top         : 0;
+                left        : 0;
+                right       : 0;
+                bottom      : 0;
+                opacity     : 0.5;
+                position    : absolute;
+                border      : 4px solid $brand-info;
+            }
+        }
+
+        &.checked,
+        &.checked:hover {
+            &:after {
+                content     : "";
+                top         : 0;
+                left        : 0;
+                right       : 0;
+                bottom      : 0;
+                opacity     : 1;
+                position    : absolute;
+                border      : 4px solid $brand-primary;
+            }
+
+            .btn-tr { display: block; }
+        }
+
+        .btn-tr {
+            height: px2rem(30);
+            display: none;
+            i {
+                line-height: 1.5;
+            }
+        }
+
+        img {
+            position          : absolute;
+            top               : 50%;
+            left              : 50%;
+            height            : 100%;
+            width             : auto;
+            pointer-events    : none;
+            transform         : translate(-50%, -50%);
+        }
+
+        input {
+            display: none;
+        }
+    }
+}
+

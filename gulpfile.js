@@ -48,9 +48,20 @@ const config = {
     },
 	styles: {
 		dest	: 'src/public/assets/css',
-		src		: 'src/public/src/css/style.scss',
+		src		: 'src/public/src/css/*.scss',
 		watch	: 'src/public/src/css/**/*.scss'
 	},
+	toolkit: {
+	    dest    : 'src/public/assets/toolkit',
+        src     : [
+            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**}',
+            'toolkit/dist/assets/toolkit/**/*'
+        ],
+        watch   : [
+            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**/*}',
+            'toolkit/dist/assets/toolkit/**/*'
+        ]
+    },
 	build: {
 		src: [
 			'*.*',
@@ -122,8 +133,21 @@ gulp.task('scripts', (done) => {
 });
 
 
+// toolkit build out to jam public folder
+gulp.task('toolkit', (done) => {
+    if (!config.hasOwnProperty('toolkit')) { done(); return; }
+
+    del.sync([config.toolkit.dest]);
+
+    gulp.src(config.toolkit.src)
+    .pipe(gulp.dest(config.toolkit.dest));
+
+    done();
+});
+
+
 // assemble
-gulp.task('assemble', ['styles', 'scripts'], () => {
+gulp.task('assemble', ['toolkit', 'styles', 'scripts'], () => {
 	return gulp.src(config.build.src)
 	.pipe(gulp.dest(config.dest));
 });
@@ -167,6 +191,9 @@ gulp.task('serve', (done) => {
 
 	gulp.task('scripts:watch', ['scripts'], browserSync.reload);
 	gulp.watch([config.scripts.watch], ['scripts:watch']);
+
+	gulp.task('toolkit:watch', ['toolkit']);
+	gulp.watch([config.toolkit.watch], ['toolkit:watch']);
 
 	gulp.watch(config.build.watch, watcher);
 

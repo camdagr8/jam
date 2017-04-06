@@ -1,0 +1,57 @@
+.btn {
+  position: relative;
+  &:hover {
+    cursor: pointer;
+  }
+
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    z-index: 1000;
+  }
+
+    &-clear {
+        @extend .btn-secondary;
+        border: none;
+        &, &:hover { background-color: transparent; }
+
+        i {
+            line-height: 1.5;
+        }
+    }
+    &-outline-clear {
+        @extend .btn-outline-secondary;
+        i {
+            line-height: 1.5;
+        }
+    }
+}
+
+.btn-tr,
+.btn-rt {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.btn-br,
+.btn-rb {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.btn-tl,
+.btn-lt {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.btn-bl,
+.btn-lb {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}

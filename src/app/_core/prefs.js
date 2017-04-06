@@ -26,7 +26,8 @@ module.exports = (req, res, next) => {
         {name: 'Object',        value: 'OBJECT'},
         {name: 'Array',         value: 'ARRAY'},
         {name: 'Checkbox',      value: 'CHECKBOX'},
-        {name: 'Radio',         value: 'RADIO'}
+        {name: 'Radio',         value: 'RADIO'},
+        {name: 'Upload',        value: 'UPLOAD'}
     ];
     jam['pages']             = [];
     jam['plugin']            = {};

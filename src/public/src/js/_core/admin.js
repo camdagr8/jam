@@ -10,6 +10,7 @@ const hbs              = require('handlebars');
 const slugify          = require('slugify');
 const beautify         = require('js-beautify').js_beautify;
 const beautify_html    = require('js-beautify').html;
+const log              = console.log;
 
 $(function () {
 
@@ -31,7 +32,13 @@ $(function () {
         let input = {};
         if ($(this).data('input')) {
             $(this).parents().find($(this).data('input')).each(function () {
-                input[$(this).attr('name')] = $(this).val();
+                if ($(this).is('input:checkbox') || $(this).is('input:radio')) {
+                    if ($(this).is(':checked')) {
+                        input[$(this).attr('name')] = $(this).val();
+                    }
+                } else {
+                    input[$(this).attr('name')] = $(this).val();
+                }
 
                 if ($(this).is('input:text') || $(this).is('textarea')) {
                     $(this).val('');
@@ -39,13 +46,12 @@ $(function () {
             });
         }
 
-
         let src = $(c).html();
         let tmp = hbs.compile(src);
         let trg = $(t);
         let elm = $(tmp(input)).appendTo(trg);
 
-        $(this).trigger('clone', [elm]);
+        $(this).trigger('clone', [elm, input]);
     };
 
     const hide_alert = (delay = 0, target = '#admin-alert') => {
@@ -81,23 +87,38 @@ $(function () {
         }).css('opacity', 1);
     };
 
-    const parse_data = {
-        page: (data) => {
+    const load_attachments = (boxes) => {
+        boxes.forEach((box) => {
+            let dz    = box.element.find('[data-uploader]');
+            dz        = (dz.length > 0) ? dz[0] : {};
+            dz        = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
 
-            // Status: Publish
-            if (data.hasOwnProperty('publish')) {
-                data.status = data.publish;
-                delete data.publish;
+            if (!dz) { return; }
+
+            if (box['files']) {
+                box.files = _.compact(box.files);
+                box.files.forEach((item) => {
+                    let narr = item.url.split('_');
+                    narr.shift();
+
+                    let file                      = {};
+                    file['name']                  = narr.join('_');
+                    file['size']                  = 12345;
+                    file['object']                = item;
+                    file['file']                  = item.file;
+                    file['object']['dz']          = dz;
+                    file['object']['objectId']    = item.file;
+
+                    dz.emit('addedfile', file);
+                });
             }
+        });
+    };
 
-            // Status: Unpublish
-            if (data.hasOwnProperty('unpublish')) {
-                if (data.unpublish === 'delete') {
-                    data.status = 'delete';
-                    delete data.unpublish;
-                }
-
-                delete data.unpublish;
+    const parse_data = {
+        meta: (data) => {
+            if (!data.hasOwnProperty('meta')) {
+                data['meta'] = {};
             }
 
             // Meta:
@@ -129,21 +150,124 @@ $(function () {
                 }
             }
 
+            // Attachments:
+            let aobj = {};
+            let attachmentBlocks = $('[data-attachments]');
+            attachmentBlocks.each(function () {
+                let metaProperty = $(this).data('attachments');
+                aobj[metaProperty] = [];
+
+                // Attachment items
+                $(this).find('.upload-item').each(function () {
+                    let obj = {title: null, caption: null, file: null, url: null};
+
+                    let titleElm = $(this).find('[data-title]');
+                    if (titleElm.length > 0) {
+                        obj['title'] = titleElm.val();
+                    }
+
+                    let captionElm = $(this).find('[data-caption]');
+                    if (captionElm.length > 0) {
+                        obj['caption'] = captionElm.val();
+                    }
+
+                    let idElm = $(this).find('[data-id]');
+                    if (idElm.length > 0) {
+                        obj['file'] = idElm.data('id');
+                    }
+
+                    let urlElm = $(this).find('[data-url]');
+                    if (urlElm.length > 0) {
+                        obj['url'] = urlElm.data('url');
+                    }
+
+                    _.keys(obj).forEach((k) => {
+                        let v = obj[k];
+                        if (typeof v === 'string') {
+                            if (v.length < 1) { obj[k] = null; }
+                        }
+                    });
+
+                    aobj[metaProperty].push(obj);
+                });
+            });
+
+            data['meta']['attachments'] = aobj;
+
+            return data;
+        },
+
+        page: (data) => {
+
+            // Status: Publish
+            if (data.hasOwnProperty('publish')) {
+                data.status = data.publish;
+                delete data.publish;
+            }
+
+            // Status: Unpublish
+            if (data.hasOwnProperty('unpublish')) {
+                if (data.unpublish === 'delete') {
+                    data.status = 'delete';
+                    delete data.unpublish;
+                }
+
+                delete data.unpublish;
+            }
+
+            data = parse_data.meta(data);
+
             return data;
         },
 
         template: (data) => {
 
             // Remove unecessary fields
-            let flds = ['metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue'];
+            let flds = [
+                'metaboxId', 'metaboxName', 'metaboxType', 'type', 'metaboxLabel', 'metaboxValue',
+                'metabox[id]', 'metabox[name]', 'metabox[label]', 'metabox[type]', 'metabox[value]'
+            ];
             flds.forEach((fld) => {
                 if (data.hasOwnProperty(fld)) {
                     delete data[fld];
                 }
             });
 
+            let mbox = [];
+            $('#admin-template-metaboxes .list-group-item').each(function () {
+                let obj = {};
+                $(this).find('input').each(function () {
+                    let n  = $(this).attr('name');
+                    n      = n.replace(/metabox\[(.*?)\]/g, "$1");
+                    obj[n] = $(this).val() || null;
+                });
+                mbox.push(obj);
+            });
+            data['metabox'] = mbox;
+
             return data;
         }
+    };
+
+    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
+        let t = $(target);
+        let a = t.find('.alert');
+        a.removeClass('alert-warning alert-info alert-success alert-danger')
+        a.addClass(cls);
+        a.find('.message').html(message);
+
+        if (delay > 0) {
+            setTimeout(() => {
+                t.stop().slideDown(250)
+            }, delay);
+        } else {
+            t.stop().slideDown(250);
+        }
+    };
+
+    const show_success = (message, delay = 3000, target = '#admin-alert') => {
+        show_msg(message, 'alert-success', 0, target);
+        hide_alert(delay);
     };
 
     const slugit = function (e) {
@@ -190,27 +314,6 @@ $(function () {
 
         s = String(s).toLowerCase();
         $(this).val(s);
-    };
-
-    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
-        let t = $(target);
-        let a = t.find('.alert');
-        a.removeClass('alert-warning alert-info alert-success alert-danger')
-        a.addClass(cls);
-        a.find('.message').html(message);
-
-        if (delay > 0) {
-            setTimeout(() => {
-                t.stop().slideDown(250)
-            }, delay);
-        } else {
-            t.stop().slideDown(250);
-        }
-    };
-
-    const show_success = (message, delay = 3000, target = '#admin-alert') => {
-        show_msg(message, 'alert-success', 0, target);
-        hide_alert(delay);
     };
 
     const validate = {
@@ -433,6 +536,7 @@ $(function () {
 
     // #metabox-clone clone listener
     $(document).on('clone', '#metabox-clone', function (e, elm) {
+
         let name    = elm.find('input.metabox-name');
         let type    = elm.find('input.metabox-type');
         let id      = elm.find('input.metabox-id');
@@ -449,61 +553,6 @@ $(function () {
             elm.remove();
             return;
         }
-
-        //let n = slugify(String(name.val()).toLowerCase(), '_');
-
-/*
-        if (type.val() !== 'CHECKBOX' && type.val() !== 'RADIO') {
-            if (String(name.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-            if (String(type.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-            if (String(id.val()).length < 1) {
-                elm.remove();
-                return;
-            }
-
-            // Test if the id is already used
-            let dup = 0;
-            $('.metabox-id').each(function () {
-                if (dup > 1) {
-                    return;
-                }
-                let t = $(this).val();
-                t     = slugify(t, '_');
-                t     = String(t).toLowerCase();
-                dup += (t === v) ? 1 : 0;
-                if (dup > 1) {
-                    elm.remove();
-                }
-            });
-
-            // Test if the name is already used
-
-            dup = 0;
-            $('.metabox-name').each(function () {
-                if (dup > 1) {
-                    return;
-                }
-                let t = $(this).val();
-                t     = slugify(t, '_');
-                t     = String(t).toLowerCase();
-                dup += (t === n) ? 1 : 0;
-                if (dup > 1) {
-                    elm.remove();
-                }
-            });
-
-            if (dup > 1) {
-                elm.remove();
-                return;
-            }
-        }
-*/
 
         id.val(slugify(String(id.val()).toLowerCase(), '_'));
 
@@ -590,10 +639,6 @@ $(function () {
 
         if (parse_data.hasOwnProperty(data.type)) {
             data = parse_data[data.type](data);
-
-            if (!data['metabox']) {
-                data['metabox'] = [];
-            }
 
             if (typeof data === 'string') {
                 show_msg(data);
@@ -734,8 +779,11 @@ $(function () {
             'NUMBER'      : widgets,
             'OBJECT'      : blocks,
             'RADIO'       : widgets,
-            'TEXT'        : blocks
+            'TEXT'        : blocks,
+            'UPLOAD'      : blocks
         };
+
+        let attachments = [];
 
         // Draw metaboxes
         d.metabox.forEach((box, i) => {
@@ -751,7 +799,6 @@ $(function () {
             }
 
             if (box.hasOwnProperty('value')) {
-
                 if (!_.isArray(box['val'])) {
                     box['val'] = [box.val];
                 }
@@ -767,13 +814,15 @@ $(function () {
             let tmp      = hbs.compile($('#metabox-hbs-' + box.type).html());
             let elm      = $(tmp(box)).appendTo(cont).hide();
 
-            if (group.length > 0) {
-                let t    = ['OBJECT', 'ARRAY', 'HTML'];
-                let e    = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
-                let g    = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
+            if (box.type !== 'UPLOAD') {
+                if (group.length > 0) {
+                    let t = ['OBJECT', 'ARRAY', 'HTML'];
+                    let e = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
+                    let g = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
 
-                if (e.length > 0 && g.length > 0) {
-                    elm = e.appendTo(g);
+                    if (e.length > 0 && g.length > 0) {
+                        elm = e.appendTo(g);
+                    }
                 }
             }
 
@@ -782,10 +831,22 @@ $(function () {
                 init_wysiwyg(txt);
             }
 
+            if (box.type === 'UPLOAD') {
+                if (window.meta['attachments']) {
+                    if (window.meta['attachments'][box.group]) {
+                        box['val'] = (box.type === 'UPLOAD') ? window.meta['attachments'][box.group] : box.val;
+                    }
+                }
+
+                attachments.push({element: elm, files: box.val});
+            }
+
             elm.find('[type="checkbox"]').change();
             elm.find('[type="radio"]').change();
             elm.show();
         });
+
+        setTimeout(load_attachments, 250, attachments);
     });
 
     // [data-toggle="slide-toggle"] click listener
@@ -806,11 +867,21 @@ $(function () {
             });
         }
 
+        let exp = $(this).prop('aria-expanded');
+        let state = Boolean(exp === true || exp === 'true');
+
         if (trg !== null) {
             trg.slideToggle(250);
+            trg.prop('aria-expanded', !state);
+            trg.attr('aria-expanded', !state);
         }
+
+        $(this).prop('aria-expanded', !state);
+        $(this).attr('aria-expanded', !state);
+
     });
 
+    // [data-toggle="buttons"] click listener for toggle button groups
     $(document).on('click', '[data-toggle="buttons"] label', function (e) {
         let chk = $(e.target).find('input');
         if (chk.length > 0) {
@@ -830,7 +901,6 @@ $(function () {
             chk.change();
         }
     });
-
 
     // Status toggles
     setTimeout(function () {

@@ -95,7 +95,7 @@
                                 <span class="input-group-addon bgc-gray-lightest">Label:</span>
                                 <input type="text" class="form-control metabox-id" name="metabox[label]" value="<%=item['label']%>" />
                                 <span class="input-group-btn">
-                                    <button class="btn btn-secondary" type="button" style="width: 50px;" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
+                                    <button class="btn btn-secondary" type="button" style="width: 50px;" aria-expanded="false" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
                                 </span>
                                 <div class="input-group-btn">
                                     <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
@@ -110,7 +110,7 @@
                                 </span>
                             </div>
 
-                            <div class="slide-toggle">
+                            <div class="slide-toggle" aria-expanded="false">
                                 <div class="input-group mt-m">
                                     <span class="input-group-addon bgc-white text-right" style="width: 95px;">Key:</span>
                                     <input type="text" class="form-control metabox-id" name="metabox[id]" value="<%=item['id']%>" />
@@ -156,7 +156,7 @@
             <span class="input-group-addon bgc-gray-lightest">Label:</span>
             <input type="text" class="form-control metabox-label" name="metabox[label]" value="{{metaboxLabel}}" />
             <span class="input-group-btn">
-                <button class="btn btn-secondary" type="button" style="width: 50px;" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
+                <button class="btn btn-secondary" type="button" style="width: 50px;" aria-expanded="false" data-toggle="slide-toggle" data-target="parents > .slide-toggle"><i class="lnr-cog"></i></button>
             </span>
             <div class="input-group-btn">
                 <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
@@ -171,7 +171,7 @@
             </span>
         </div>
 
-        <div class="slide-toggle">
+        <div class="slide-toggle" aria-expanded="false">
             <div class="input-group mt-m">
                 <span class="input-group-addon bgc-white text-right" style="width: 95px;">Key:</span>
                 <input type="text" class="form-control metabox-id" name="metabox[id]" value="{{metaboxId}}" />

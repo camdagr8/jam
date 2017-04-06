@@ -1,0 +1,50 @@
+---
+{
+  "atomic": "organism",
+  "dna": "uploader-metabox"
+}
+---
+<section class="col-5">
+    <div data-dna="uploader-metabox" class="card card-shadow bgc-white bd-0 metabox-\{{type}}" data-metabox="\{{group}}">
+        <h6 class="card-header">
+            <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_\{{type}}_{{i}}" aria-expanded="true">
+                <i class="lnr-chevron-up"></i>
+            </button>
+            <i class="ico lnr-picture"></i> \{{name}}
+        </h6>
+        <div class="collapse show" id="collapse_\{{type}}_\{{i}}">
+            <div data-uploader>
+                <span class="label">
+                    Drag &amp; Drop or Click to Upload
+                </span>
+                <button type="button" class="btn btn-outline-primary btn-library">Select from Media Library</button>
+            </div>
+            <ul class="list-group list-group-flush" data-sortable>
+                <li class="list-group-item upload-item">
+                    <div class="gu-handle right"><i class="lnr-menu"></i></div>
+                    <div class="upload-image">
+                        <img src="/assets/toolkit/images/fpo/2x1.png" title="click to edit"/>
+                        <button type="button" class="btn btn-clear btn-edit">
+                            <i class="lnr-pencil"></i>
+                            <div class="text-uppercase small">Edit</div>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-tr rounded-circle bd-0" data-upload-remove>
+                            <i class="lnr-close"></i>
+                        </button>
+                        <div class="progress" data-dz-uploadprogress>
+                            <div class="progress-bar progress-bar-animated progress-bar-striped bg-success" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="upload-meta">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="title" placeholder="title" autocomplete="off" />
+                        </div>
+                        <div class="form-group">
+                            <textarea type="text" class="form-control" name="caption" placeholder="caption" rows="1" autocomplete="off"></textarea>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
