@@ -8,7 +8,8 @@ Parse.Cloud.define('file_get', (request, response) => {
     }
 
     let skip = request.params.hasOwnProperty('skip') ? request.params.skip : 0;
-    let qry = core.query({table: 'File', order: 'descending', orderBy: 'createdAt', limit: 1000, skip: skip});
+    let limit = request.params.hasOwnProperty('limit') ? request.params.limit : 1000;
+    let qry = core.query({table: 'File', order: 'descending', orderBy: 'createdAt', limit: limit, skip: skip});
 
     if (request.params.hasOwnProperty('name')) {
         qry.equalTo('name', request.params.name);
@@ -22,13 +23,10 @@ Parse.Cloud.define('file_get', (request, response) => {
         qry.containedIn('extension', exts);
     }
 
-/*
-
     if (request.params.hasOwnProperty('date')) {
-        let d = new Date(request.params.data);
+        let d = new Date(request.params.date);
         qry.lessThan('createdAt', d);
     }
-*/
 
     qry.find().then((results) => {
         response.success(results);

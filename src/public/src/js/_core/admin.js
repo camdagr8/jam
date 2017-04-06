@@ -10,6 +10,7 @@ const hbs              = require('handlebars');
 const slugify          = require('slugify');
 const beautify         = require('js-beautify').js_beautify;
 const beautify_html    = require('js-beautify').html;
+const log              = console.log;
 
 $(function () {
 
@@ -86,26 +87,36 @@ $(function () {
         }).css('opacity', 1);
     };
 
+    const load_attachments = (boxes) => {
+        boxes.forEach((box) => {
+            let dz    = box.element.find('[data-uploader]');
+            dz        = (dz.length > 0) ? dz[0] : {};
+            dz        = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
+
+            if (!dz) { return; }
+
+            if (box['files']) {
+                box.files = _.compact(box.files);
+                box.files.forEach((item) => {
+                    let narr = item.url.split('_');
+                    narr.shift();
+
+                    let file                      = {};
+                    file['name']                  = narr.join('_');
+                    file['size']                  = 12345;
+                    file['object']                = item;
+                    file['file']                  = item.file;
+                    file['object']['dz']          = dz;
+                    file['object']['objectId']    = item.file;
+
+                    dz.emit('addedfile', file);
+                });
+            }
+        });
+    };
+
     const parse_data = {
-        page: (data) => {
-
-            // Status: Publish
-            if (data.hasOwnProperty('publish')) {
-                data.status = data.publish;
-                delete data.publish;
-            }
-
-            // Status: Unpublish
-            if (data.hasOwnProperty('unpublish')) {
-                if (data.unpublish === 'delete') {
-                    data.status = 'delete';
-                    delete data.unpublish;
-                }
-
-                delete data.unpublish;
-            }
-
-
+        meta: (data) => {
             if (!data.hasOwnProperty('meta')) {
                 data['meta'] = {};
             }
@@ -138,6 +149,73 @@ $(function () {
                     }
                 }
             }
+
+            // Attachments:
+            let aobj = {};
+            let attachmentBlocks = $('[data-attachments]');
+            attachmentBlocks.each(function () {
+                let metaProperty = $(this).data('attachments');
+                aobj[metaProperty] = [];
+
+                // Attachment items
+                $(this).find('.upload-item').each(function () {
+                    let obj = {title: null, caption: null, file: null, url: null};
+
+                    let titleElm = $(this).find('[data-title]');
+                    if (titleElm.length > 0) {
+                        obj['title'] = titleElm.val();
+                    }
+
+                    let captionElm = $(this).find('[data-caption]');
+                    if (captionElm.length > 0) {
+                        obj['caption'] = captionElm.val();
+                    }
+
+                    let idElm = $(this).find('[data-id]');
+                    if (idElm.length > 0) {
+                        obj['file'] = idElm.data('id');
+                    }
+
+                    let urlElm = $(this).find('[data-url]');
+                    if (urlElm.length > 0) {
+                        obj['url'] = urlElm.data('url');
+                    }
+
+                    _.keys(obj).forEach((k) => {
+                        let v = obj[k];
+                        if (typeof v === 'string') {
+                            if (v.length < 1) { obj[k] = null; }
+                        }
+                    });
+
+                    aobj[metaProperty].push(obj);
+                });
+            });
+
+            data['meta']['attachments'] = aobj;
+
+            return data;
+        },
+
+        page: (data) => {
+
+            // Status: Publish
+            if (data.hasOwnProperty('publish')) {
+                data.status = data.publish;
+                delete data.publish;
+            }
+
+            // Status: Unpublish
+            if (data.hasOwnProperty('unpublish')) {
+                if (data.unpublish === 'delete') {
+                    data.status = 'delete';
+                    delete data.unpublish;
+                }
+
+                delete data.unpublish;
+            }
+
+            data = parse_data.meta(data);
 
             return data;
         },
@@ -705,6 +783,8 @@ $(function () {
             'UPLOAD'      : blocks
         };
 
+        let attachments = [];
+
         // Draw metaboxes
         d.metabox.forEach((box, i) => {
             box['i']        = i;
@@ -734,13 +814,15 @@ $(function () {
             let tmp      = hbs.compile($('#metabox-hbs-' + box.type).html());
             let elm      = $(tmp(box)).appendTo(cont).hide();
 
-            if (group.length > 0) {
-                let t    = ['OBJECT', 'ARRAY', 'HTML'];
-                let e    = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
-                let g    = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
+            if (box.type !== 'UPLOAD') {
+                if (group.length > 0) {
+                    let t = ['OBJECT', 'ARRAY', 'HTML'];
+                    let e = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
+                    let g = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
 
-                if (e.length > 0 && g.length > 0) {
-                    elm = e.appendTo(g);
+                    if (e.length > 0 && g.length > 0) {
+                        elm = e.appendTo(g);
+                    }
                 }
             }
 
@@ -749,10 +831,22 @@ $(function () {
                 init_wysiwyg(txt);
             }
 
+            if (box.type === 'UPLOAD') {
+                if (window.meta['attachments']) {
+                    if (window.meta['attachments'][box.group]) {
+                        box['val'] = (box.type === 'UPLOAD') ? window.meta['attachments'][box.group] : box.val;
+                    }
+                }
+
+                attachments.push({element: elm, files: box.val});
+            }
+
             elm.find('[type="checkbox"]').change();
             elm.find('[type="radio"]').change();
             elm.show();
         });
+
+        setTimeout(load_attachments, 250, attachments);
     });
 
     // [data-toggle="slide-toggle"] click listener
