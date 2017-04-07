@@ -3,15 +3,64 @@
 <head>
     <% include ../partials/head %>
 </head>
-<body>
 
-    <% include ../partials/header %>
+<body class="home">
+<% include ../partials/header %>
+
+<% if (rec['meta']['attachments']['hero']) { %>
+<% let hero = rec.meta.attachments.hero[0]; %>
+<section class="hero hero-home" style="background-image: url('<%=hero.url%>');">
+    <header>
+        <h1><%=hero.title%></h1>
+    </header>
+</section>
+<% } %>
+
+<main role="main" class="bgc-white">
 
     <% if (rec['meta']['body']) { %>
-    <%-core.hbsParse(rec.meta.body)%>
+    <section class="container home-about">
+        <%-rec.meta.body-%>
+    </section>
     <% } %>
 
-    <% include ../partials/footer %>
+    <% if (rec['meta']['attachments']['gallery']) { %>
+    <section class="home-tiles">
+        <% rec.meta.attachments.gallery.forEach((item) => { %>
+        <a class="tile" href="javascript:void(0);" style="background-image: url('<%=item.url%>');">
+        </a>
+        <% }); %>
+    </section>
+    <% } %>
 
+    <% if (rec['meta']['attachments']['features'] && rec['meta']['links']) { %>
+    <section class="container home-articles pt-xxxl pb-xxxl">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <h2 class="heading-3 mb-m">Features</h2>
+            </div>
+        </div>
+        <div class="row">
+            <% rec.meta.attachments.features.forEach((item, i) => { let link = rec.meta.links[i]; %>
+            <div class="col-xs-12 col-lg-4">
+                <div class="card card-article mb-m">
+                    <img class="card-img-top" src="<%=item.url%>" alt="<%=item.title%>">
+                    <div class="card-block">
+                        <h5 class="card-title"><a href="<%-link%>"><%=item.title%></a></h5>
+                        <p class="card-text"><%-core.hbsParse(item.caption)%></p>
+                    </div>
+                    <div class="card-footer text-right">
+                        <a href="<%-link%>">Read More <i class="lnr-arrow-right mt-xxs ml-xs float-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </section>
+    <% } %>
+
+</main>
+
+<% include ../partials/footer %>
 </body>
 </html>

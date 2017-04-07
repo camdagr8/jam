@@ -1,13 +1,32 @@
-<header class="header header-admin">
-	<nav class="navbar navbar-toggleable-md navbar-inverse bg-translucent">
-		<a class="navbar-brand" href="<%=baseurl%>"><img src="<%=baseurl%>/assets/images/logo.jpg" class="logo rounded-circle" /> Jam</a>
-		<button class="navbar-toggler navbar-toggler-right bd-0" type="button" data-target="#header-toggle" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle navigation">
-			<i class="lnr-menu"></i>
-		</button>
+<header class="header header-default">
+    <nav class="navbar navbar-toggleable-md  navbar-inverse bg-translucent bd-b-1 bdc-inverse">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-		<div class="collapse navbar-collapse" id="header-toggle">
-			<ul class="navbar-nav ml-auto mt-2 mt-md-0">
-			</ul>
-		</div>
-	</nav>
+        <a class="navbar-brand" href="<%=baseurl%>">Jam</a>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <ul class="navbar-nav ml-auto mt-2 mt-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About Us <span class="sr-only">About Us</span></a>
+                </li>
+
+                <% if (currentuser) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Dashboard <span class="sr-only">Jam Admin</span></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="lnr-user"></i> Sign Out<span class="sr-only">Sign Out</span></a>
+                </li>
+
+                <% } else { %>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/login"><i class="lnr-user"></i> Sign In</span> <span class="sr-only"></a>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
 </header>

@@ -63,6 +63,14 @@
             opacity      : .5;
             transform    : translate(-50%, -50%);
         }
+
+        .btn-tr {
+            height             : px2rem(30);
+            margin             : .5px;
+            i {
+                line-height    : 1.5;
+            }
+        }
     }
 
     .upload-meta {

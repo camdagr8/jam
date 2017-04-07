@@ -40,9 +40,10 @@ $(function () {
      * Wysiwyg
      */
     $('[data-wysiwyg]').trumbowyg({
-        autogrow:           true,
-        removeformatPasted: true,
-        btns:               [
+        autogrow              : true,
+        removeformatPasted    : true,
+        semantic              : false,
+        btns                  : [
             ['viewHTML'],
             ['formatting'],
             'btnGrp-semantic',

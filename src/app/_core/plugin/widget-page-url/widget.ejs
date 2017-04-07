@@ -8,10 +8,8 @@
 
 <div id="admin-routes-req" class="input-group">
 	<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-link2"></i></span>
-	<% if (rec['routes']) { %>
-		<input type="text" class="form-control pl-s" placeholder="/page-url" name="routes" required data-slug="blur" autocapitalize="off" autocomplete="off" autocorrect="off" value="<%=rec.routes[0]%>" />
-
-		<% rec.routes.shift(); %>
+	<% if (rec['routes']) { let r = _.clone(rec.routes); %>
+		<input type="text" class="form-control pl-s" placeholder="/page-url" name="routes" required data-slug="blur" autocapitalize="off" autocomplete="off" autocorrect="off" value="<%=r[0]%>" />
 	<% } else { %>
 	<input type="text" class="form-control pl-s" placeholder="/page-url" name="routes" required data-slug="blur" autocapitalize="off" autocomplete="off" autocorrect="off" />
 	<% } %>
@@ -22,15 +20,13 @@
     </span>
 </div>
 <div id="admin-routes" class="mb-l">
-	<% if (rec['routes']) { %>
-
-	<% rec.routes.forEach((route) => { %>
+<% if ((rec['routes'])) { let r = _.clone(rec.routes); r.shift(); -%>
+	<% r.forEach((route) => { %>
 	<div class="input-group mt-xs">
 		<button class="btn btn-secondary bd-r-0" type="button" data-target=".input-group" data-remove style="width: 46px;"><i class="lnr-cross"></i></button>
 		<input type="text" class="form-control pl-s" placeholder="/page-url" autocapitalize="off" autocomplete="off" autocorrect="off" name="routes" data-slug="blur" value="<%=route%>" />
 		<button class="btn btn-primary bd-l-0" type="button" data-clone="#route-hbs" data-target="#admin-routes" style="width: 46px;"><i class="lnr-plus"></i></button>
 	</div>
 	<% }); %>
-
-	<% } %>
+<% } -%>
 </div>

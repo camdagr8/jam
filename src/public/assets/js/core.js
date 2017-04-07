@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 45);
+/******/ 	return __webpack_require__(__webpack_require__.s = 46);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -312,11 +312,11 @@ var _exception = __webpack_require__(1);
 
 var _exception2 = _interopRequireDefault(_exception);
 
-var _helpers = __webpack_require__(30);
+var _helpers = __webpack_require__(31);
 
-var _decorators = __webpack_require__(28);
+var _decorators = __webpack_require__(29);
 
-var _logger = __webpack_require__(38);
+var _logger = __webpack_require__(39);
 
 var _logger2 = _interopRequireDefault(_logger);
 
@@ -5340,9 +5340,9 @@ module.exports = exports['default'];
 
 // var local = handlebars.create();
 
-var handlebars = __webpack_require__(18)['default'];
+var handlebars = __webpack_require__(19)['default'];
 
-var printer = __webpack_require__(26);
+var printer = __webpack_require__(27);
 handlebars.PrintVisitor = printer.PrintVisitor;
 handlebars.print = printer.print;
 
@@ -5350,7 +5350,7 @@ module.exports = handlebars;
 
 // Publish a Node.js require() handler for .handlebars and .hbs files
 function extension(module, filename) {
-  var fs = __webpack_require__(43);
+  var fs = __webpack_require__(44);
   var templateString = fs.readFileSync(filename, 'utf8');
   module.exports = handlebars.compile(templateString);
 }
@@ -5432,7 +5432,7 @@ if (true) {
     !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
         __webpack_require__(6),
         __webpack_require__(5),
-        __webpack_require__(41)
+        __webpack_require__(42)
     ], __WEBPACK_AMD_DEFINE_RESULT__ = function(js_beautify, css_beautify, html_beautify) {
         return get_beautify(js_beautify, css_beautify, html_beautify);
     }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -5460,254 +5460,248 @@ if (true) {
  * Imports
  * -----------------------------------------------------------------------------
  */
+__webpack_require__(17);
+
 var _ = __webpack_require__(8);
-var dz = __webpack_require__(17);
 var hbs = __webpack_require__(11);
 var slugify = __webpack_require__(7);
-//const moment    = require('moment');
 //const Parse    = require('parse');
 
 var log = console.log;
 
-if (typeof Parse !== 'undefined') {
-    Parse.initialize("6SXm59PG", "AORssIwJi5glNIxOo1tB3F9CHO3ysyRHZ6Fe4u2WgA");
-    Parse.serverURL = '/api';
+Parse.initialize("6SXm59PG", "AORssIwJi5glNIxOo1tB3F9CHO3ysyRHZ6Fe4u2WgA");
+Parse.serverURL = '/api';
 
-    var uploader = {
+window.uploader = {
 
-        library: {
-            add: function add(items) {
-                items = _.isArray(items) ? items : [items];
-                var tile = '<label class="tile {{class}}" title="{{name}}" id="media_{{objectId}}" data-type="{{extension}}">\n                    <input type="checkbox" name="img" value="{{objectId}}" {{{checked}}} />\n                    <img src="{{url}}" />\n                    <span class="btn btn-sm btn-primary btn-tr"><i class="lnr-check"></i></span>\n                </label>';
+    library: {
+        add: function add(items) {
+            items = _.isArray(items) ? items : [items];
+            var tile = '<label class="tile {{class}}" title="{{name}}" id="media_{{objectId}}" data-type="{{extension}}">\n                <input type="checkbox" name="img" value="{{objectId}}" {{{checked}}} />\n                <img src="{{url}}" />\n                <span class="btn btn-sm btn-primary btn-tr"><i class="lnr-check"></i></span>\n            </label>';
 
-                var tmp = hbs.compile(tile);
-                var trg = $('#adminMediaLibrary-modal .modal-tiles');
+            var tmp = hbs.compile(tile);
+            var trg = $('#adminMediaLibrary-modal .modal-tiles');
 
-                items.forEach(function (item) {
-                    item = item.toJSON();
-                    item['url'] = item.file.url;
+            items.forEach(function (item) {
+                item = item.toJSON();
+                item['url'] = item.file.url;
 
-                    uploader.library.files[item.objectId] = item;
+                uploader.library.files[item.objectId] = item;
 
-                    if ($('#media_' + item.objectId).length > 0) {
-                        return;
-                    }
-
-                    var d = _.clone(item);
-                    var sel = uploader.library.selected.indexOf(d.objectId);
-                    d['checked'] = sel > -1 ? 'checked="checked"' : null;
-                    d['class'] = d['checked'] !== null ? 'checked' : '';
-
-                    $(tmp(d)).appendTo(trg);
-                });
-            },
-
-            files: {},
-
-            get: function get() {
-                var skip = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-                var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 200;
-                var date = arguments[2];
-
-
-                if (!date) {
-                    date = new Date();
-                    date = date.toISOString();
-                }
-
-                Parse.Cloud.run('file_get', { skip: skip, date: date, limit: limit }).then(function (results) {
-                    $('.modal-loading').hide();
-
-                    uploader.library.add(results);
-
-                    if (results.length >= limit) {
-                        skip += limit;
-
-                        if (skip > 10000) {
-                            skip = 0;
-
-                            var d = _.last(results).get('createdAt');
-                            date = new Date(d);
-                            date = date.toIsoString();
-                        }
-
-                        uploader.library.get(skip, limit, date);
-                    }
-                });
-            },
-
-            selected: []
-        },
-
-        on: {
-            addedfile: function addedfile(file) {
-                var obj = file.hasOwnProperty('object') ? file.object : undefined;
-                if (!obj) {
-                    var narr = String(file.name).toLowerCase().split('.');
-                    var ext = narr.pop();
-                    var name = slugify(narr.join('.')) + '.' + ext;
-                    var pfile = new Parse.File(name, file);
-
-                    pfile.save().then(function (result) {
-                        return Parse.Cloud.run('file_post', { file: result, name: name, extension: ext });
-                    }).catch(function (err) {}).then(function (result) {
-                        file['object'] = result.toJSON();
-                        file.object.url = result.get('file').url();
-
-                        // remove media library tile
-                        $('#media_' + result.id).remove();
-                        uploader.on.addedfile(file);
-                    }).catch(function (err) {});
-                } else {
-                    var upl = _.isArray(obj) ? obj[0] : obj;
-                    upl = typeof upl['toJSON'] === 'function' ? upl.toJSON() : upl;
-
-                    var _dz = void 0;
-                    if (!upl['dz']) {
-                        _dz = $($('#adminMediaLibrary-dz').val());
-                        _dz = _dz.length > 0 ? _dz[0] : {};
-                        _dz = _dz.hasOwnProperty('__uploader') ? _dz.__uploader : null;
-                    } else {
-                        _dz = upl['dz'];
-                    }
-
-                    if (!_dz) {
-                        return;
-                    }
-
-                    _dz.emit('thumbnail', file, upl.url);
-                    _dz.emit("complete", file);
-                }
-            },
-
-            complete: function complete(file) {
-
-                var id = file.hasOwnProperty('object') ? file.object.objectId : null;
-                if (id !== null) {
-
-                    var elm = $(file.previewElement);
-                    elm.attr('id', 'upload_' + id);
-
-                    elm.find('[data-id]').data('id', id);
-                    elm.find('[data-url]').data('url', file.object.url);
-
-                    if (file.object.hasOwnProperty('title')) {
-                        elm.find('[data-title]').val(file.object.title);
-                    }
-
-                    if (file.object.hasOwnProperty('caption')) {
-                        elm.find('[data-caption]').val(file.object.caption);
-                    }
-                }
-            },
-
-            librarySelect: function librarySelect(e) {
-
-                var elm = $(e.target);
-                var id = elm.val();
-
-                if (elm.is(':checked') === true) {
-                    elm.parent().addClass('checked');
-
-                    if ($('#upload_' + id).length > 0) {
-                        return;
-                    }
-
-                    var item = uploader.library.files[id];
-
-                    if (item) {
-                        var dzelm = $($('#adminMediaLibrary-dz').val());
-                        var _dz2 = dzelm.length > 0 ? dzelm[0] : null;
-                        _dz2 = _dz2.hasOwnProperty('__uploader') ? _dz2.__uploader : undefined;
-
-                        if (!_dz2) {
-                            return;
-                        }
-
-                        item['dz'] = _dz2;
-
-                        var file = { name: item.name, size: 12345, object: item };
-                        _dz2.emit('addedfile', file);
-                    }
-                } else {
-                    elm.parent().removeClass('checked');
-                    var u = '#upload_' + id;
-                    if ($(u).length > 0) {
-                        $(u).remove();
-                    }
-                }
-            }
-        }
-    };
-
-    $(function () {
-
-        $('[data-uploader]').each(function () {
-            var id = $(this).attr('id');
-            if (!id) {
-                return;
-            }
-
-            var tmp = $('#metabox-hbs-UPLOAD-ITEM');
-            tmp = tmp.length > 0 ? tmp.html() : '';
-            var previews = $(this).data('previews');
-            var opts = {
-                clickable: true,
-                autoProcessQueue: false,
-                previewTemplate: tmp,
-                previewsContainer: previews,
-                url: 'http://localhost'
-            };
-
-            var me = this;
-            me.__uploader = new dz("#" + id, opts);
-
-            me.__uploader.on('addedfile', function (file) {
-                $('#adminMediaLibrary-dz').val('#' + $(me).attr('id'));
-                uploader.on.addedfile(file);
-            });
-
-            me.__uploader.on('complete', function (file) {
-                uploader.on.complete(file);
-            });
-        });
-
-        setTimeout(function () {
-            $('#adminMediaLibrary-modal').on('show.bs.modal', function (e) {
-                var dz = $(e.relatedTarget).data('dz') || undefined;
-                var target = $(e.relatedTarget).data('container') || undefined;
-
-                if (!target) {
+                if ($('#media_' + item.objectId).length > 0) {
                     return;
                 }
 
-                $('#adminMediaLibrary-container').val(target);
-                $('#adminMediaLibrary-dz').val(dz);
+                var d = _.clone(item);
+                var sel = uploader.library.selected.indexOf(d.objectId);
+                d['checked'] = sel > -1 ? 'checked="checked"' : null;
+                d['class'] = d['checked'] !== null ? 'checked' : '';
 
-                var sel = [];
-                $(target + ' input[data-id]').each(function () {
-                    sel.push($(this).data('id'));
-                });
-
-                $('#adminMediaLibrary-modal .modal-tiles input').each(function () {
-                    var id = $(this).val();
-                    if (sel.indexOf(id) > -1) {
-                        $(this).prop('checked', true);
-                        $(this).parent().addClass('checked');
-                    } else {
-                        $(this).prop('checked', false);
-                        $(this).parent().removeClass('checked');
-                    }
-                });
-
-                uploader.library.selected = sel;
-                uploader.library.get();
+                $(tmp(d)).appendTo(trg);
             });
-        }, 1000);
+        },
 
-        $(document).on('change', '#adminMediaLibrary-modal .modal-tiles input:checkbox', uploader.on.librarySelect);
+        files: {},
+
+        get: function get() {
+            var skip = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 200;
+            var date = arguments[2];
+
+
+            if (!date) {
+                date = new Date();
+                date = date.toISOString();
+            }
+
+            Parse.Cloud.run('file_get', { skip: skip, date: date, limit: limit }).then(function (results) {
+                $('.modal-loading').hide();
+
+                uploader.library.add(results);
+
+                if (results.length >= limit) {
+                    skip += limit;
+
+                    if (skip > 10000) {
+                        skip = 0;
+
+                        var d = _.last(results).get('createdAt');
+                        date = new Date(d);
+                        date = date.toIsoString();
+                    }
+
+                    uploader.library.get(skip, limit, date);
+                }
+            });
+        },
+
+        selected: []
+    },
+
+    on: {
+        addedfile: function addedfile(file) {
+            var obj = file.hasOwnProperty('object') ? file.object : undefined;
+            if (!obj) {
+                var narr = String(file.name).toLowerCase().split('.');
+                var ext = narr.pop();
+                var name = slugify(narr.join('.')) + '.' + ext;
+                var pfile = new Parse.File(name, file);
+
+                pfile.save().then(function (result) {
+                    return Parse.Cloud.run('file_post', { file: result, name: name, extension: ext });
+                }).catch(function (err) {
+                    throw new Error(err.message);
+                }).then(function (result) {
+                    file['object'] = result.toJSON();
+                    file.object.url = result.get('file').url();
+
+                    // remove media library tile
+                    $('#media_' + result.id).remove();
+
+                    uploader.on.addedfile(file);
+                }).catch(function (err) {
+                    throw new Error(err.message);
+                });
+            } else {
+                var upl = _.isArray(obj) ? obj[0] : obj;
+                upl = typeof upl['toJSON'] === 'function' ? upl.toJSON() : upl;
+
+                var dz = void 0;
+                if (!upl['dz']) {
+                    dz = $($('#adminMediaLibrary-dz').val());
+                    dz = dz.length > 0 ? dz[0] : {};
+                    dz = dz.hasOwnProperty('__uploader') ? dz.__uploader : null;
+
+                    if (!dz) {
+                        if (file.hasOwnProperty('previewElement')) {
+                            $(file.previewElement).parents().each(function () {
+                                if (dz) {
+                                    return;
+                                }
+                                var u = $(this).find('[data-uploader]');
+                                if (u.length > 0) {
+                                    dz = u[0];
+                                    dz = dz.hasOwnProperty('__uploader') ? dz.__uploader : null;
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    dz = upl['dz'];
+                }
+
+                if (!dz) {
+                    throw new Error('no dz');
+                }
+
+                dz.emit('thumbnail', file, upl.url);
+                dz.emit("complete", file);
+            }
+        },
+
+        complete: function complete(file) {
+            var id = file.hasOwnProperty('object') ? file.object.objectId : null;
+            if (id !== null) {
+
+                var elm = $(file.previewElement);
+                elm.attr('id', 'upload_' + id);
+
+                elm.find('[data-id]').data('id', id);
+                elm.find('[data-url]').data('url', file.object.url);
+
+                if (file.object.hasOwnProperty('title')) {
+                    elm.find('[data-title]').val(file.object.title);
+                }
+
+                if (file.object.hasOwnProperty('caption')) {
+                    elm.find('[data-caption]').val(file.object.caption);
+                }
+            }
+        },
+
+        librarySelect: function librarySelect(e) {
+
+            var elm = $(e.target);
+            var id = elm.val();
+
+            if (elm.is(':checked') === true) {
+                elm.parent().addClass('checked');
+
+                if ($('#upload_' + id).length > 0) {
+                    return;
+                }
+
+                var item = uploader.library.files[id];
+
+                if (item) {
+                    var dzelm = $($('#adminMediaLibrary-dz').val());
+                    var dz = dzelm.length > 0 ? dzelm[0] : null;
+                    dz = dz.hasOwnProperty('__uploader') ? dz.__uploader : undefined;
+
+                    if (!dz) {
+                        return;
+                    }
+
+                    item['dz'] = dz;
+
+                    var file = { name: item.name, size: 12345, object: item };
+                    dz.emit('addedfile', file);
+                }
+            } else {
+                elm.parent().removeClass('checked');
+                var u = '#upload_' + id;
+                if ($(u).length > 0) {
+                    $(u).remove();
+                }
+            }
+        }
+    }
+};
+
+$(function () {
+
+    $(document).on('click', '[data-upload-remove]', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        $(e.target).closest('.upload-item').remove();
     });
-}
+
+    setTimeout(function () {
+        $('#adminMediaLibrary-modal').on('show.bs.modal', function (e) {
+            var dz = $(e.relatedTarget).data('dz') || undefined;
+            var target = $(e.relatedTarget).data('container') || undefined;
+
+            if (!target) {
+                return;
+            }
+
+            $('#adminMediaLibrary-container').val(target);
+            $('#adminMediaLibrary-dz').val(dz);
+
+            var sel = [];
+            $(target + ' input[data-id]').each(function () {
+                sel.push($(this).data('id'));
+            });
+
+            $('#adminMediaLibrary-modal .modal-tiles input').each(function () {
+                var id = $(this).val();
+                if (sel.indexOf(id) > -1) {
+                    $(this).prop('checked', true);
+                    $(this).parent().addClass('checked');
+                } else {
+                    $(this).prop('checked', false);
+                    $(this).parent().removeClass('checked');
+                }
+            });
+
+            uploader.library.selected = sel;
+            uploader.library.get();
+        });
+    }, 1000);
+
+    $(document).on('change', '#adminMediaLibrary-modal .modal-tiles input:checkbox', uploader.on.librarySelect);
+});
 
 /***/ }),
 /* 14 */
@@ -5798,6 +5792,7 @@ $(function () {
         return elm.trumbowyg({
             autogrow: true,
             removeformatPasted: true,
+            semantic: false,
             btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
         }).css('opacity', 1);
     };
@@ -6563,6 +6558,19 @@ $(function () {
                     }
                 }
 
+                elm.find('[data-uploader]').dropzone({
+                    itemTemplate: '#metabox-hbs-UPLOAD-ITEM'
+                }).each(function () {
+                    if (!this.__uploader) {
+                        return;
+                    }
+                    this.__uploader.on('addedfile', uploader.on.addedfile);
+                    this.__uploader.on('complete', uploader.on.complete);
+                });
+
+                if (_.isArray(box.val)) {
+                    box.val.reverse();
+                }
                 attachments.push({ element: elm, files: box.val });
             }
 
@@ -6740,6 +6748,7 @@ $(function () {
     $('[data-wysiwyg]').trumbowyg({
         autogrow: true,
         removeformatPasted: true,
+        semantic: false,
         btns: [['viewHTML'], ['formatting'], 'btnGrp-semantic', ['superscript', 'subscript'], 'btnGrp-justify', 'btnGrp-lists', ['horizontalRule'], ['removeformat'], ['plugin'], ['fullscreen']]
     }).css('opacity', 1);
 });
@@ -7771,6 +7780,73 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var dz = __webpack_require__(18);
+var log = console.log;
+
+(function ($) {
+
+    $.fn.dropzone = function () {
+        if (!dz) {
+            throw new Error('jq-dropzone error: dropzone library not found');
+        }
+
+        var ns = {
+            init: function init(elms, params) {
+
+                var defaults = {
+                    itemTemplate: '.dropzoneItemTemplate',
+                    previews: '.previews',
+                    clickable: true,
+                    autoProcessQueue: false,
+                    url: 'http://localhost'
+                };
+
+                var opt = $.extend(defaults, params);
+
+                return elms.each(function () {
+                    var id = $(this).attr('id');
+                    if (!id) {
+                        throw new Error('jq-dropzone error: `id` attribute is required');
+                    }
+
+                    opt = $.extend(opt, $(this).data());
+
+                    var tmp = typeof opt.itemTemplate === 'string' ? $(opt.itemTemplate) : opt.itemTemplate;
+                    tmp = tmp.length > 0 ? tmp.html() : '';
+                    var previews = opt.previews;
+                    var opts = {
+                        clickable: opt.clickable,
+                        autoProcessQueue: opt.autoProcessQueue,
+                        previewTemplate: tmp,
+                        previewsContainer: previews,
+                        url: opt.url,
+                        addedfile: function addedfile(file) {
+                            file.previewElement = dz.createElement(this.options.previewTemplate.trim());
+                            this.previewsContainer.insertBefore(file.previewElement, this.previewsContainer.firstChild);
+                            return false;
+                        }
+                    };
+
+                    var me = this;
+                    me.__uploader = new dz("#" + id, opts);
+                });
+            }
+        };
+
+        switch (arguments[0]) {
+            default:
+                return ns.init(this, arguments[0]);
+        }
+    };
+})(window.jQuery);
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {
@@ -9541,10 +9617,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 }).call(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(42)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(43)(module)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9555,7 +9631,7 @@ exports.__esModule = true;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _handlebarsRuntime = __webpack_require__(19);
+var _handlebarsRuntime = __webpack_require__(20);
 
 var _handlebarsRuntime2 = _interopRequireDefault(_handlebarsRuntime);
 
@@ -9565,11 +9641,11 @@ var _handlebarsCompilerAst = __webpack_require__(9);
 
 var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-var _handlebarsCompilerBase = __webpack_require__(20);
+var _handlebarsCompilerBase = __webpack_require__(21);
 
-var _handlebarsCompilerCompiler = __webpack_require__(22);
+var _handlebarsCompilerCompiler = __webpack_require__(23);
 
-var _handlebarsCompilerJavascriptCompiler = __webpack_require__(24);
+var _handlebarsCompilerJavascriptCompiler = __webpack_require__(25);
 
 var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
@@ -9616,7 +9692,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9638,7 +9714,7 @@ var base = _interopRequireWildcard(_handlebarsBase);
 // Each of these augment the Handlebars object. No need to setup here.
 // (This is done to easily share code between commonjs and browse envs)
 
-var _handlebarsSafeString = __webpack_require__(40);
+var _handlebarsSafeString = __webpack_require__(41);
 
 var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -9650,7 +9726,7 @@ var _handlebarsUtils = __webpack_require__(0);
 
 var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-var _handlebarsRuntime = __webpack_require__(39);
+var _handlebarsRuntime = __webpack_require__(40);
 
 var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
@@ -9689,7 +9765,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9705,15 +9781,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _parser = __webpack_require__(25);
+var _parser = __webpack_require__(26);
 
 var _parser2 = _interopRequireDefault(_parser);
 
-var _whitespaceControl = __webpack_require__(27);
+var _whitespaceControl = __webpack_require__(28);
 
 var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-var _helpers = __webpack_require__(23);
+var _helpers = __webpack_require__(24);
 
 var Helpers = _interopRequireWildcard(_helpers);
 
@@ -9744,7 +9820,7 @@ function parse(input, options) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9917,7 +9993,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10496,7 +10572,7 @@ function transformLiteralToPath(sexpr) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10733,7 +10809,7 @@ function preparePartialBlock(open, program, close, locInfo) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10752,7 +10828,7 @@ var _exception2 = _interopRequireDefault(_exception);
 
 var _utils = __webpack_require__(0);
 
-var _codeGen = __webpack_require__(21);
+var _codeGen = __webpack_require__(22);
 
 var _codeGen2 = _interopRequireDefault(_codeGen);
 
@@ -11868,7 +11944,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12613,7 +12689,7 @@ exports['default'] = handlebars;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12806,7 +12882,7 @@ PrintVisitor.prototype.HashPair = function (pair) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13034,7 +13110,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13046,7 +13122,7 @@ exports.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = __webpack_require__(29);
+var _decoratorsInline = __webpack_require__(30);
 
 var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 
@@ -13057,7 +13133,7 @@ function registerDefaultDecorators(instance) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13093,7 +13169,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13105,31 +13181,31 @@ exports.registerDefaultHelpers = registerDefaultHelpers;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = __webpack_require__(31);
+var _helpersBlockHelperMissing = __webpack_require__(32);
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 
-var _helpersEach = __webpack_require__(32);
+var _helpersEach = __webpack_require__(33);
 
 var _helpersEach2 = _interopRequireDefault(_helpersEach);
 
-var _helpersHelperMissing = __webpack_require__(33);
+var _helpersHelperMissing = __webpack_require__(34);
 
 var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 
-var _helpersIf = __webpack_require__(34);
+var _helpersIf = __webpack_require__(35);
 
 var _helpersIf2 = _interopRequireDefault(_helpersIf);
 
-var _helpersLog = __webpack_require__(35);
+var _helpersLog = __webpack_require__(36);
 
 var _helpersLog2 = _interopRequireDefault(_helpersLog);
 
-var _helpersLookup = __webpack_require__(36);
+var _helpersLookup = __webpack_require__(37);
 
 var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 
-var _helpersWith = __webpack_require__(37);
+var _helpersWith = __webpack_require__(38);
 
 var _helpersWith2 = _interopRequireDefault(_helpersWith);
 
@@ -13146,7 +13222,7 @@ function registerDefaultHelpers(instance) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13192,7 +13268,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13293,7 +13369,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13325,7 +13401,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13361,7 +13437,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13394,7 +13470,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13413,7 +13489,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13453,7 +13529,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13507,7 +13583,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13811,7 +13887,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13833,7 +13909,7 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*jshint curly:true, eqeqeq:true, laxbreak:true, noempty:false */
@@ -14967,7 +15043,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*jshint curly:t
 }());
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -14995,14 +15071,14 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 44 */,
-/* 45 */
+/* 45 */,
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

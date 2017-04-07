@@ -70,9 +70,10 @@ $(function () {
         if (!elm) { return; elm; }
 
         return elm.trumbowyg({
-            autogrow:           true,
-            removeformatPasted: true,
-            btns:               [
+            autogrow              : true,
+            removeformatPasted    : true,
+            semantic              : false,
+            btns                  : [
                 ['viewHTML'],
                 ['formatting'],
                 'btnGrp-semantic',
@@ -838,6 +839,15 @@ $(function () {
                     }
                 }
 
+                elm.find('[data-uploader]').dropzone({
+                    itemTemplate: '#metabox-hbs-UPLOAD-ITEM'
+                }).each(function () {
+                    if (!this.__uploader) { return; }
+                    this.__uploader.on('addedfile', uploader.on.addedfile);
+                    this.__uploader.on('complete', uploader.on.complete);
+                });
+
+                if (_.isArray(box.val)) { box.val.reverse(); }
                 attachments.push({element: elm, files: box.val});
             }
 

@@ -327,12 +327,6 @@
       },
       "dependencies": {}
     },
-    "src/materials/footer.html": {
-      "dna": [],
-      "id": null,
-      "dependents": {},
-      "dependencies": {}
-    },
     "src/materials/form/checkbox.html": {
       "dna": ["form-check", "form-check-inline"],
       "id": "form-check",
@@ -400,15 +394,6 @@
       "id": "form-validation",
       "dependents": {},
       "dependencies": {}
-    },
-    "src/materials/header.html": {
-      "dna": [],
-      "id": null,
-      "dependents": {},
-      "dependencies": {
-        "src/materials/misc/collapse.html": [".collapse"],
-        "src/materials/misc/pills.html": [".nav-item", ".nav-link"]
-      }
     },
     "src/materials/helpers/borders.html": {
       "dna": [],
@@ -502,8 +487,8 @@
       "id": "collapse",
       "dependents": {
         "src/materials/admin/login-form.html": [".collapse"],
-        "src/materials/header.html": [".collapse"],
         "src/materials/misc/accordion.html": [".collapse"],
+        "src/materials/misc/header.html": [".collapse"],
         "src/materials/misc/uploader.html": [".collapse"],
         "src/materials/navbars/navbar-danger.html": [".collapse"],
         "src/materials/navbars/navbar-inverse.html": [".collapse"],
@@ -529,6 +514,21 @@
         "src/materials/button/button-danger.html": [".btn-danger", ".btn-outline-danger"]
       }
     },
+    "src/materials/misc/footer.html": {
+      "dna": [],
+      "id": null,
+      "dependents": {},
+      "dependencies": {}
+    },
+    "src/materials/misc/header.html": {
+      "dna": [],
+      "id": null,
+      "dependents": {},
+      "dependencies": {
+        "src/materials/misc/collapse.html": [".collapse"],
+        "src/materials/misc/pills.html": [".nav-item", ".nav-link"]
+      }
+    },
     "src/materials/misc/jumbotron.html": {
       "dna": ["jumbotron"],
       "id": "jumbotron",
@@ -547,7 +547,7 @@
       "dna": ["nav-pills", "nav-item", "nav-link"],
       "id": "nav-pills",
       "dependents": {
-        "src/materials/header.html": [".nav-item", ".nav-link"],
+        "src/materials/misc/header.html": [".nav-item", ".nav-link"],
         "src/materials/misc/tabs.html": [".nav-item", ".nav-link"],
         "src/materials/navbars/navbar-danger.html": [".nav-item", ".nav-link"],
         "src/materials/navbars/navbar-inverse.html": [".nav-item", ".nav-link"],
