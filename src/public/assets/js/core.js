@@ -5484,7 +5484,7 @@ window.uploader = {
 
             items.forEach(function (item) {
                 item = item.toJSON();
-                item['url'] = item.file.url;
+                item['url'] = '/cdn/' + item.name;
 
                 uploader.library.files[item.objectId] = item;
 
@@ -5553,7 +5553,7 @@ window.uploader = {
                     throw new Error(err.message);
                 }).then(function (result) {
                     file['object'] = result.toJSON();
-                    file.object.url = result.get('file').url();
+                    file.object.url = '/cdn/' + name;
 
                     // remove media library tile
                     $('#media_' + result.id).remove();

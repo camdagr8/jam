@@ -20,12 +20,12 @@
 
     <% if (rec['meta']['body']) { %>
     <section class="container home-about">
-        <%-rec.meta.body-%>
+        <%-core.hbsParse(rec.meta.body)-%>
     </section>
     <% } %>
 
     <% if (rec['meta']['attachments']['gallery']) { %>
-    <section class="home-tiles">
+    <section class="home-tiles bgc-white">
         <% rec.meta.attachments.gallery.forEach((item) => { %>
         <a class="tile" href="javascript:void(0);" style="background-image: url('<%=item.url%>');">
         </a>
@@ -34,7 +34,7 @@
     <% } %>
 
     <% if (rec['meta']['attachments']['features'] && rec['meta']['links']) { %>
-    <section class="container home-articles pt-xxxl pb-xxxl">
+    <section class="container home-articles pt-xxxl pb-xxxl bgc-white">
         <div class="row">
             <div class="col-xs-12 col-sm-12">
                 <h2 class="heading-3 mb-m">Features</h2>

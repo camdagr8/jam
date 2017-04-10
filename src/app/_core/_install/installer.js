@@ -162,6 +162,7 @@ const install_post = (req, res, next) => {
 /**
  * Exports
  */
+/*
 module.exports = (req, res, next) => {
     if (jam['installed'] === true) {
         next();
@@ -176,5 +177,14 @@ module.exports = (req, res, next) => {
                 install_get(req, res);
             }
         }
+    }
+};
+*/
+module.exports = (req, res, next) => {
+    if (jam['installed'] === true) {
+        next();
+    } else {
+        jam.title = "Jam Install";
+        res.render(appdir + '/_core/view/admin/no-install', jam);
     }
 };

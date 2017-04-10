@@ -7,49 +7,53 @@
  */
 const routes = [
     {
-        "method":     "all",
-        "route":      ["/uninstall"],
-        "controller": "/_core/_install/uninstaller.js"
+        "method"        : "all",
+        "route"         : ["/uninstall"],
+        "controller"    : "/_core/_install/uninstaller.js"
     },
     {
-        "route":      ["/admin", "/dashboard"],
-        "controller": "/_core/controller/dashboard.js"
+        "route"         : ["/admin", "/dashboard"],
+        "controller"    : "/_core/controller/dashboard.js"
     },
     {
-        "route":      ["/admin/page/:id", "/admin/page"],
-        "controller": "/_core/controller/editor-page.js"
+        "route"         : ["/admin/page/:id", "/admin/page"],
+        "controller"    : "/_core/controller/editor-page.js"
     },
     {
-        "route":      ["/admin/user/:id", "/admin/user"],
-        "controller": "/_core/controller/editor-user.js"
+        "route"         : ["/admin/user/:id", "/admin/user"],
+        "controller"    : "/_core/controller/editor-user.js"
     },
     {
-        "route":      ["/admin/template/:id", "/admin/template"],
-        "controller": "/_core/controller/editor-template.js"
+        "route"         : ["/admin/template/:id", "/admin/template"],
+        "controller"    : "/_core/controller/editor-template.js"
     },
     {
-        "route":      ["/admin/templates"],
-        "controller": "/_core/controller/list-templates.js"
+        "route"         : ["/admin/templates"],
+        "controller"    : "/_core/controller/list-templates.js"
     },
     {
-        "route":      ["/admin/pages"],
-        "controller": "/_core/controller/list-pages.js"
+        "route"         : ["/admin/pages"],
+        "controller"    : "/_core/controller/list-pages.js"
     },
     {
-        "route":      ["/admin/users"],
-        "controller": "/_core/controller/list-users.js"
+        "route"         : ["/admin/users"],
+        "controller"    : "/_core/controller/list-users.js"
     },
     {
-        "route":      ["/signin", "/login"],
-        "controller": "/_core/controller/login.js"
+        "route"         : ["/signin", "/login"],
+        "controller"    : "/_core/controller/login.js"
     },
     {
-        "route":      ["/signout", "/logout"],
-        "controller": "/_core/controller/logout.js"
+        "route"         : ["/signout", "/logout"],
+        "controller"    : "/_core/controller/logout.js"
     },
     {
-        "route":      ["/admin/purge/:type"],
-        "controller": "/_core/controller/purge.js"
+        "route"         : ["/admin/purge/:type"],
+        "controller"    : "/_core/controller/purge.js"
+    },
+    {
+        "route"         : ["/cdn/:file"],
+        "controller"    : "/_core/controller/cdn.js"
     }
 ];
 
