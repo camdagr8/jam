@@ -29,6 +29,7 @@ const _              = require('underscore');
  */
 const env = require(__dirname + '/src/env.json');
 env['PORT'] = env['PORT'] || 9000;
+env['PORT'] = Number(env.PORT);
 
 const config = {
 	port: {
