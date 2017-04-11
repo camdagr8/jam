@@ -27,10 +27,13 @@ const _              = require('underscore');
  * Configuration
  * -----------------------------------------------------------------------------
  */
+const env = require(__dirname + '/src/env.json');
+env['PORT'] = env['PORT'] || 9000;
+
 const config = {
 	port: {
-		browsersync: 9090,
-		proxy: 9000
+		browsersync: env.PORT + 90,
+		proxy: env.PORT
 	},
 	browsers: 'last 1 version',
 	dest: 'dist',
