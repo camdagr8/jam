@@ -76,27 +76,38 @@ Jam is a CMS built on [Node](https://nodejs.org/en/) + [Express](https://express
 ## Global Objects
 Jam creates a couple global objects that are used to persist data through out the application. 
 
-### Jam Object
+### 1. The Core Object
+The `global.core` object is created before any script execution starts
+
+| Property | Type | Description |
+|:---------|:-----|:------------|
+| core.hbsParse | Function | Parses content for Helper wysiwyg text. Returns: String |
+| core.is_role | Function | Checks whether the specified `permission` is applied to the specified `user`. Returns: Boolean |
+
+### 2. The Jam Object
 The `global.jam` object is created before any script execution starts. Once execution is under way the following properties are attached: 
 
-```js
-    jam['baseurl']           = req.protocol + '://' + req.get('host');
-    jam['theme']             = 'default';  // Default theme setting will be over written when config is pulled
-    jam['blocks']            = [];         // Admin content section widgets
-    jam['currentuser']       = null;       // The currently logged in user object
-    jam['helpers']           = [];         // The list of registered helpers
-    jam['is']                = {};         // Object that stores boolean values of states (jam.is.admin would tell if the current page is an admin page. 
-    jam['meta_types']        = [];         // List of admin metabox types
-    jam['pages']             = [];         // List of page content types pulled from the Parse.Object('Content') query
-    jam['plugin']            = {};         // Registered plugins get built here and their module.exports can be accessed via the plugin's ID value.
-    jam['plugins']           = [];         // List of registered plugins 
-    jam['sidebar']           = [];         // List of Admin sidebar navigation plugins
-    jam['url']               = url;        // The current page url. Example: http://mysite.com/sample.json would output sample.json 
-    jam['users']             = [];         // List of users. Only available in the admin pages. 
-    jam['widgets']           = [];         // Admin sidebar section widgets
-    jam['template_files']    = [];         // List of template files. Only available in the admin pages. 
-    jam['templates']         = [];         // List of registered tempaltes. Only available int he admin pages.
-```
+| Property | Type | Description | 
+|:---------|:-----|:------------|
+| jam.baseurl | String | The base url of the site |
+| jam.theme | String | Default theme setting will be over written when config is pulled |
+| jam.blocks | Array | Admin content section widgets |
+| jam.currentuser | Object | The currently logged in user object |
+| jam.helpers | Array | The list of registered helpers |
+| jam.is | Object | Stores boolean values of states (jam.is.admin would tell if the current page is an admin page) |
+| jam.meta_types | Array | List of admin metabox types |
+| jam.pages | Array | List of page content types pulled from the Parse.Object('Content') query |
+| jam.plugin | Object | Registered plugins get built here and their module.exports can be accessed via the plugin's ID value. |
+| jam.plugins | Array | List of registered plugins |
+| jam.sidebar | Array | List of Admin sidebar navigation plugins |
+| jam.url | String | The current page url. Example: http://mysite.com/sample.json would output sample.json |
+| jam.users | Array | List of users. Only available in the admin pages. |
+| jam.widgets | Array | Admin sidebar section widgets | 
+| jam.template_files | Array | List of template files. Only available in the admin pages. |
+| jam.tempaltes | Array | List of registered tempaltes. Only available int he admin pages. | 
+
+> _**Pro Tip:**You can pass the jam object to the render function and set the .ejs file's data value or use it as a global `jam.PROPERTY`_
+
 
 ## Themes
 Themes are saved in the `~/src/app/view/themes` directory and consist of .ejs template files.
@@ -175,15 +186,15 @@ const moment = require('moment');
  * Exports
  */
 module.exports = {
-	id: 'date',
+    id: 'date',
 
-	wysiwyg: '{{date format="mm/dd/YYYY"}}',
+    wysiwyg: '{{date format="mm/dd/YYYY"}}',
 
-	helper: (opt) => {
-		let format 	= (!opt.hash.hasOwnProperty('format')) 	? 'L' 			: opt.hash.format;
-		let date 	= (!opt.hash.hasOwnProperty('date')) 	? new Date() 	: new Date(opt.hash.date);
-		return moment(date).format(format);
-	}
+    helper: (opt) => {
+	    let format 	= (!opt.hash.hasOwnProperty('format')) 	? 'L'           : opt.hash.format;
+	    let date 	= (!opt.hash.hasOwnProperty('date')) 	? new Date()    : new Date(opt.hash.date);
+	    return moment(date).format(format);
+    }
 };
 ```
 #### The icon.ejs File
