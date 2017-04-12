@@ -145,13 +145,13 @@ const add_widgets = (sections) => {
 
 /**
  *
- * core.helpers(helpers_path)
+ * core.plugins(mod_path)
  *
  * @author Cam Tullos cam@tullos.ninja
  * @since 0.1.0
  *
- * @description Function that reads the helpers directory and creates an object array of the results.
- * @param mod_path {String} The helpers directory to scan.
+ * @description Function that reads the supplied directory and creates an object array of the results.
+ * @param mod_path {String} The plugin directory to scan.
  * @returns {Array} List of module objects.
  */
 const plugins = (mod_path) => {

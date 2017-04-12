@@ -1,24 +1,6 @@
 [
-	{
-		"method"		: "get",
-		"func" 			: "auth",
-		"route"			: ["/REST/upload/auth", "/REST/v1/upload/auth"],
-		"controller"	: "/controller/api/v1/upload.js"
-	},
-	{
-		"method" 		: "get",
-		"func" 			: "dir_get",
-		"route" 		: ["/REST/upload/directory", "/REST/v1/upload/directory"],
-		"controller" 	: "/controller/api/v1/upload.js"
-	},
-	{
-		"method" 		: "post",
-		"func" 			: "dir_set",
-		"route" 		: ["/REST/upload/directory", "/REST/v1/upload/directory"],
-		"controller" 	: "/controller/api/v1/upload.js"
-	},
-	{
-		"route"			: ["/REST/upload", "/REST/v1/upload/directory"],
-		"controller"	: "/controller/api/v1/upload.js"
-	}
+    {
+        "route": "/sample.json",
+        "controller": "/controller/sample.js"
+    }
 ]

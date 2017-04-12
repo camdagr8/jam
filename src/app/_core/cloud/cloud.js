@@ -11,6 +11,5 @@ fs.readdirSync(coredir).forEach((file) => {
 
 // 1.0 - Read user Parse Cloud modules
 fs.readdirSync(dir).forEach((file) => {
-	if (file === 'cloud.js') { return; }
 	require(dir+'/'+file);
 });
