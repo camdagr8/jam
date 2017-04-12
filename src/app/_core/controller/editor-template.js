@@ -22,6 +22,9 @@ const template_use = (req, res, next) => {
         return;
     }
 
+    // Get widgets
+    core.add_widgets('template-editor');
+
     // Get template rec if :id specified in url
     if (req.params['id']) {
 
