@@ -106,7 +106,7 @@ The `global.jam` object is created before any script execution starts. Once exec
 | jam.template_files | Array | List of template files. Only available in the admin pages. |
 | jam.tempaltes | Array | List of registered tempaltes. Only available int he admin pages. | 
 
-> _**Pro Tip:**You can pass the jam object to the render function and set the .ejs file's data value or use it as a global `jam.PROPERTY`_
+> _**Pro Tip:** You can pass the jam object to the render function and set the .ejs file's data value or use it as a global `jam.PROPERTY`_
 
 
 ## Themes
