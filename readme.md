@@ -73,6 +73,31 @@ ___
 ## Architecture
 Jam is a CMS built on [Node](https://nodejs.org/en/) + [Express](https://expressjs.com/) and uses [Parse Cloud Code](http://docs.parseplatform.org/cloudcode/guide/) to interact with the [MongoDB](https://www.mongodb.com/). Jam also uses [EJS](https://github.com/tj/ejs), a simple templating language as the server side rendering engine.
 
+## Global Objects
+Jam creates a couple global objects that are used to persist data through out the application. 
+
+### Jam Object
+The `global.jam` object is created before any script execution starts. Once execution is under way the following properties are attached: 
+
+```js
+    jam['baseurl']           = req.protocol + '://' + req.get('host');
+    jam['theme']             = 'default';  // Default theme setting will be over written when config is pulled
+    jam['blocks']            = [];         // Admin content section widgets
+    jam['currentuser']       = null;       // The currently logged in user object
+    jam['helpers']           = [];         // The list of registered helpers
+    jam['is']                = {};         // Object that stores boolean values of states (jam.is.admin would tell if the current page is an admin page. 
+    jam['meta_types']        = [];         // List of admin metabox types
+    jam['pages']             = [];         // List of page content types pulled from the Parse.Object('Content') query
+    jam['plugin']            = {};         // Registered plugins get built here and their module.exports can be accessed via the plugin's ID value.
+    jam['plugins']           = [];         // List of registered plugins 
+    jam['sidebar']           = [];         // List of Admin sidebar navigation plugins
+    jam['url']               = url;        // The current page url. Example: http://mysite.com/sample.json would output sample.json 
+    jam['users']             = [];         // List of users. Only available in the admin pages. 
+    jam['widgets']           = [];         // Admin sidebar section widgets
+    jam['template_files']    = [];         // List of template files. Only available in the admin pages. 
+    jam['templates']         = [];         // List of registered tempaltes. Only available int he admin pages.
+```
+
 ## Themes
 Themes are saved in the `~/src/app/view/themes` directory and consist of .ejs template files.
 
@@ -123,7 +148,7 @@ Jam comes shipped with 2 helpers:
 |**lipsum**| Displays latin lorem ipsum text
 
 #### Creating A Helper
-Helpers are stored in the `~/src/app/helper` directory and typically consist the required `mod.js` file and the optional `icon.ejs` file. Jam will automatically register helpers placed in this directory. If you wish for Jam to ignore your helper prefix the helper's directory name with an underscore `_`
+Helpers are stored in the `~/src/app/helper` directory and typically consist of the required `mod.js` file and the optional `icon.ejs` file. Jam will automatically register helpers placed in this directory. If you wish for Jam to ignore your helper prefix the helper's directory name with an underscore `_`
 
 ![Helpers](https://ibin.co/3IoX5HYCEpAm.png)
 
@@ -131,8 +156,8 @@ Helpers are stored in the `~/src/app/helper` directory and typically consist the
 
 The mod.js file should expose the following properties on the `module.exports` object: 
 
-| Property| Type| Description|
-|---------|-----|------------|
+| Property | Type | Description |
+|:---------|:-----|:------------|
 | **id** | String | The id of the helper used to identify and register the helper making the helper accessible in the global `jam.helpers` object.|
 | **wysiwyg** | String | The Handlebars helper or block expression to inject into the wysiwyg or metabox. It's how you use the helper in content. |
 | **helper** | Function | The helper replaces the `wysiwyg` string with the output of the function. The helper function should expect the options hash or context and the options hash depending on which type of helper you are registering (see: [ Handlebars Block Helpers for more info](http://handlebarsjs.com/block_helpers.html)). |

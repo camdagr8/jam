@@ -21,5 +21,5 @@ exports.use = (req, res, next) => {
 // catch all methods [DELETE|GET|POST|PUT]
 exports.all = (req, res) => {
     // Output the sample data object as JSON
-    res.json(jam.sample);
+    res.json(jam);
 };
