@@ -48,8 +48,10 @@ The db connection string is a combination of your MongoDB username, password, se
 Using the above settings it should look like this: `mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev`
 
 >_**Pro Tip:** You can skip the prompts by specifying flags in the jam install command:_ 
->`jam install --db mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev --username your@email.com --password MYPASSWORD --port 9000
-`
+
+```
+jam install --db mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev --username your@email.com --password MYPASSWORD --port 9000
+```
 
 ### Start the Local Server
 ```
@@ -75,12 +77,14 @@ Jam is a CMS built on [Node](https://nodejs.org/en/) + [Express](https://express
 Themes are saved in the `~/src/app/view/themes` directory and consist of .ejs template files.
 
 ### Creating A Theme 
-Creating a new theme by adding a new directory in the themes directory and give it a name. You will need to update the site settings via the admin dashboard to point to the new theme directory.
+Create a new theme by adding a new directory in the themes directory and give it a name. You will need to update the site settings via the admin dashboard to point to the new theme directory.
 
 ![Theme Directory](https://ibin.co/3IoNg3hneJe8.png)
 
 >_**Pro Tip:** You can create a new theme with pre-generated template files using the Jam CLI_
->`jam create theme --name "My Theme"`
+```
+jam create theme --name "My Theme"
+```
 
 ### Adding A Style Sheet
 When you create a new theme, it's typical to want a specific style sheet for that theme. There are a couple ways to add a new style sheet. 
@@ -126,11 +130,12 @@ Helpers are stored in the `~/src/app/helper` directory and typically consist the
 ##### The mod.js File
 
 The mod.js file should expose the following properties on the `module.exports` object: 
-|Property|Type|Description|
-|---|---|---|
-|**id**| String | The id of the helper used to identify and register the helper making the helper accessible in the global `jam.helpers` object.
-|**wysiwyg**| String | The Handlebars helper or block expression to inject into the wysiwyg or metabox. It's how you use the helper in content. 
-|**helper**| Function | The helper replaces the `wysiwyg` string with the output of the function. The helper function should expect the options hash or context and the options hash depending on which type of helper you are registering (see: [ Handlebars Block Helpers for more info](http://handlebarsjs.com/block_helpers.html)). 
+
+| Property| Type| Description|
+|---------|-----|------------|
+| **id** | String | The id of the helper used to identify and register the helper making the helper accessible in the global `jam.helpers` object.|
+| **wysiwyg** | String | The Handlebars helper or block expression to inject into the wysiwyg or metabox. It's how you use the helper in content. |
+| **helper** | Function | The helper replaces the `wysiwyg` string with the output of the function. The helper function should expect the options hash or context and the options hash depending on which type of helper you are registering (see: [ Handlebars Block Helpers for more info](http://handlebarsjs.com/block_helpers.html)). |
 
 
 ###### Example: date helper 
