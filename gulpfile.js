@@ -55,7 +55,7 @@ const config = {
 		src		: 'src/public/src/css/*.scss',
 		watch	: 'src/public/src/css/**/*.scss'
 	},
-	toolkit: {
+	toolkitx: {
 	    dest    : 'src/public/assets/toolkit',
         src     : [
             '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**}',
@@ -263,59 +263,6 @@ gulp.task('create:plugin', () => {
 
 });
 
-// Create Widget
-gulp.task('create:widget', ['create:plugin'], () => {
-	let id = (gutil.env.name) ? gutil.env.name : 'widget-' + Date.now();
-		id = slugify(id);
-
-	let core = (gutil.env.core) ? '_core/' : '';
-	let stream = source('./app/'+core+'plugin/' + id + '/widget.ejs');
-
-	let txt = `<!--// Widget ${id} //-->`;
-
-	stream.end(txt);
-    return stream.pipe(gulp.dest(config.src));
-});
-
-// Create Helper Icon placeholder
-gulp.task('create:helper-icon', () => {
-
-	let id = (gutil.env.name) ? gutil.env.name : 'helper-' + Date.now();
-		id = slugify(id);
-
-	let core = (gutil.env.core) ? '_core/' : '';
-	let stream = source('./app/'+core+'helper/' + id + '/icon.ejs');
-
-	let txt = `<path d="M10 10 H 90 V 90 H 10 L 10 10" />`;
-
-	stream.end(txt);
-    return stream.pipe(gulp.dest(config.src));
-});
-
-// Create Helper
-gulp.task('create:helper', ['create:helper-icon'], () => {
-
-	let id = (gutil.env.name) ? gutil.env.name : 'helper-' + Date.now();
-		id = slugify(id);
-
-	let mod = `module.exports = {
-		id: '${id}',
-
-		wysiwyg: "{{${id} param='fubar'}}",
-
-		helper: () => { return 'something'; }
-	};`;
-
-	mod = beautify(mod);
-
-	let core = (gutil.env.core) ? '_core/' : '';
-
-	let stream = source('./app/'+core+'helper/' + id + '/mod.js');
-
-    stream.end(mod);
-    return stream.pipe(gulp.dest(config.src));
-
-});
 
 // default
 gulp.task('default', (done) => {
