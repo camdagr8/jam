@@ -1,0 +1,49 @@
+{
+    "dev"         : false,
+    "browsers"    : "last 1 version",
+    "dest"        : "dist",
+    "src"         : "src",
+    "port" : {
+        "browsersync"    : 9090,
+        "proxy"          : 9000
+    },
+    "scripts" : {
+        "dest"     : "src/public/assets/js",
+        "src"      : "src/public/src/js/app.js",
+        "watch"    : "src/public/src/js/**/*"
+    },
+    "core" : {
+        "dest"     : "src/public/assets/js",
+        "src"      : "src/public/src/js/core.js",
+        "watch"    : "src/public/src/js/**/*"
+    },
+    "styles" : {
+        "dest"     : "src/public/assets/css",
+        "src"      : "src/public/src/css/*.scss",
+        "watch"    : "src/public/src/css/**/*.scss"
+    },
+    "build" : {
+        "src": [
+            "*.*",
+            "src/**",
+            "!{node_modules,node_modules/**}",
+            "!{src/app/_core/model/install,src/app/_core/model/install/**}",
+            "!{src/public/src,src/public/src/**}",
+            "!{logs,logs/**}",
+            "!webpack.config.js",
+            "!gulpfile.js",
+            "!{dist,dist/**}"
+        ],
+        "watch" : [
+            "*.*",
+            "src/**",
+            "!{node_modules,node_modules/**}",
+            "!{src/app/_core/model/install,src/app/_core/model/install/**}",
+            "!{src/public/src,src/public/src/**}",
+            "!{logs,logs/**}",
+            "!webpack.config.js",
+            "!gulpfile.js",
+            "!{dist,dist/**}"
+        ]
+    }
+}

@@ -27,71 +27,20 @@ const _              = require('underscore');
  * Configuration
  * -----------------------------------------------------------------------------
  */
-const env = require(__dirname + '/src/env.json');
-env['PORT'] = env['PORT'] || 9000;
-env['PORT'] = Number(env.PORT);
 
-const config = {
-	port: {
-		browsersync: env.PORT + 90,
-		proxy: env.PORT
-	},
-	browsers: 'last 1 version',
-	dest: 'dist',
-	src: 'src',
-	dev: gutil.env.dev,
-	scripts: {
-		dest	: 'src/public/assets/js',
-		src		: 'src/public/src/js/app.js',
-		watch	: 'src/public/src/js/**/*'
-	},
-    core: {
-        dest	: 'src/public/assets/js',
-        src		: 'src/public/src/js/core.js',
-        watch	: 'src/public/src/js/**/*'
-    },
-	styles: {
-		dest	: 'src/public/assets/css',
-		src		: 'src/public/src/css/*.scss',
-		watch	: 'src/public/src/css/**/*.scss'
-	},
-	toolkitx: {
-	    dest    : 'src/public/assets/toolkit',
-        src     : [
-            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**}',
-            'toolkit/dist/assets/toolkit/**/*'
-        ],
-        watch   : [
-            '!{toolkit/dist/assets/toolkit/images,toolkit/dist/assets/toolkit/images/**/*}',
-            'toolkit/dist/assets/toolkit/**/*'
-        ]
-    },
-	build: {
-		src: [
-			'*.*',
-			'src/**',
-			'!{node_modules,node_modules/**}',
-            '!{src/app/_core/model/install,src/app/_core/model/install/**}',
-			'!{src/public/src,src/public/src/**}',
-			'!{logs,logs/**}',
-			'!webpack.config.js',
-			'!gulpfile.js',
-			'!{dist,dist/**}'
-		],
-		watch: [
-			'*.*',
-			'src/**',
-			'!{node_modules,node_modules/**}',
-			'!{src/app/_core/model/install,src/app/_core/model/install/**}',
-			'!{src/public/src,src/public/src/**}',
-			'!{logs,logs/**}',
-			'!webpack.config.js',
-			'!gulpfile.js',
-			'!{dist,dist/**}'
-		]
-	}
-};
+const config               = require(__dirname + '/gulp.config.json');
+config.dev                 = gutil.env.dev;
 
+const env                  = require(__dirname + '/src/env.json');
+env['PORT']                = env['PORT'] || config.port.proxy;
+env['PORT']                = Number(env.PORT);
+
+if (gutil.env.port) {
+    env.PORT = Number(gutil.env.port);
+}
+
+config.port['proxy']          = env.PORT;
+config.port['browsersync']    = env.PORT + 90;
 
 
 /**
@@ -139,19 +88,6 @@ gulp.task('scripts', (done) => {
 });
 
 
-// toolkit build out to jam public folder
-gulp.task('toolkit', (done) => {
-    if (!config.hasOwnProperty('toolkit')) { done(); return; }
-
-    del.sync([config.toolkit.dest]);
-
-    gulp.src(config.toolkit.src)
-    .pipe(gulp.dest(config.toolkit.dest));
-
-    done();
-});
-
-
 // assemble
 gulp.task('assemble', ['styles', 'scripts'], () => {
 	return gulp.src(config.build.src)
@@ -165,9 +101,9 @@ gulp.task('nodemon', (done) => {
 
 	let callbackCalled = false;
 	nodemon({
-		watch : config.dest,
-		script: './'+config.dest+'/index.js',
-		ext: 'js ejs json jsx html css scss'
+		watch     : config.dest,
+		script    : './'+config.dest+'/index.js',
+		ext       : 'js ejs json jsx html css scss'
 	}).on('start', function () {
 		if (!callbackCalled) {
 			callbackCalled = true;
@@ -182,14 +118,14 @@ gulp.task('nodemon', (done) => {
 // serve -> browserSync & watch start
 gulp.task('serve', (done) => {
 	browserSync({
-		notify: false,
-		timestamps: true,
-		reloadDelay: 2000,
-		reloadDebounce: 2000,
-		logPrefix: '00:00:00',
-		port: config.port.browsersync,
-		ui: {port: config.port.browsersync+1},
-		proxy: 'localhost:'+config.port.proxy
+		notify            : false,
+		timestamps        : true,
+		reloadDelay       : 2000,
+		reloadDebounce    : 2000,
+		logPrefix         : '00:00:00',
+		port              : config.port.browsersync,
+		ui                : {port: config.port.browsersync+1},
+		proxy             : 'localhost:'+config.port.proxy
 	});
 
 	gulp.task('styles:watch', ['styles']);
@@ -197,9 +133,6 @@ gulp.task('serve', (done) => {
 
 	gulp.task('scripts:watch', ['scripts'], browserSync.reload);
 	gulp.watch([config.scripts.watch], ['scripts:watch']);
-
-	gulp.task('toolkit:watch', ['toolkit']);
-	gulp.watch([config.toolkit.watch], ['toolkit:watch']);
 
 	gulp.watch(config.build.watch, watcher);
 
@@ -238,10 +171,9 @@ const watcher = (e) => {
 
  // Create Plugin
 gulp.task('create:plugin', () => {
-	let id = (gutil.env.name) ? gutil.env.name : 'widget-' + Date.now();
-		id = slugify(id);
-
-	let mod = `module.exports = {
+    let id     = (gutil.env.name) ? gutil.env.name : 'widget-' + Date.now();
+    id         = slugify(id);
+    let mod    = `module.exports = {
 		id: '${id}',
 
 		index: 1000000,
@@ -252,11 +184,10 @@ gulp.task('create:plugin', () => {
 
 		zone: 'widgets'
 	};`;
-	mod = beautify(mod);
 
-	let core = (gutil.env.core) ? '_core/' : '';
-
-	let stream = source('./app/'+core+'plugin/' + id + '/mod.js');
+	mod           = beautify(mod);
+	let core      = (gutil.env.core) ? '_core/' : '';
+	let stream    = source('./app/'+core+'plugin/' + id + '/mod.js');
 
     stream.end(mod);
     return stream.pipe(gulp.dest(config.src));
@@ -268,12 +199,12 @@ gulp.task('create:plugin', () => {
 gulp.task('default', (done) => {
 
 	if (config.dev) {
-		runSequence(['clean'], ['assemble'], ['toolkit'], ['nodemon'], () => {
+		runSequence(['clean'], ['assemble'], ['nodemon'], () => {
 			gulp.start('serve');
 			done();
 		});
 	} else {
-		runSequence(['clean'], ['assemble'], ['toolkit'], () => {
+		runSequence(['clean'], ['assemble'], () => {
 			done();
 		});
 	}
