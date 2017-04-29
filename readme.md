@@ -5,25 +5,25 @@
 If you haven't already, install MongoDB. 
 You can install MongoDB however you wish, but I find [Homebrew](https://brew.sh/) the easiest way. 
 ```
-brew install mongodb
+$ brew install mongodb
 ```
 
 Start MongoDB as a service:
 ```
-brew services start mongodb
+$ brew services start mongodb
 ```
 
 ### Create the admin db user
 
 In terminal input the following MongoDB commands:
 ```
-> mongo
-> use admin
-> db.createUser({user:"dbadmin", pwd:"PASSWORD", roles:[{role:"root", db:"admin"}]})
+> $ mongo
+> $ use admin
+> $ db.createUser({user:"dbadmin", pwd:"PASSWORD", roles:[{role:"root", db:"admin"}]})
 
-> use jam-dev
-> db.createUser({user:"dbadmin", pwd:"PASSWORD", roles:["readWrite"]})
-> exit
+> $ use jam-dev
+> $ db.createUser({user:"dbadmin", pwd:"PASSWORD", roles:["readWrite"]})
+> $ exit
 ```
 
 ### Install Jam
@@ -34,12 +34,12 @@ npm install -g brkfst-jam-cli
 
 Change directory to where you want to install jam
 ```
-cd /User/yourname/jam
+$ cd /User/yourname/jam
 ```
 
 Run the jam install command.
 ```
-jam install
+$ jam install
 ```
 
 You will be prompted to enter the database connection string, an admin username & password, and a port to run the local server on. 
@@ -50,12 +50,12 @@ Using the above settings it should look like this: `mongodb://dbadmin:PASSWORD@l
 >_**Pro Tip:** You can skip the prompts by specifying flags in the jam install command:_ 
 
 ```
-jam install --db mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev --username your@email.com --password MYPASSWORD --port 9000
+$ jam install --db mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev --username your@email.com --password MYPASSWORD --port 9000
 ```
 
 ### Start the Local Server
 ```
-jam launch
+$ jam launch
 ```
 
 ## Running Remotely
@@ -119,7 +119,7 @@ Create a new theme by adding a new directory in the themes directory and give it
 
 >_**Pro Tip:** You can create a new theme with pre-generated template files using the Jam CLI_
 ```
-jam create theme --name "My Theme"
+$ jam create theme --name "My Theme"
 ```
 
 ### Adding A Style Sheet
