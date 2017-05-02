@@ -1,6 +1,8 @@
-const path           = require('path');
-const webpack        = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+'use strict';
+
+const path              = require('path');
+const webpack           = require('webpack');
+const UglifyJSPlugin    = require('uglifyjs-webpack-plugin');
 
 module.exports = (config) => {
 
@@ -41,7 +43,7 @@ module.exports = (config) => {
                     loader:  'babel-loader',
                     exclude: /node_modules/,
                     query:   {
-                        presets: ['es2015', 'react']
+                        presets: ['react', 'es2015']
                     }
                 }
             ]
