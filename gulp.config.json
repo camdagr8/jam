@@ -10,7 +10,10 @@
     "scripts" : {
         "dest"     : "src/public/assets/js",
         "src"      : "src/public/src/js/app.js",
-        "watch"    : "src/public/src/js/**/*"
+        "watch"    : [
+            "src/public/src/js/**/*",
+            "!{src/public/src/js/_core/vendor,src/public/src/js/_core/vendor/**}"
+        ]
     },
     "core" : {
         "dest"     : "src/public/assets/js",

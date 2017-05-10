@@ -5,7 +5,7 @@
  */
 
 const _                = require('underscore');
-const dragula          = require('./dragula.js');
+const dragula          = require('./plugins/dragula.js');
 const hbs              = require('handlebars');
 const slugify          = require('slugify');
 const beautify         = require('js-beautify').js_beautify;
@@ -956,9 +956,10 @@ $(function () {
      * Initializers
      * -------------------------------------------------------------------------
      */
-    $('[data-toggle="check"] input').change();
 
     $('#admin-template-select').change();
+
+    $('[data-toggle="check"] input').change();
 
     $('[data-sortable]').each(function () {
         let opt = {};

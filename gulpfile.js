@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * -----------------------------------------------------------------------------
  * Dependencies
@@ -6,6 +8,7 @@
 const beautify       = require('js-beautify').js_beautify;
 const browserSync    = require('browser-sync');
 const csso           = require('gulp-csso');
+const concat         = require('gulp-concat');
 const del            = require('del');
 const gulp           = require('gulp');
 const gulpif         = require('gulp-if');
@@ -41,7 +44,7 @@ if (gutil.env.port) {
 
 config.port['proxy']          = env.PORT;
 config.port['browsersync']    = env.PORT + 90;
-
+config.scripts['vendor']      = ["src/public/src/js/_core/vendor/**/*.js"];
 
 /**
  * -----------------------------------------------------------------------------
@@ -88,8 +91,19 @@ gulp.task('scripts', (done) => {
 });
 
 
+// vendor
+gulp.task('vendor', (done) => {
+
+    gulp.src(config.scripts.vendor)
+    .pipe(concat('vendor.js'))
+    .pipe(gulp.dest(config.scripts.dest));
+
+    done();
+});
+
+
 // assemble
-gulp.task('assemble', ['styles', 'scripts'], () => {
+gulp.task('assemble', ['styles', 'vendor', 'scripts'], () => {
 	return gulp.src(config.build.src)
 	.pipe(gulp.dest(config.dest));
 });
@@ -134,6 +148,9 @@ gulp.task('serve', (done) => {
 	gulp.task('scripts:watch', ['scripts'], browserSync.reload);
 	gulp.watch([config.scripts.watch], ['scripts:watch']);
 
+    gulp.task('vendor:watch', ['vendor'], browserSync.reload);
+    gulp.watch([config.scripts.watch], ['vendor:watch']);
+
 	gulp.watch(config.build.watch, watcher);
 
 	done();
@@ -167,32 +184,6 @@ const watcher = (e) => {
 		gulp.src(s).pipe(gulp.dest(p));
 	}
 };
-
-
- // Create Plugin
-gulp.task('create:plugin', () => {
-    let id     = (gutil.env.name) ? gutil.env.name : 'widget-' + Date.now();
-    id         = slugify(id);
-    let mod    = `module.exports = {
-		id: '${id}',
-
-		index: 1000000,
-
-		perms: ['all'],
-
-		sections: ['all'],
-
-		zone: 'widgets'
-	};`;
-
-	mod           = beautify(mod);
-	let core      = (gutil.env.core) ? '_core/' : '';
-	let stream    = source('./app/'+core+'plugin/' + id + '/mod.js');
-
-    stream.end(mod);
-    return stream.pipe(gulp.dest(config.src));
-
-});
 
 
 // default
