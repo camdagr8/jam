@@ -1,11 +1,9 @@
 {
   "name": "Jam",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Cam Tullos",
-  "private": true,
   "scripts": {
     "build": "gulp",
-    "prestart": "npm install",
     "start": "node index.js",
     "test": "npm install && gulp --dev"
   },

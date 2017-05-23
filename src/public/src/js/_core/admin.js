@@ -10,7 +10,7 @@ const hbs              = require('handlebars');
 const slugify          = require('slugify');
 const beautify         = require('js-beautify').js_beautify;
 const beautify_html    = require('js-beautify').html;
-const log              = console.log;
+const log              = console.log.bind(console);
 
 $(function () {
 

@@ -1,5 +1,6 @@
 
-require('./_core/bootstrap');
-require('./_core/wysiwyg');
-require('./_core/admin');
+require('./_core/admin-parse');
+require('./_core/admin-bootstrap');
+require('./_core/admin-wysiwyg');
 require('./_core/admin-uploader');
+require('./_core/admin');
