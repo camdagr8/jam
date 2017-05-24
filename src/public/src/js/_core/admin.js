@@ -250,25 +250,14 @@ $(function () {
         }
     };
 
-    const show_msg = (message, cls = 'alert-danger', delay = 0, target = '#admin-alert') => {
-        let t = $(target);
-        let a = t.find('.alert');
-        a.removeClass('alert-warning alert-info alert-success alert-danger')
-        a.addClass(cls);
-        a.find('.message').html(message);
-
-        if (delay > 0) {
-            setTimeout(() => {
-                t.stop().slideDown(250)
-            }, delay);
-        } else {
-            t.stop().slideDown(250);
-        }
+    const show_msg = (message, cls = 'alert-danger') => {
+        let type = cls.split('-').pop();
+        let w = (window.innerWidth < 400) ? 200 : 400;
+        $.bootstrapGrowl(message, {delay: 400000, type: type, width: w, offset: {from: 'top', amount: 10}});
     };
 
-    const show_success = (message, delay = 3000, target = '#admin-alert') => {
-        show_msg(message, 'alert-success', 0, target);
-        hide_alert(delay);
+    const show_success = (message) => {
+        show_msg(message, 'alert-success');
     };
 
     const slugit = function (e) {
@@ -319,7 +308,6 @@ $(function () {
 
     const validate = {
         page: (data) => {
-
             let err = null;
             let req = {
                 template: 'Select a template',

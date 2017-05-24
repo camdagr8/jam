@@ -6025,30 +6025,14 @@ $(function () {
 
     var show_msg = function show_msg(message) {
         var cls = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'alert-danger';
-        var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-        var target = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#admin-alert';
 
-        var t = $(target);
-        var a = t.find('.alert');
-        a.removeClass('alert-warning alert-info alert-success alert-danger');
-        a.addClass(cls);
-        a.find('.message').html(message);
-
-        if (delay > 0) {
-            setTimeout(function () {
-                t.stop().slideDown(250);
-            }, delay);
-        } else {
-            t.stop().slideDown(250);
-        }
+        var type = cls.split('-').pop();
+        var w = window.innerWidth < 400 ? 200 : 400;
+        $.bootstrapGrowl(message, { delay: 400000, type: type, width: w, offset: { from: 'top', amount: 10 } });
     };
 
     var show_success = function show_success(message) {
-        var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3000;
-        var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '#admin-alert';
-
-        show_msg(message, 'alert-success', 0, target);
-        hide_alert(delay);
+        show_msg(message, 'alert-success');
     };
 
     var slugit = function slugit(e) {
@@ -6099,7 +6083,6 @@ $(function () {
 
     var validate = {
         page: function page(data) {
-
             var err = null;
             var req = {
                 template: 'Select a template',
