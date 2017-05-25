@@ -1,6 +1,6 @@
 {
   "name": "Jam",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Cam Tullos",
   "scripts": {
     "build": "gulp",

@@ -6028,7 +6028,7 @@ $(function () {
 
         var type = cls.split('-').pop();
         var w = window.innerWidth < 400 ? 200 : 400;
-        $.bootstrapGrowl(message, { delay: 400000, type: type, width: w, offset: { from: 'top', amount: 10 } });
+        $.bootstrapGrowl(message, { delay: 4000, type: type, width: w, offset: { from: 'top', amount: 10 } });
     };
 
     var show_success = function show_success(message) {

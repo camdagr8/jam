@@ -253,7 +253,7 @@ $(function () {
     const show_msg = (message, cls = 'alert-danger') => {
         let type = cls.split('-').pop();
         let w = (window.innerWidth < 400) ? 200 : 400;
-        $.bootstrapGrowl(message, {delay: 400000, type: type, width: w, offset: {from: 'top', amount: 10}});
+        $.bootstrapGrowl(message, {delay: 4000, type: type, width: w, offset: {from: 'top', amount: 10}});
     };
 
     const show_success = (message) => {
