@@ -63,7 +63,8 @@ const page_use = (req, res, next) => {
 };
 
 const page_get = (req, res) => {
-    jam.content = './sections/editor-page';
+    let darr       = __dirname.split('/'); darr.pop();
+    jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
@@ -85,35 +86,35 @@ const page_get = (req, res) => {
 
 const page_save = (req, res) => {
 
-	let nonce = req.body.nonce;
-	let output = {data: null, nonce: null};
+    let nonce = req.body.nonce;
+    let output = {data: null, nonce: null};
 
-	Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
+    Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
-		delete req.body.nonce;
-		return Parse.Cloud.run('content_post', req.body);
+        delete req.body.nonce;
+        return Parse.Cloud.run('content_post', req.body);
 
-	}, (err) => {
+    }, (err) => {
 
-		res.json({error: err});
+        res.json({error: err});
 
-	}).then((result) => {
+    }).then((result) => {
 
-		output.data = result.toJSON();
-		return Parse.Cloud.run('nonce_create');
+        output.data = result.toJSON();
+        return Parse.Cloud.run('nonce_create');
 
-	}, (err) => {
+    }, (err) => {
 
-		res.json({error: err});
+        res.json({error: err});
 
-	}).then((nonce) => {
+    }).then((nonce) => {
 
-		output.nonce = nonce;
-		res.json(output);
+        output.nonce = nonce;
+        res.json(output);
 
-	}, (err) => {
-		res.json({error: err});
-	});
+    }, (err) => {
+        res.json({error: err});
+    });
 };
 
 /**

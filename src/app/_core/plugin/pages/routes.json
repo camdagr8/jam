@@ -1,0 +1,10 @@
+[
+    {
+        "route"         : ["/admin/page/:id", "/admin/page"],
+        "controller"    : "/_core/plugin/pages/controller/editor.js"
+    },
+    {
+        "route"         : ["/admin/pages"],
+        "controller"    : "/_core/plugin/pages/controller/list.js"
+    }
+]

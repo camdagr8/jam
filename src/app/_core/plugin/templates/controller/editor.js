@@ -101,7 +101,6 @@ const template_delete = (req, res) => {
 
 const template_get = (req, res) => {
     let darr       = __dirname.split('/'); darr.pop();
-    let dir        = darr.join('/') + '/view';
     jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce

@@ -13,6 +13,8 @@ exports.use = (req, res, next) => {
 };
 
 exports.all = (req, res) => {
-    jam.content = './sections/list-pages';
+    let darr       = __dirname.split('/'); darr.pop();
+    jam.content    = darr.join('/') + '/view/list.ejs';
+
     res.render(core.template.admin, jam);
 };

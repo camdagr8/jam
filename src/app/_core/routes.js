@@ -17,14 +17,6 @@ let routes = [
         "controller"    : "/_core/controller/dashboard.js"
     },
     {
-        "route"         : ["/admin/page/:id", "/admin/page"],
-        "controller"    : "/_core/controller/editor-page.js"
-    },
-    {
-        "route"         : ["/admin/pages"],
-        "controller"    : "/_core/controller/list-pages.js"
-    },
-    {
         "route"         : ["/signin", "/login"],
         "controller"    : "/_core/controller/login.js"
     },

@@ -1,21 +1,21 @@
 <li class="list-menu-heading <%=(url[1] === 'page' || url[1] === 'pages') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
-	<span class="badge badge-info"><%=pages.length%></span><h6><i class="lnr-file-empty ico"></i>Pages</h6>
+    <span class="badge badge-info"><%=pages.length%></span><h6><i class="lnr-file-empty ico"></i>Pages</h6>
 </li>
 <li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
-	<ul class="list-sub-menu">
-		<li>
-			<a href="<%=baseurl%>/admin/page" class="list-menu-item menu-add">New Page</a>
-		</li>
-        <% if (plugin.sidebar_pages.recent.length > 0) { %>
+    <ul class="list-sub-menu">
+        <li>
+            <a href="<%=baseurl%>/admin/page" class="list-menu-item menu-add">New Page</a>
+        </li>
+        <% if (plugin.pages.recent.length > 0) { %>
         <li class="list-menu-heading active sub-active" >
             <h6><i class="lnr-history2 ico"></i>Recent Pages</h6>
         </li>
-		<% plugin.sidebar_pages.recent.forEach((item) => { %>
-		<li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>
-		<% }); %>
+        <% plugin.pages.recent.forEach((item) => { %>
+        <li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>
+        <% }); %>
         <% } %>
         <li>
             <a href="<%=baseurl%>/admin/pages" class="list-menu-item">View All</a>
         </li>
-	</ul>
+    </ul>
 </li>

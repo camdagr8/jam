@@ -6,16 +6,16 @@
 
     <table data-dna="table-bordered" class="table table-bordered table-hover">
         <thead class="thead-default">
-        <tr>
-            <th style="width: 50%">Name</th>
-            <th class="hidden-sm-down">Route</th>
-            <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
-            <th class="hidden-sm-down" style="width: 5%;"></th>
-        </tr>
+            <tr>
+                <th style="width: 50%">Name</th>
+                <th class="hidden-sm-down">Route</th>
+                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
+                <th class="hidden-sm-down" style="width: 5%;"></th>
+            </tr>
         </thead>
         <tbody>
-        <% pages.forEach((page) => { %>
-        <% if (page.status === 'delete') { return; } %>
+            <% pages.forEach((page) => { %>
+            <% if (page.status === 'delete') { return; } %>
             <tr>
                 <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
                 <td class="hidden-sm-down">
@@ -32,7 +32,7 @@
                     <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
                 </td>
             </tr>
-        <% }); %>
+            <% }); %>
         </tbody>
     </table>
 
@@ -51,8 +51,8 @@
             </tr>
         </thead>
         <tbody>
-        <% pages.forEach((page) => { %>
-        <% if (page.status !== 'delete') { return; } %>
+            <% pages.forEach((page) => { %>
+            <% if (page.status !== 'delete') { return; } %>
             <tr>
                 <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
                 <td class="hidden-sm-down">
@@ -69,7 +69,7 @@
                     <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
                 </td>
             </tr>
-        <% }); %>
+            <% }); %>
         </tbody>
     </table>
     <div class="text-center p-l">

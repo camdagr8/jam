@@ -20,11 +20,10 @@ const recent = (count = 5) => {
     return output;
 };
 
-
 module.exports = {
-    id: 'sidebar-pages',
+    id: 'pages',
 
-    index: 0,
+    index: 1,
 
     perms: ['administrator', 'publisher', 'moderator'],
 
@@ -32,10 +31,12 @@ module.exports = {
 
     use: (req, res, next) => {
         if (jam.is.admin) {
-            jam.plugin['sidebar_pages']['recent'] = recent(3);
+            jam.plugin['pages']['recent'] = recent(3);
         }
         next();
     },
+
+    type: 'plugin',
 
     zone: 'sidebar',
 
