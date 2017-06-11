@@ -13,14 +13,14 @@ const permissions    = ['administrator', 'publisher', 'moderator'];
  * -----------------------------------------------------------------------------
  */
 const page_use = (req, res, next) => {
-    jam['rec'] = {};
+    jam['rec'] = {meta: {}};
 
     /**
      * Permissions
      */
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/404', jam);
+        res.render(core.template.theme + '/templates/404', jam);
         return;
     }
 
@@ -54,7 +54,7 @@ const page_use = (req, res, next) => {
             next();
 
         }, () => {
-            res.render(core.template.theme + '/404');
+            res.render(core.template.theme + '/templates/404');
         });
 
     } else {
@@ -78,7 +78,7 @@ const page_get = (req, res) => {
             code: 400,
             message: 'Bad Request'
         };
-        res.status(jam.err.code).render(core.template.theme + '/404', jam);
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
 
     });
 };

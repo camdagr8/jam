@@ -1,11 +1,12 @@
 /**
  * Route middle-ware
  */
+const fs = require('fs-extra');
 
 /**
  * 0.0 - Pre-defined routes needed for the admin interface.
  */
-const routes = [
+let routes = [
     {
         "method"        : "all",
         "route"         : ["/uninstall"],
@@ -78,8 +79,6 @@ const default_route = {
     route:      ['*'],
     controller: '/_core/controller/cms.js'
 };
-// 2.1 - Append the catch all route.
-routes.push(default_route);
 
 
 /*
@@ -104,6 +103,16 @@ module.exports = (req, res, next) => {
         return;
     }
 
+    // Get plugin routes and add them to the routes array
+    jam.plugins.forEach((plugin) => {
+        if (plugin.hasOwnProperty('routes')) {
+            let r = require(plugin.routes);
+            r.forEach((item) => { routes.push(item); });
+        }
+    });
+
+    routes.push(default_route);
+
     // Type of http request methods to handle
     let methods = ['use', 'all', 'get', 'post', 'put', 'delete'];
 
@@ -114,7 +123,7 @@ module.exports = (req, res, next) => {
 
         let cntr = require(c);
 
-        if (typeof item['method'] === 'string' && typeof item['func'] === 'string') {
+        if (item.hasOwnProperty('method') && item.hasOwnProperty('func')) {
             app[item.method](item.route, cntr[item.func]);
         } else {
             methods.forEach((method) => {

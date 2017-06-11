@@ -1,3 +1,4 @@
+const Promise    = require('promise');
 
 /**
  *
@@ -9,6 +10,7 @@
  * @description Retrieves configuration variables, preferences, and other necessary data.
  */
 module.exports = (req, res, next) => {
+    //log('prefs');
 
     let url = req.url.split('/');
     url.shift();
@@ -19,6 +21,8 @@ module.exports = (req, res, next) => {
     jam['currentuser']       = null;
     jam['helpers']           = [];
     jam['is']                = {};
+    jam['req']               = req;
+
     jam['meta_types']        = [
         {name: 'HTML',          value: 'HTML'},
         {name: 'Plain Text',    value: 'TEXT', checked: true},
@@ -38,6 +42,7 @@ module.exports = (req, res, next) => {
     jam['widgets']           = [];
     jam['template_files']    = [];
     jam['templates']         = [];
+    jam['dashboards']        = [];
 
     // jam.is.admin boolean
     let base_urls = ['admin', 'dashboard'];
@@ -53,11 +58,11 @@ module.exports = (req, res, next) => {
         let keys = _.keys(result);
         keys.forEach((key) => { jam[key] = result[key]; });
 
-        core.template.theme = `themes/${jam.theme}/templates`;
+        core.template.theme = `${appdir}/view/themes/${jam.theme}`;
 
     }, (err) => { // Not able to get the configs
 
-        log(err);
+        log(err.message);
         jam['installed'] = false;
         prm.reject();
 
@@ -72,7 +77,7 @@ module.exports = (req, res, next) => {
 
     }, (err) => { // No current user: Keep going
 
-        log(err);
+        log(err.message);
 
     }).then(() => { // Get helpers and plugins
 
@@ -87,15 +92,36 @@ module.exports = (req, res, next) => {
     }).always(() => {
 
         // register plugin `use` hooks
-        _.keys(jam.plugin).forEach((name) => {
-            let plugin = jam.plugin[name];
-            if (plugin.hasOwnProperty('use')) {
-                app.use(plugin.use);
-            }
-        });
+        let before = [];
+        if (jam.is.admin === true) {
+            _.keys(jam.plugin).forEach((name) => {
+                let plugin = jam.plugin[name];
+                if (plugin.hasOwnProperty('use')) {
+                    before.push(plugin.use);
+                }
+            });
+        }
 
-        next();
+        if (before.length > 0) {
+            let cnt = before.length;
+            let comp = 0;
 
+            before.forEach((fnc) => {
+                let prom = new Promise(function (resolve) {
+                    fnc(req, res, resolve);
+                });
+
+                prom.finally(() => {
+                    comp += 1;
+                    if (comp === cnt) {
+                        next();
+                    }
+                });
+            });
+
+        } else {
+            next();
+        }
     });
 
 };

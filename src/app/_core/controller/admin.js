@@ -4,10 +4,11 @@
  * ---------------------------------------------------------------------------
  */
 module.exports = (req, res, next) => {
+    //log('admin');
 	if (!jam.currentuser) {
 		res.redirect('/login');
 	} else {
-		// Get widget
+		// Get widgets
 		core.add_widgets('all');
 
 		Parse.Cloud.run('users_get').then((users) => {

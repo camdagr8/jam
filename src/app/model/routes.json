@@ -1,6 +1,1 @@
-[
-    {
-        "route": "/sample.json",
-        "controller": "/controller/sample.js"
-    }
-]
+[]

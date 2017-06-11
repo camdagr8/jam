@@ -18,7 +18,7 @@ const template_use = (req, res, next) => {
      */
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/404', jam);
+        res.render(core.template.theme + '/templates/404', jam);
         return;
     }
 
@@ -30,7 +30,7 @@ const template_use = (req, res, next) => {
 
         let tmp = _.findWhere(jam['templates'], {objectId: req.params.id});
         if (!tmp) {
-            res.render(core.template.theme + '/404', jam);
+            res.render(core.template.theme + '/templates/404', jam);
         } else {
             jam['rec'] = tmp;
             next();
@@ -111,7 +111,7 @@ const template_get = (req, res) => {
     }, (err) => {
 
         jam['err'] = {code: 400, message: 'Bad Request'};
-        res.status(jam.err.code).render(core.template.theme + '/404', jam);
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
 
     });
 };

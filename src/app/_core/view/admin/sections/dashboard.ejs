@@ -1,1 +1,11 @@
+<div id="dashboard">
+    <div class="row">
+        <% if (dashboards) { %>
 
+        <% dashboards.forEach(function (widget, i) { %>
+        <%- include(widget, {index: i}) -%>
+        <% }); %>
+
+        <% } %>
+    </div>
+</div>

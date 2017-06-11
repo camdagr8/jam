@@ -1,0 +1,13 @@
+<li class="list-menu-heading <%=(url[1] === 'user' || url[1] === 'users') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
+    <span class="badge badge-info"><%=users.length%></span><h6><i class="lnr-users2 ico"></i>Users</h6>
+</li>
+<li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
+    <ul class="list-sub-menu">
+        <li>
+            <a href="<%=baseurl%>/admin/user" class="list-menu-item menu-add">New User</a>
+        </li>
+        <li>
+            <a href="<%=baseurl%>/admin/users" class="list-menu-item">View All</a>
+        </li>
+    </ul>
+</li>

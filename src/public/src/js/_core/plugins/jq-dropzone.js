@@ -1,5 +1,5 @@
 const dz  = require('dropzone');
-const log = console.log;
+const log = console.log.bind(console);
 
 (function($) {
 

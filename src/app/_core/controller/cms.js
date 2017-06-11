@@ -1,9 +1,11 @@
-const moment    = require('moment');
+const moment     = require('moment');
+const Promise    = require('promise');
 
-jam['rec']      = {};
-let item        = {};
+jam['rec']       = {};
+let item         = {};
 
 exports.use = (req, res, next) => {
+    //log('cms');
 
     req.baseUrl = (req.baseUrl === '') ? '/' : req.baseUrl;
 
@@ -18,14 +20,14 @@ exports.use = (req, res, next) => {
         if (item.status === 'delete') {
 
             jam['rec']['title'] = '404 Error';
-            res.status(404).render(core.template.theme + '/404', jam);
+            res.status(404).render(core.template.theme + '/templates/404', jam);
             return;
         }
 
         if (item.status === 'draft') {
             if (core.is_role(50) === false) {
                 jam['rec']['title'] = '404 Error';
-                res.status(404).render(core.template.theme + '/404', jam);
+                res.status(404).render(core.template.theme + '/templates/404', jam);
                 return;
             } else {
                 jam['rec']['title'] = 'draft | ' + jam['rec']['title'];
@@ -41,7 +43,7 @@ exports.use = (req, res, next) => {
 
                 if (diff > 0) {
                     jam['rec']['title'] = '404 Error';
-                    res.status(404).render(core.template.theme + '/404', jam);
+                    res.status(404).render(core.template.theme + '/templates/404', jam);
                     return;
                 }
             }
@@ -55,17 +57,50 @@ exports.use = (req, res, next) => {
 
             if (diff < 1) {
                 jam['rec']['title'] = '404 Error';
-                res.status(404).render(core.template.theme + '/404', jam);
+                res.status(404).render(core.template.theme + '/templates/404', jam);
                 return;
             }
         }
 
-        next();
+        // register widget.ejs
+        core.add_widgets(jam.rec.type);
+
+        // register plugin `use` hooks
+        let before = [];
+        if (jam.is.admin !== true) {
+            _.keys(jam.plugin).forEach((name) => {
+                let plugin = jam.plugin[name];
+                if (plugin.hasOwnProperty('use')) {
+                    before.push(plugin.use);
+                }
+            });
+        }
+
+        if (before.length > 0) {
+            let cnt = before.length;
+            let comp = 0;
+
+            before.forEach((fnc) => {
+                let prom = new Promise(function (resolve) {
+                    fnc(req, res, resolve);
+                });
+
+                prom.finally(() => {
+                    comp += 1;
+                    if (comp === cnt) {
+                        next();
+                    }
+                });
+            });
+
+        } else {
+            next();
+        }
 
     }).catch(() => {
 
         jam['rec']['title'] = '404 Error';
-        res.status(404).render(core.template.theme + '/404', jam);
+        res.status(404).render(core.template.theme + '/templates/404', jam);
 
     });
 };
@@ -81,8 +116,7 @@ exports.all = (req, res) => {
 
     if (output === 'html') {
         let tmp = jam.rec['template'] || 'index';
-        tmp = core.template.theme + '/' + tmp;
+        tmp = core.template.theme + '/templates/' + tmp;
         res.render(tmp, jam);
     }
 };
-

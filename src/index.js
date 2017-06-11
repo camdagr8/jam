@@ -53,9 +53,9 @@ const api = new ParseServer({
     publicServerURL 	: env.SERVER_URI + env.PARSE_MOUNT,
     serverURL			: env.SERVER_URI + env.PARSE_MOUNT,
     loggerAdapter 		: {
-        module: "parse-server/lib/Adapters/Logger/WinstonLoggerAdapter",
-        options: {
-            logLevel: "error"
+        module          : "parse-server/lib/Adapters/Logger/WinstonLoggerAdapter",
+        options         : {
+            logLevel    : "error"
         }
     }
 });
@@ -98,6 +98,7 @@ if (env.PARSE_DASHBOARD === true || env.PARSE_DASHBOARD === 'true') {
 
     app.use(env.PARSE_DASHBOARD_MOUNT, dashboard);
 }
+
 
 // Get config variables
 app.use(prefs);

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <% include ../partials/head %>
-</head>
+    <head>
+        <% include ../partials/head %>
+    </head>
+    <body>
 
-<body class="home">
-<% include ../partials/header %>
+        <% include ../partials/header %>
 
-<main role="main">
-    YOUR CONTENT HERE
-</main>
+        <% if (rec['meta']['body']) { %>
+        <%-core.hbsParse(rec.meta.body)%>
+        <% } %>
 
-<% include ../partials/footer %>
-</body>
+        <% include ../partials/footer %>
+
+    </body>
 </html>

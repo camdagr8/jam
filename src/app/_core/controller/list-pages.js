@@ -6,7 +6,7 @@ exports.use = (req, res, next) => {
      */
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/404', jam);
+        res.render(core.template.theme + '/templates/404', jam);
     }  else {
         next();
     }

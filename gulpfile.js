@@ -44,7 +44,10 @@ if (gutil.env.port) {
 
 config.port['proxy']          = env.PORT;
 config.port['browsersync']    = env.PORT + 90;
-config.scripts['vendor']      = ["src/public/src/js/_core/vendor/**/*.js"];
+config.scripts['vendor']      = {
+    core    : ["src/public/src/js/_core/vendor/**/*.js"],
+    app     : ["src/public/src/js/_app/vendor/**/*.js"],
+};
 
 /**
  * -----------------------------------------------------------------------------
@@ -92,13 +95,16 @@ gulp.task('scripts', (done) => {
 
 
 // vendor
-gulp.task('vendor', (done) => {
+gulp.task('vendor:core', () => {
+    return gulp.src(config.scripts.vendor.core)
+    .pipe(concat('vendor-core.js'))
+    .pipe(gulp.dest(config.scripts.dest));
+});
 
-    gulp.src(config.scripts.vendor)
+gulp.task('vendor', ['vendor:core'], () => {
+    return gulp.src(config.scripts.vendor.app)
     .pipe(concat('vendor.js'))
     .pipe(gulp.dest(config.scripts.dest));
-
-    done();
 });
 
 
@@ -121,7 +127,7 @@ gulp.task('nodemon', (done) => {
 	}).on('start', function () {
 		if (!callbackCalled) {
 			callbackCalled = true;
-			done();
+			setTimeout(done, 1000);
 		}
 	}).on('restart', function () {
 		browserSync.reload();
@@ -132,14 +138,15 @@ gulp.task('nodemon', (done) => {
 // serve -> browserSync & watch start
 gulp.task('serve', (done) => {
 	browserSync({
-		notify            : false,
-		timestamps        : true,
-		reloadDelay       : 0,
-		reloadDebounce    : 2000,
-		logPrefix         : '00:00:00',
-		port              : config.port.browsersync,
-		ui                : {port: config.port.browsersync+1},
-		proxy             : 'localhost:'+config.port.proxy
+        notify            : false,
+        timestamps        : true,
+        reloadDelay       : 2000,
+        reloadDebounce    : 2000,
+        logPrefix         : '00:00:00',
+        port              : config.port.browsersync,
+        ui                : {port: config.port.browsersync + 1},
+        proxy             : 'localhost:' + config.port.proxy,
+        startPath         : "/"
 	});
 
 	gulp.task('styles:watch', ['styles']);

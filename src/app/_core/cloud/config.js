@@ -23,61 +23,72 @@
 
 const config_get = (request, response, skip = 0, output = {}) => {
 
-	let limit   = 1000;
-	let qry     = core.query({table: 'Config', skip: skip, limit: limit});
-
 	if (request.params.hasOwnProperty('key')) { // Single config object query
+        let qry = new Parse.Query('Config');
 		qry.equalTo('key', request.params.key.toLowerCase());
-	}
+		qry.first().then((results) => {
+		    //log('config_get:', results);
+            if (results) {
+                let item = results.toJSON();
+                response.success(item.value);
+            } else {
+                response.success();
+            }
+        }).catch((err) => {
+		    response.success();
+        });
+	} else {
 
-	qry.find().then((results) => { // Process results into output object.
+        let limit   = 1000;
+        let qry     = core.query({table: 'Config', skip: skip, limit: limit});
+        qry.find().then((results) => { // Process results into output object.
 
-		results.forEach((result) => {
-			let k = result.get('key');
-			let v = result.get('value');
+            results.forEach((result) => {
+                let k = result.get('key');
+                let v = result.get('value');
 
-			if (output.hasOwnProperty(k)) {
-				if (!_.isArray(output[k])) {
-					output[k] = [output[k]];
-				}
-				output[k].push(v[k]);
+                if (output.hasOwnProperty(k)) {
+                    if (!_.isArray(output[k])) {
+                        output[k] = [output[k]];
+                    }
+                    output[k].push(v[k]);
 
-			} else {
-				output[k] = v[k];
-			}
-		});
-
-		return results.length;
-
-	}, (err) => { // Query error
-
-		response.error(err);
-
-	}).then((len) => {
-
-		if (len === limit) { // Call config_get() again if the len is at the `limit` so that we get all records.
-
-			skip += limit;
-			config_get(request, response, skip, output);
-
-		} else { // We got all the records -> move along
-
-			if (request.params.hasOwnProperty('key')) {
-
-				let v = output[request.params.key];
-				response.success(v);
-
-			} else {
-                if (_.isEmpty(output)) {
-                    response.error('no config');
                 } else {
-                    response.success(output);
+                    output[k] = v[k];
                 }
+            });
 
-			}
-		}
+            return results.length;
 
-	});
+        }, (err) => { // Query error
+
+            response.error(err);
+
+        }).then((len) => {
+
+            if (len === limit) { // Call config_get() again if the len is at the `limit` so that we get all records.
+
+                skip += limit;
+                config_get(request, response, skip, output);
+
+            } else { // We got all the records -> move along
+
+                if (request.params.hasOwnProperty('key')) {
+
+                    let v = output[request.params.key];
+                    response.success(v);
+
+                } else {
+                    if (_.isEmpty(output)) {
+                        response.error('no config');
+                    } else {
+                        response.success(output);
+                    }
+
+                }
+            }
+        });
+    }
 
 };
 

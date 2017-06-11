@@ -70,6 +70,7 @@ $(function () {
         if (!elm) { return; elm; }
 
         return elm.trumbowyg({
+            resetCss              : true,
             autogrow              : true,
             removeformatPasted    : true,
             semantic              : false,
@@ -640,20 +641,20 @@ $(function () {
         btn.text(btn.data('submit'));
 
         // Do the AJAX thang:
-        let action = trg.attr('action');
-        let type   = (data.hasOwnProperty('objectId')) ? 'PUT' : 'POST';
-        type = (trg.attr('method').toLowerCase() === 'delete') ? 'DELETE' : type;
+        let action    = trg.attr('action');
+        let type      = (data.hasOwnProperty('objectId')) ? 'PUT' : 'POST';
+        type          = (trg.attr('method').toLowerCase() === 'delete') ? 'DELETE' : type;
 
-        let n = (data.hasOwnProperty('title')) ? data.title : null;
-        n = (n === null && data.hasOwnProperty('email')) ? data.email : n;
-        n = (n === null) ? '' : n;
+        let n         = (data.hasOwnProperty('title')) ? data.title : null;
+        n             = (n === null && data.hasOwnProperty('email')) ? data.email : n;
+        n             = (n === null) ? '' : n;
 
         $.ajax({
-            data:     data,
-            type:     type,
-            url:      action,
-            dataType: 'json',
-            success:  (resp) => {
+            data        : data,
+            type        : type,
+            url         : action,
+            dataType    : 'json',
+            success     :  (resp) => {
 
                 setTimeout(() => {
                     btn.text(btn.data('label'));
@@ -775,42 +776,44 @@ $(function () {
         let attachments = [];
 
         // Draw metaboxes
+        if (!d.hasOwnProperty('metabox')) { d['metabox'] = []; }
+
         d.metabox.forEach((box, i) => {
-            box['i']        = i;
-            box['group']    = slugify(box.name);
-            box['group']    = box.group.toLowerCase();
-            box['val']      = (typeof window['meta'][box.id] !== 'undefined') ? window.meta[box.id] : undefined;
+            box['i']                  = i;
+            box['group']              = slugify(box.name);
+            box['group']              = box.group.toLowerCase();
+            box['val']                = (typeof window['meta'][box.id] !== 'undefined') ? window.meta[box.id] : undefined;
 
             if (box.val) {
-                box['val'] = (box.type === 'OBJECT') ? beautify(JSON.stringify(box.val)) : box.val;
-                box['val'] = (box.type === 'ARRAY') ? beautify(JSON.stringify(box.val)) : box.val;
-                box['val'] = (box.type === 'HTML') ? beautify_html(box.val) : box.val;
+                box['val']            = (box.type === 'OBJECT') ? beautify(JSON.stringify(box.val)) : box.val;
+                box['val']            = (box.type === 'ARRAY') ? beautify(JSON.stringify(box.val)) : box.val;
+                box['val']            = (box.type === 'HTML') ? beautify_html(box.val) : box.val;
             }
 
             if (box.hasOwnProperty('value')) {
                 if (!_.isArray(box['val'])) {
-                    box['val'] = [box.val];
+                    box['val']        = [box.val];
                 }
 
                 if (box['val'].indexOf(String(box.value)) > -1) {
-                    box['checked'] = 'checked="checked"';
+                    box['checked']    = 'checked="checked"';
                 }
             }
 
             // Check if there is a card with data-metabox="NAME" in the dom already.
-            let group    = $('[data-metabox="'+box.group+'"]');
-            let cont     = zones[box.type] || widgets;
-            let tmp      = hbs.compile($('#metabox-hbs-' + box.type).html());
-            let elm      = $(tmp(box)).appendTo(cont).hide();
+            let group          = $('[data-metabox="'+box.group+'"]');
+            let cont           = zones[box.type] || widgets;
+            let tmp            = hbs.compile($('#metabox-hbs-' + box.type).html());
+            let elm            = $(tmp(box)).appendTo(cont).hide();
 
             if (box.type !== 'UPLOAD') {
                 if (group.length > 0) {
-                    let t = ['OBJECT', 'ARRAY', 'HTML'];
-                    let e = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
-                    let g = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
+                    let t      = ['OBJECT', 'ARRAY', 'HTML'];
+                    let e      = (t.indexOf(box.type) > -1) ? elm.find('textarea') : elm.find('.list-group-item');
+                    let g      = (t.indexOf(box.type) > -1) ? group.find('.collapse') : group.find('.list-group');
 
                     if (e.length > 0 && g.length > 0) {
-                        elm = e.appendTo(g);
+                        elm    = e.appendTo(g);
                     }
                 }
             }

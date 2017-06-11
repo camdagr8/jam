@@ -181,6 +181,7 @@ module.exports = (req, res, next) => {
 };
 */
 module.exports = (req, res, next) => {
+    //log('installer');
     if (jam['installed'] === true) {
         next();
     } else {

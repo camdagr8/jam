@@ -6,8 +6,6 @@ module.exports = {
 
     perms: ['administrator'],
 
-
-
     roles: [],
 
     sections: ['user-editor'],

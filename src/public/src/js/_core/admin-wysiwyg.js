@@ -41,6 +41,7 @@ $(function () {
      */
     $('[data-wysiwyg]').trumbowyg({
         autogrow              : true,
+        resetCss              : true,
         removeformatPasted    : true,
         semantic              : false,
         btns                  : [

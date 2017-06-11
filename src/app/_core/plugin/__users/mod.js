@@ -1,13 +1,13 @@
 module.exports = {
-    id: 'test',
+    id: 'users',
 
     index: 1000000,
 
-    perms: ['all'],
+    perms: ['administrator'],
 
     sections: ['all'],
 
-    type: 'widget',
+    type: 'plugin',
 
     zone: 'widgets'
 };

@@ -136,7 +136,6 @@ const add_widgets = (sections) => {
 		// Exit if no intersecting sections ---------------------------------- X
 		if (_.intersection(sections, m.sections).length < 1) { return; }
 
-
 		jam[z] = (jam.hasOwnProperty(z)) ? jam[z] : [];
 		jam[z].push(plugin.widget);
 		jam[z] = _.uniq(jam[z]);
@@ -167,7 +166,7 @@ const plugins = (mod_path) => {
 	mods.forEach((dir) => {
 
 		if (dir.substr(0, 1) === '.') { return; }
-        if (dir.substr(0, 1) === '_') { return; }
+		if (dir.substr(0, 1) === '_') { return; }
 
 		let name 	= slugify(dir);
 		let obj 	= {name: name, index: 1000000};
@@ -348,6 +347,7 @@ const scan = (path) => {
 const template = {
 	admin: appdir + '/_core/view/admin/admin',
 	install: appdir + '/_core/view/admin/install',
+    views: null,
     theme: null
 };
 

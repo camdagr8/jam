@@ -9,15 +9,15 @@ exports.use = (req, res) => {
                 req.pipe(request(url)).pipe(res);
             } else {
                 jam['rec']['title'] = '404 Error';
-                res.status(404).render(core.template.theme + '/404', jam);
+                res.status(404).render(core.template.theme + '/templates/404', jam);
             }
         }).catch(() => {
             jam['rec']['title'] = '404 Error';
-            res.status(404).render(core.template.theme + '/404', jam);
+            res.status(404).render(core.template.theme + '/templates/404', jam);
         });
 
     } else {
         jam['rec']['title'] = '404 Error';
-        res.status(404).render(core.template.theme + '/404', jam);
+        res.status(404).render(core.template.theme + '/templates/404', jam);
     }
 };
