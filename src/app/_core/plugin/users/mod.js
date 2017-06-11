@@ -1,7 +1,7 @@
 module.exports = {
     id: 'users',
 
-    index: 100000,
+    index: 1000,
 
     perms: ['administrator'],
 
