@@ -1,0 +1,10 @@
+[
+    {
+        "route"         : ["/admin/user/:id", "/admin/user"],
+        "controller"    : "/_core/plugin/users/controller/editor.js"
+    },
+    {
+        "route"         : ["/admin/users"],
+        "controller"    : "/_core/plugin/users/controller/list.js"
+    }
+]

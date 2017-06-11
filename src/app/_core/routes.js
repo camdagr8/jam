@@ -21,10 +21,6 @@ let routes = [
         "controller"    : "/_core/controller/editor-page.js"
     },
     {
-        "route"         : ["/admin/user/:id", "/admin/user"],
-        "controller"    : "/_core/controller/editor-user.js"
-    },
-    {
         "route"         : ["/admin/template/:id", "/admin/template"],
         "controller"    : "/_core/controller/editor-template.js"
     },
@@ -35,10 +31,6 @@ let routes = [
     {
         "route"         : ["/admin/pages"],
         "controller"    : "/_core/controller/list-pages.js"
-    },
-    {
-        "route"         : ["/admin/users"],
-        "controller"    : "/_core/controller/list-users.js"
     },
     {
         "route"         : ["/signin", "/login"],
@@ -104,11 +96,10 @@ module.exports = (req, res, next) => {
     }
 
     // Get plugin routes and add them to the routes array
-    jam.plugins.forEach((plugin) => {
-        if (plugin.hasOwnProperty('routes')) {
-            let r = require(plugin.routes);
-            r.forEach((item) => { routes.push(item); });
-        }
+    let rdirs = [appdir + '/_core/plugin', appdir + '/plugin'];
+    core.find_file(rdirs, 'routes.json').forEach((file) => {
+        let r = require(file);
+        r.forEach((item) => { routes.push(item); });
     });
 
     routes.push(default_route);

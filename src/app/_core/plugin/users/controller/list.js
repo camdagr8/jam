@@ -13,6 +13,9 @@ exports.use = (req, res, next) => {
 };
 
 exports.all = (req, res) => {
-    jam.content = './sections/list-users';
+    let darr       = __dirname.split('/'); darr.pop();
+    let dir        = darr.join('/') + '/view';
+    jam.content    = darr.join('/') + '/view/list.ejs';
+
     res.render(core.template.admin, jam);
 };

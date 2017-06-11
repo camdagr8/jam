@@ -98,7 +98,9 @@ exports.use = (req, res, next) => {
 };
 
 exports.get = (req, res) => {
-    jam['content'] = './sections/editor-user';
+    let darr       = __dirname.split('/'); darr.pop();
+    let dir        = darr.join('/') + '/view';
+    jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {

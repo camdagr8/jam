@@ -1,7 +1,7 @@
 module.exports = {
     id: 'users',
 
-    index: 1000000,
+    index: 100000,
 
     perms: ['administrator'],
 
@@ -9,5 +9,5 @@ module.exports = {
 
     type: 'plugin',
 
-    zone: 'widgets'
+    zone: 'sidebar'
 };

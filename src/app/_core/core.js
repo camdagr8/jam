@@ -1,9 +1,10 @@
 // Includes
-const hbs 		= require('handlebars');
-const slugify 	= require('slugify');
-const Promise 	= require('promise');
-const moment 	= require('moment');
-const fs 		= require('fs');
+const hbs        = require('handlebars');
+const slugify    = require('slugify');
+const Promise    = require('promise');
+const moment     = require('moment');
+const fs         = require('fs');
+const rr         = require('readdir-recursive');
 
 
 /**
@@ -370,6 +371,40 @@ const timestamper = () => {
 	fs.writeFile(p, t, 'utf8', () => {});
 };
 
+/**
+ *
+ * find_file()
+ *
+ * @author Cam Tullos cam@tullos.ninja
+ * @since 1.0.13
+ *
+ * @description Recursively finds the supplied file name in the directory
+ * @param dir {String|Array} The directories to search
+ * @param file {String|Array} The files to find
+ *
+ * @return {Array} List of file paths
+ */
+const find_file = (dirs, files) => {
+    if (typeof dirs === 'string') { dirs = [dirs]; }
+    if (typeof files === 'string') { files = [files]; }
+
+    let output = [];
+    dirs.forEach((dir) => {
+        rr.fileSync(dir).forEach((file) => {
+
+            let exclude    = false;
+            let farr       = file.split('/');
+            farr.forEach((i) => { if (i.substr(0, 2) === '__') { exclude = true; } });
+
+            if (exclude === true) { return; }
+
+            f = farr.pop();
+            if (files.indexOf(f) > -1) { output.push(file); }
+        });
+    });
+
+    return output;
+};
 
 /**
  * Exports
@@ -385,3 +420,4 @@ exports.scan           = scan;
 exports.skey           = 'bD6yXAOEX4xq';
 exports.template       = template;
 exports.timestamper    = timestamper;
+exports.find_file      = find_file;
