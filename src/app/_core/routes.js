@@ -21,14 +21,6 @@ let routes = [
         "controller"    : "/_core/controller/editor-page.js"
     },
     {
-        "route"         : ["/admin/template/:id", "/admin/template"],
-        "controller"    : "/_core/controller/editor-template.js"
-    },
-    {
-        "route"         : ["/admin/templates"],
-        "controller"    : "/_core/controller/list-templates.js"
-    },
-    {
         "route"         : ["/admin/pages"],
         "controller"    : "/_core/controller/list-pages.js"
     },

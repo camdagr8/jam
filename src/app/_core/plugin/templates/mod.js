@@ -1,11 +1,13 @@
 module.exports = {
-    id: 'sidebar-templates',
+    id: 'templates',
 
-    index: 1,
+    index: 100,
 
     perms: ['administrator'],
 
     sections: ['all'],
+
+    type: 'plugin',
 
     zone: 'sidebar'
 };

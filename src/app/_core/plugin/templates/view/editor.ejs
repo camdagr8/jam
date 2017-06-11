@@ -1,43 +1,43 @@
 <form id="admin-form" action="<%=baseurl%>/admin/template" method="post">
 
-	<input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="nonce" value="<%=nonce%>" />
     <input type="hidden" name="type" value="template" />
-	<input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
+    <input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
 
-	<div class="mb-l"><h5><i class="lnr-pencil ico"></i> Template Editor</h5></div>
+    <div class="mb-l"><h5><i class="lnr-pencil ico"></i> Template Editor</h5></div>
 
-	<div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
-		<div class="mb-s">
+    <div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
+        <div class="mb-s">
 
             <!-- Template Title -->
-			<div class="input-group mb-l">
-				<span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
-				<input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['title']%>" />
-				<span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the template select dropdown widget."><i class="lnr-question-circle"></i></span>
-			</div>
+            <div class="input-group mb-l">
+                <span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
+                <input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['title']%>" />
+                <span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the template select dropdown widget."><i class="lnr-question-circle"></i></span>
+            </div>
 
             <!-- Template File -->
-			<div class="card card-shadow bgc-white bd-0 mb-l">
-				<h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> File</h6>
+            <div class="card card-shadow bgc-white bd-0 mb-l">
+                <h6 class="card-header" style="margin-bottom: -1px;"><i class="lnr-file-code ico"></i> File</h6>
 
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item">
-						<div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<input type="text" class="form-control" name="template" value="<%=rec['template']%>" readonly />
-							<div class="input-group-btn">
-								<button type="button" class="btn btn-primary" style="width: 50px;">
-									<i class="lnr-chevron-down"></i>
-								</button>
-							</div>
-						</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <input type="text" class="form-control" name="template" value="<%=rec['template']%>" readonly />
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary" style="width: 50px;">
+                                    <i class="lnr-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div class="dropdown-menu dropdown-menu-right" style="margin-top: -10px; margin-right: 20px;">
                             <% template_files.forEach((file) => { -%>
                             <a class="dropdown-item <%=(file === rec['template']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
                             <% }); -%>
                         </div>
-					</li>
-				</ul>
-			</div>
+                    </li>
+                </ul>
+            </div>
 
             <div>
                 <!-- Template Metabox Add -->
@@ -129,23 +129,23 @@
                 </div>
             </div>
 
-		</div>
-		<aside>
-			<div class="mb-l">
-				<button
-					type="button"
-					class="btn btn-primary btn-block btn-lg text-uppercase"
-					data-label="Save Template"
-					data-confirm="Are you sure?"
-					data-submit='Saving...'>Save Template</button>
-			</div>
+        </div>
+        <aside>
+            <div class="mb-l">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-block btn-lg text-uppercase"
+                    data-label="Save Template"
+                    data-confirm="Are you sure?"
+                    data-submit='Saving...'>Save Template</button>
+            </div>
             <% if (rec['objectId']) { %>
             <div>
                 <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminTemplateDeleteModal">Delete Template</button>
             </div>
             <% } %>
-		</aside>
-	</div>
+        </aside>
+    </div>
 </form>
 
 <script id="metabox-hbs" type="text/x-handlebars-template">

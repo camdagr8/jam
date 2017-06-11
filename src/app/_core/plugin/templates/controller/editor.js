@@ -100,7 +100,9 @@ const template_delete = (req, res) => {
 };
 
 const template_get = (req, res) => {
-    jam['content'] = './sections/editor-template';
+    let darr       = __dirname.split('/'); darr.pop();
+    let dir        = darr.join('/') + '/view';
+    jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {

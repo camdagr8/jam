@@ -1,0 +1,10 @@
+[
+    {
+        "route"         : ["/admin/template/:id", "/admin/template"],
+        "controller"    : "/_core/plugin/templates/controller/editor.js"
+    },
+    {
+        "route"         : ["/admin/templates"],
+        "controller"    : "/_core/plugin/templates/controller/list.js"
+    }
+]
