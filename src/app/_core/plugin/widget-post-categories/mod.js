@@ -17,6 +17,10 @@ module.exports = {
             pagination    : {}
         };
 
+        if (req.params.hasOwnProperty("id")) {
+            log('got ID');
+        }
+
         Parse.Cloud.run('category_list').then((result) => {
             jam['categories'] = result;
         }).catch((err) => {
