@@ -222,6 +222,29 @@ $(function () {
             return data;
         },
 
+        post: (data) => {
+
+            // Status: Publish
+            if (data.hasOwnProperty('publish')) {
+                data.status = data.publish;
+                delete data.publish;
+            }
+
+            // Status: Unpublish
+            if (data.hasOwnProperty('unpublish')) {
+                if (data.unpublish === 'delete') {
+                    data.status = 'delete';
+                    delete data.unpublish;
+                }
+
+                delete data.unpublish;
+            }
+
+            data = parse_data.meta(data);
+
+            return data;
+        },
+
         template: (data) => {
 
             // Remove unecessary fields
@@ -313,6 +336,24 @@ $(function () {
             let req = {
                 template: 'Select a template',
                 title:    'Enter the page title'
+            };
+
+            _.keys(req).forEach((fld) => {
+                if (err !== null) {
+                    return;
+                }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            return (err !== null) ? err : true;
+        },
+
+        post: (data) => {
+            let err = null;
+            let req = {
+                title:    'Enter the post title'
             };
 
             _.keys(req).forEach((fld) => {
@@ -848,7 +889,7 @@ $(function () {
         });
 
         setTimeout(load_attachments, 250, attachments);
-    });
+    }).change();
 
     // [data-toggle="slide-toggle"] click listener
     $(document).on('click', '[data-toggle="slide-toggle"]', function () {

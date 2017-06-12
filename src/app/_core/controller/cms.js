@@ -5,7 +5,7 @@ jam['rec']       = {};
 let item         = {};
 
 exports.use = (req, res, next) => {
-    //log('cms');
+    log('cms.use()');
 
     req.baseUrl = (req.baseUrl === '') ? '/' : req.baseUrl;
 
@@ -107,6 +107,7 @@ exports.use = (req, res, next) => {
 
 // 1.0 - ALL | Get the route
 exports.all = (req, res) => {
+    log('cms.all()');
 
     let output    = (req.query.hasOwnProperty('output')) ? req.query.output : 'html';
 

@@ -1,0 +1,10 @@
+[
+    {
+        "route": ["/REST/categories/:page", "/REST/categories"],
+        "controller": "[plugin_dir]/controller/list"
+    },
+    {
+        "route": ["/REST/category/:id", "/REST/category"],
+        "controller": "[plugin_dir]/controller/editor"
+    }
+]

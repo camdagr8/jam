@@ -36,6 +36,7 @@ module.exports = (req, res, next) => {
     jam['pages']             = [];
     jam['plugin']            = {};
     jam['plugins']           = [];
+    jam['posts']             = [];
     jam['sidebar']           = [];
     jam['url']               = url;
     jam['users']             = [];

@@ -27,7 +27,6 @@ const admin             = require(appdir + '/_core/controller/admin.js');
 const moment            = require('moment');
 
 
-
 global.log = (...args) => {
 	let a = [];
 

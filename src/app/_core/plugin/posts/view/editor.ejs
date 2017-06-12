@@ -1,0 +1,55 @@
+<form id="admin-form" action="<%=baseurl%>/admin/post" method="post">
+
+    <input type="hidden" name="type" value="post" />
+    <input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
+    <select class="form-control" id="admin-template-select" name="template" title="Select Template" style="display: none;">
+        <option value="article" data-template='{"metabox":[{"name":"Body","label":"","type":"HTML","id":"body","value":""}],"title":"Article","template":"article","creator":{"objectId":"u5fMpRs2SP"},"createdAt":"2017-06-11T03:28:59.807Z","updatedAt":"2017-06-11T03:31:29.547Z","objectId":"aAVHXpe5lH"}'>Article</option>
+    </select>
+
+    <div class="mb-l"><h5><i class="lnr-pushpin ico"></i> Post Editor</h5></div>
+
+    <div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
+        <div class="blocks">
+
+            <div class="input-group mb-xs">
+                <span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
+                <input type="text" class="form-control form-control-lg pl-s" placeholder="Title" name="title" autocomplete="off" value="<%=rec['title']%>" />
+            </div>
+
+            <% if (blocks) { %>
+
+            <% blocks.forEach(function (block, i) { %>
+            <%- include(block, {index: i}) -%>
+            <% }); %>
+
+            <% } %>
+
+            <div id="admin-meta-box-blocks"></div>
+        </div>
+
+        <aside class="widgets">
+
+            <% if (widgets) { %>
+
+            <% widgets.forEach(function (widget, i) { %>
+            <%- include(widget, {index: i}) -%>
+            <% }); %>
+
+            <% } %>
+
+            <div id="admin-meta-box-widgets" class="mb-l"></div>
+
+            <div class="mb-l">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-block btn-lg text-uppercase"
+                    data-label="Save Post"
+                    data-confirm="Are you sure?"
+                    data-submit='Saving...'>Save Post</button>
+            </div>
+        </aside>
+    </div>
+</form>
+
+<%- include ../../../view/admin/partials/metaboxes -%>

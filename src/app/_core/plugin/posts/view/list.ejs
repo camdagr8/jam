@@ -1,0 +1,137 @@
+<section class="admin-list">
+    <div class="mb-l">
+        <h5 class="d-inline-block"><i class="lnr-pushpin ico"></i> Posts</h5>
+        <a href="<%=baseurl%>/admin/post" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Post</a>
+    </div>
+
+    <table data-dna="table-bordered" class="table table-bordered table-hover">
+        <thead class="thead-default">
+            <tr>
+                <th style="width: 50%">Name</th>
+                <th class="hidden-sm-down">Route</th>
+                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
+                <th class="hidden-sm-down" style="width: 5%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% posts.forEach((post) => { %>
+            <% if (post.status === 'delete') { return; } %>
+            <tr>
+                <td class="title"><a href="<%=post.edit_url%>"><%=post.title%></a></td>
+                <td class="hidden-sm-down">
+                    <% post.routes.forEach((route) => { %>
+                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view post" data-placement="left" target="_blank" class="badge badge-primary d-inline">
+                        <%=route%>
+                    </a>
+                    <% }); %>
+                </td>
+                <td class="hidden-sm-down">
+                    <i class="<%=post.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=post.status%>"></i>
+                </td>
+                <td class="hidden-sm-down action">
+                    <a href="<%=post.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                </td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <% let deleted_posts = _.where(posts, {status: 'delete'}); %>
+    <% if (deleted_posts.length > 0) { %>
+    <div class="mt-xxl mb-s">
+        <h5 class="d-inline-block"><i class="lnr-trash ico"></i> Deleted Posts</h5>
+    </div>
+    <table data-dna="table-bordered" class="table table-bordered table-hover">
+        <thead class="thead-default">
+            <tr>
+                <th style="width: 50%">Name</th>
+                <th class="hidden-sm-down">Route</th>
+                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
+                <th class="hidden-sm-down" style="width: 5%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% posts.forEach((post) => { %>
+            <% if (post.status !== 'delete') { return; } %>
+            <tr>
+                <td class="title"><a href="<%=post.edit_url%>"><%=post.title%></a></td>
+                <td class="hidden-sm-down">
+                    <% post.routes.forEach((route) => { %>
+                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view post" data-placement="left" target="_blank" class="badge badge-primary d-inline">
+                        <%=route%>
+                    </a>
+                    <% }); %>
+                </td>
+                <td class="hidden-sm-down">
+                    <i class="<%=post.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=post.status%>"></i>
+                </td>
+                <td class="hidden-sm-down action">
+                    <a href="<%=post.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                </td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <div class="text-center p-l">
+        <button type="submit" class="btn btn-outline-danger text-uppercase" data-toggle="modal" data-target="#adminPostsDeleteModal">Permanently Delete Posts</button>
+    </div>
+    <% } %>
+
+    <% if (pagination.pages > 1) { %>
+    <div class="col-12">
+        <nav aria-label="Page navigation">
+            <ul data-dna="pagination" class="pagination justify-content-center">
+                <% if (pagination.page !== pagination.prev) { %>
+                <li class="page-item">
+                    <a class="page-link" href="/admin/posts/<%=pagination.prev%><%=pagination.query%>" aria-label="Previous">
+                        <span aria-hidden="true"><i class="lnr-chevron-left"></i></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <% } %>
+
+                <% for (let i = pagination.min; i <= pagination.max; i++) { %>
+                <% if (pagination.page === i) { %>
+                <li class="page-item active"><a class="page-link" href="javascript:void(0);"><%=i%></a></li>
+                <% } else { %>
+                <li class="page-item"><a class="page-link" href="/admin/posts/<%=i%><%=pagination.query%>"><%=i%></a></li>
+                <% } %>
+                <% } %>
+
+                <% if (pagination.page !== pagination.next) { %>
+                <li class="page-item">
+                    <a class="page-link" href="/admin/posts/<%=pagination.next%><%=pagination.query%>" aria-label="Next">
+                        <span aria-hidden="true"><i class="lnr-chevron-right"></i></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+    <div class="clearfix"></div>
+    <div class="pb-5">&nbsp;</div>
+    <% } %>
+</section>
+
+<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminPostsDelete" aria-hidden="true" id="adminPostsDeleteModal">
+    <div class="modal-dialog">
+        <form id="admin-delete-form" action="<%=baseurl%>/admin/purge/post" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Posts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-l mt-m">Permanently deleting cannot be undone.<br />Are you sure?</div>
+                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-block btn-lg text-uppercase">Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
