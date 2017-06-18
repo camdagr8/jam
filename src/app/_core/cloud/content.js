@@ -134,6 +134,7 @@ const content_get_posts = (request, response) => {
     let order      = (params.hasOwnProperty('order')) ? params.order : 'descending';
     let orderBy    = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'createdAt';
     let skip       = (limit * page) - limit;
+    skip           = (skip < 0) ? 0 : skip;
 
 
     // 0.1 - Use core.query() to contruct the Parse.Query object
@@ -188,7 +189,8 @@ const content_get_posts = (request, response) => {
         response.success(results);
 
     }, (err) => {
-        log(err);
+        log(__filename);
+        log(err.message);
         response.success(results);
     });
 };

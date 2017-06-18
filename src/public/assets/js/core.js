@@ -5773,7 +5773,7 @@ $(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(__filename) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -6276,7 +6276,7 @@ $(function () {
                 }, 2000);
             },
             error: function error(xhr, status, err) {
-                console.log('error');
+                console.log(__filename);
                 console.log(err);
                 btn.removeAttr('disabled');
                 $('body').find('.alert').text(err.message).addClass('show');
@@ -6791,6 +6791,7 @@ $(function () {
         dragula([this], opt);
     });
 });
+/* WEBPACK VAR INJECTION */}.call(exports, "/index.js"))
 
 /***/ }),
 /* 18 */

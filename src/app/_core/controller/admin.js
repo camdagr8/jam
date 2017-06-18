@@ -16,8 +16,8 @@ module.exports = (req, res, next) => {
 		    jam.users = users;
 
 		}, (err) => {
-
-		    log(err);
+            log(__filename);
+		    log(err.message);
 
         }).then(() => { // Get Content/Pages
 
@@ -28,8 +28,8 @@ module.exports = (req, res, next) => {
             jam['pages'] = pages;
 
         }, (err) => { // Get Content/Pages error
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => { // Get template files
 
@@ -50,8 +50,8 @@ module.exports = (req, res, next) => {
             });
 
         }, (err) => { // Get template files error
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => { // Get templates array
 
@@ -62,8 +62,8 @@ module.exports = (req, res, next) => {
             jam['templates'] = templates;
 
         }, (err) => {
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => {
 

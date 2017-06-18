@@ -5,7 +5,7 @@ module.exports = {
 
 	perms: ['all'],
 
-	sections: ['page-editor', 'post-editor'],
+	sections: ['page-editor'],
 
 	zone: 'blocks'
 };

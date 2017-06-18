@@ -16,8 +16,7 @@ const cat_list = (request, response) => {
         max: 0,
         min: 0
     };
-
-
+    
     // 0.1 - Use core.query() to contruct the Parse.Query object
     let qopt = {
         table      : 'Category',
@@ -34,6 +33,10 @@ const cat_list = (request, response) => {
 
     if (params.hasOwnProperty('containedIn')) {
         qry.containedIn('slug', params.containedIn);
+    }
+
+    if (params.hasOwnProperty('notContainedIn')) {
+        qry.notContainedIn('slug', params.notContainedIn);
     }
 
     qry.count().then((count) => {

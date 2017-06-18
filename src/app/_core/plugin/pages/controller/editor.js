@@ -73,7 +73,7 @@ const page_get = (req, res) => {
         res.render(core.template.admin, jam);
 
     }, (err) => {
-
+        log(__filename);
         log(err);
         jam['err'] = {
             code: 400,

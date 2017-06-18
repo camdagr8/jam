@@ -25,10 +25,12 @@ exports.all = (req, res) => {
         qry.limit(1000);
         return qry.find();
     }, (err) => {
+        log(__filename);
         log(err);
 	}).then(function (roles) {
 		return Parse.Object.destroyAll(roles, {useMasterKey: true});
 	}, (err) => {
+        log(__filename);
 	    log(err);
     }).then(function () {
 		let qry = new Parse.Query('Config');

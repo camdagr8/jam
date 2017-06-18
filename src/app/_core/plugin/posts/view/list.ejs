@@ -20,9 +20,17 @@
                 <td class="title"><a href="<%=post.edit_url%>"><%=post.title%></a></td>
                 <td class="hidden-sm-down">
                     <% post.routes.forEach((route) => { %>
+                    <% if (post.hasOwnProperty('category')) { %>
+                    <% post.category.forEach((cat) => { %>
+                    <a href="<%=baseurl%>/<%=cat%><%=route%>" data-toggle="tooltip" title="view post" data-placement="left" target="_blank" class="badge badge-primary d-inline">
+                        /<%=cat%><%=route%>
+                    </a>
+                    <% }); %>
+                    <% } else { %>
                     <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view post" data-placement="left" target="_blank" class="badge badge-primary d-inline">
                         <%=route%>
                     </a>
+                    <% } %>
                     <% }); %>
                 </td>
                 <td class="hidden-sm-down">

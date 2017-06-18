@@ -499,7 +499,7 @@ $(function () {
                 }, 2000);
             },
             error:    function (xhr, status, err) {
-                console.log('error');
+                console.log(__filename);
                 console.log(err);
                 btn.removeAttr('disabled');
                 $('body').find('.alert').text(err.message).addClass('show');
