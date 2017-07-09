@@ -20,7 +20,7 @@ module.exports = {
         };
 
         let id;
-        let limit = 2;
+        let limit = 10;
 
         if (req.url.indexOf('/admin/post/') > -1) {
             id = req.url.split('/post/').pop();
