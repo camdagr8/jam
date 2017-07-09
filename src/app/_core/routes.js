@@ -13,6 +13,10 @@ let routes = [
         "controller"    : "/_core/_install/uninstaller.js"
     },
     {
+        "route"         : ["/admin/purge/:type"],
+        "controller"    : "/_core/controller/purge.js"
+    },
+    {
         "route"         : ["/admin", "/dashboard"],
         "controller"    : "/_core/controller/dashboard.js"
     },
@@ -24,10 +28,7 @@ let routes = [
         "route"         : ["/signout", "/logout"],
         "controller"    : "/_core/controller/logout.js"
     },
-    {
-        "route"         : ["/admin/purge/:type"],
-        "controller"    : "/_core/controller/purge.js"
-    },
+
     {
         "route"         : ["/cdn/:file"],
         "controller"    : "/_core/controller/cdn.js"
@@ -46,23 +47,6 @@ user_routes.forEach((r) => {
     routes.push(r);
 });
 
-
-/*
- * ----------------------------------------------------------------------------
- * END middle-ware
- * ----------------------------------------------------------------------------
- */
-
-
-/**
- *
- * routes(req, res, next)
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Applies the `routes` array to the app.
- */
 module.exports = (req, res, next) => {
     if (req.path === '/install' && req.method === 'POST') {
         res.json({status: 'OK'});

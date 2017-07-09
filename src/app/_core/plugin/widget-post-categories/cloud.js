@@ -4,19 +4,21 @@ const cat_list = (request, response) => {
     let results    = [];
     let params     = request.params;
     let page       = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
-    let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
+    let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 100;
     let order      = (params.hasOwnProperty('order')) ? params.order : 'ascending';
     let orderBy    = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'slug';
     let skip       = (limit * page) - limit;
     let pagination = {
-        pages: 0,
-        page: 0,
-        next: 0,
-        prev: 0,
-        max: 0,
-        min: 0
+        limit    : limit,
+        count    : 0,
+        pages    : 0,
+        page     : 0,
+        next     : 0,
+        prev     : 0,
+        max      : 0,
+        min      : 0
     };
-    
+
     // 0.1 - Use core.query() to contruct the Parse.Query object
     let qopt = {
         table      : 'Category',
@@ -41,25 +43,29 @@ const cat_list = (request, response) => {
 
     qry.count().then((count) => {
         let pages    = Math.ceil(count / limit);
-        let nxt      = Math.min(page + 1, pages);
-        let prv      = Math.max(page - 1, page);
+        let nxt      = page + 1;
+        let prv      = Math.min(page - 1, 1);
         let max      = page + 2;
         let min      = page - 2;
 
         max          = (max > pages) ? pages : max;
         min          = (min < 1) ? 1 : min;
+        prv          = (prv < 1) ? 1 : prv;
 
         pagination = {
+            limit    : limit,
+            count    : count,
             pages    : pages,
             page     : page,
             next     : nxt,
             prev     : prv,
             max      : max,
-            min      : min
+            min      : min,
         };
 
         qry.skip(skip);
         qry.limit(limit);
+
         return qry.find();
 
     }).then((items) => {
@@ -109,27 +115,53 @@ const cat_delete = (request, response) => {
         return;
     }
 
-    let qry = new Parse.Query('Category');
-    qry.get(request.params.objectId).then((result) => {
+    Parse.Cloud.run('category_get', {objectId: request.params.objectId, format: 'object'}).then((result) => {
         return result.destroy();
-    }).catch((err) => {
-        response.error(err.message);
-    }).then(() => {
-        response.success();
+    }).always(() => {
+        response.success({status: 'OK', category: request.params.objectId});
     });
 };
 
 const cat_get = (request, response) => {
-    if (!request.params.hasOwnProperty('objectId')) {
-        response.error('objectId is a required parameter');
-        return;
-    }
 
-    let qry = new Parse.Query('Category');
-    qry.get(request.params.objectId).then((result) => {
-        response.success(result.toJSON());
+    let queries = [
+        new Parse.Query('Category'),
+        new Parse.Query('Category')
+    ];
+
+    queries[0].equalTo('objectId', request.params.objectId);
+    queries[1].equalTo('slug', String(request.params.objectId).toLowerCase());
+
+    let qry = new Parse.Query.or(...queries);
+    qry.first().then((result) => {
+        if (result) {
+            let output = result.toJSON();
+            if (request.params.hasOwnProperty('format')) {
+                switch (request.params.format) {
+                    case 'object':
+                        output = result;
+                        break;
+                }
+            }
+
+            response.success(output);
+        } else {
+            response.success();
+        }
     }).catch((err) => {
-        response.error(err.message);
+       response.error(err.message);
+    });
+};
+
+const cat_before_save = (request, response) => {
+    let qry = new Parse.Query('Category');
+    qry.equalTo('slug', request.object.get('slug'));
+    qry.count().then((count) => {
+        if (count > 0) {
+            response.error('category already exists');
+        } else {
+            response.success('ok');
+        }
     });
 };
 
@@ -140,3 +172,5 @@ Parse.Cloud.define('category_list', cat_list);
 Parse.Cloud.define('category_save', cat_save);
 
 Parse.Cloud.define('category_delete', cat_delete);
+
+Parse.Cloud.beforeSave('Category', cat_before_save);

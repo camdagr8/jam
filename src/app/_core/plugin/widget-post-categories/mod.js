@@ -1,24 +1,26 @@
 module.exports = {
-    id: 'widget-post-categories',
+    id          : 'widget-post-categories',
 
-    index: 1000000,
+    index       : 1000000,
 
-    perms: ['all'],
+    perms       : ['all'],
 
-    sections: ['post-editor'],
+    sections    : ['post-editor'],
 
-    type: 'widget',
+    type        : 'widget',
 
-    zone: 'widgets',
+    zone        : 'widgets',
 
-    use: (req, res, next) => {
+    use         : (req, res, next) => {
 
         jam['categories'] = {
             list          : [],
+            selected      : [],
             pagination    : {}
         };
 
         let id;
+        let limit = 2;
 
         if (req.url.indexOf('/admin/post/') > -1) {
             id = req.url.split('/post/').pop();
@@ -36,16 +38,17 @@ module.exports = {
 
                 jam['rec'] = rec;
 
-                return Parse.Cloud.run('category_list', {containedIn: jam.rec.category, limit: 1000});
+                return Parse.Cloud.run('category_list', {containedIn: rec.category, limit: rec.category.length});
 
             }).then((cats) => {
 
-                jam.categories.list = jam.categories.list.concat(cats.list);
-                return Parse.Cloud.run('category_list', {notContainedIn: jam.rec.category});
+                jam.categories.selected = cats.list;
+                return Parse.Cloud.run('category_list', {limit: limit});
 
             }).then((cats) => {
 
-                jam.categories.list = jam.categories.list.concat(cats.list);
+                jam.categories.list          = cats.list;
+                jam.categories.pagination    = cats.pagination;
 
             }).catch((err) => {
 
@@ -56,11 +59,17 @@ module.exports = {
 
         } else {
 
-            Parse.Cloud.run('category_list').then((result) => {
-                jam['categories'] = result;
+            Parse.Cloud.run('category_list', {limit: limit}).then((cats) => {
+
+                jam.categories.selected      = [];
+                jam.categories.list          = cats.list;
+                jam.categories.pagination    = cats.pagination;
+
             }).catch((err) => {
+
                 log(__filename);
                 log(err.message);
+
             }).always(next);
 
         }

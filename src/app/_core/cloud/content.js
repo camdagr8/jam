@@ -27,11 +27,27 @@ const pubicons = {
  * @returns {Object} Returns a Parse.Object
  */
 const content_get = (request, response) => {
+    let queries = [];
     // 0.1 - Use core.query() to contruct the Parse.Query object
-    let qry = core.query({table: 'Content'});
+    let rqry = core.query({table: 'Content'});
 
     // 1.0 - Apply route search
-    qry.containsAll('routes', [request.params.route]);
+    rqry.contains('routes', request.params.route);
+
+    queries.push(rqry);
+
+    let rarr = request.params.route.split('/');
+    rarr.shift();
+    if (rarr.length === 2) {
+
+        let cqry = core.query({table: 'Content'});
+        cqry.contains('routes', rarr[1]);
+        cqry.contains('category', rarr[0]);
+
+        queries.push(cqry);
+    }
+
+    let qry = Parse.Query.or(...queries);
 
     // 2.0 - Execute query
     qry.first().then((result) => {
@@ -214,6 +230,10 @@ const content_post = (request, response) => {
         obj.set(key, request.params[key]);
     });
 
+    if (!request.params.hasOwnProperty('category')) {
+        obj.unset('category');
+    }
+
     if (!request.params.hasOwnProperty('unpublishAt')) {
         obj.unset('unpublishAt');
     }
@@ -253,14 +273,12 @@ const content_before_save = (request, response) => {
 
     let routes = request.object.get('routes');
     if (typeof routes === 'string') {
-        routes = [routes];
-        request.object.set('routes', routes);
+        request.object.set('routes', [routes]);
     }
 
     let cats = request.object.get('category');
     if (typeof cats === 'string') {
-        cats = [cats];
-        request.object.set('category', cats);
+        request.object.set('category', [cats]);
     }
 
     let usr = request.user || jam.currentuser;

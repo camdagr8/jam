@@ -8,40 +8,23 @@
     </h6>
     <div class="collapse show" id="collapse_widget-post-categories">
         <ul class="list-group list-group-flush" data-toggle="check" id="widget-post-categories-checks">
-        <% if (rec.hasOwnProperty('category')) { %>
-            <% const unchecked = []; %>
+            <% categories.selected.forEach((item) => { %>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <span data-category-label><%=item.name%></span>
+                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" checked aria-checked="true" id="cat-<%=item.objectId%>" />
+                </label>
+            </li>
+            <% }); %>
             <% categories.list.forEach((item) => { %>
-            <%
-                if (rec.category.indexOf(item.slug) < 0) {
-                    unchecked.push(item);
-                    return;
-                }
-            %>
+            <% if (_.findWhere(categories.selected, {objectId: item.objectId})) { return null; } %>
             <li class="list-group-item">
                 <label class="check" tabindex="0">
                     <span data-category-label><%=item.name%></span>
-                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" checked aria-checked="true" />
+                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" aria-checked="false" id="cat-<%=item.objectId%>" />
                 </label>
             </li>
             <% }); %>
-            <% unchecked.forEach((item) => { %>
-            <li class="list-group-item">
-                <label class="check" tabindex="0">
-                    <span data-category-label><%=item.name%></span>
-                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" aria-checked="false" />
-                </label>
-            </li>
-            <% }); %>
-        <% } else { %>
-            <% categories.list.forEach((item) => { %>
-            <li class="list-group-item">
-                <label class="check" tabindex="0">
-                    <span data-category-label><%=item.name%></span>
-                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" aria-checked="false" />
-                </label>
-            </li>
-            <% }); %>
-        <% } %>
         </ul>
     </div>
     <div class="card-footer">
@@ -76,39 +59,29 @@
                 <li class="list-group-item d-flex justify-content-center" data-category-form>
                     <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
                         <span data-dna="input-group-btn" class="input-group-btn">
-                            <button class="btn btn-outline-danger" type="button" data-category-delete="<%=result.objectId%>"><i class="lnr-cross"></i></button>
+                            <button class="btn btn-outline-danger" type="button" data-category-delete="<%=result.slug%>"><i class="lnr-cross"></i></button>
                         </span>
                         <input type="hidden" data-category-id value="<%=result.objectId%>" />
                         <input type="text" data-category-name value="<%=result.name%>" class="form-control" placeholder="Category" />
                         <span data-dna="input-group-btn" class="input-group-btn">
-                            <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-check"></i></button>
+                            <button class="btn btn-secondary" type="button" data-category-toggle='<%-JSON.stringify(result)%>'>
+                                <% if (_.findWhere(categories.selected, {objectId: result.objectId})) { %>
+                                <i class="lnr-check-square"></i>
+                                <% } else { %>
+                                <i class="lnr-square"></i>
+                                <% } %>
+                            </button>
+                        </span>
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
                         </span>
                     </div>
                 </li>
                 <% }); %>
             </ul>
-            <% if (categories.pagination.pages > 1) { let pag = categories.pagination; %>
-            <div class="modal-footer">
-                <nav aria-label="Category pagination">
-                    <ul data-dna="pagination" class="pagination pagination-sm" style="margin-bottom: 0;">
-                        <% if (pag.page > 1) { %>
-                        <li class="page-item">
-                            <button type="button" class="page-link" aria-label="Previous" data-category-prev="<%=pag.prev%>">
-                                <i aria-hidden="true" class="lnr-chevron-left"></i>
-                                <span class="sr-only">Previous</span>
-                            </button>
-                        </li>
-                        <% } %>
-                        <% if (pag.next !== pag.pages) { %>
-                        <li class="page-item">
-                            <button type="button" class="page-link" aria-label="Next" data-category-next="<%=pag.next%>">
-                                <i aria-hidden="true" class="lnr-chevron-right"></i>
-                                <span class="sr-only">Next</span>
-                            </button>
-                        </li>
-                        <% } %>
-                    </ul>
-                </nav>
+            <% if (categories.pagination.pages > 1) { %>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-primary col-6 text-uppercase" data-category-more >Load More</button>
             </div>
             <% } %>
         </div>
@@ -116,13 +89,22 @@
 </div>
 
 <script type="text/javascript">
+    const categories = <%-JSON.stringify(categories)%>;
+
     $(function () {
+        const category_icon = function (item) {
+            let output = 'lnr-square';
+            categories.selected.forEach((i) => { if (i.objectId === item.objectId) { output = 'lnr-check-square'; } });
+
+            return output;
+        };
+
         const category_delete = function () {
             const btn    = $(this);
             const par    = btn.closest('[data-category-form]');
 
             let id       = btn.data('category-delete');
-            let chk      = $('input[data-category="'+id+'"]').closest('li.list-group-item');
+            let chk      = $('input[value="'+id+'"]').closest('li.list-group-item');
             let url      = '/REST/category/' + id;
 
             par.remove();
@@ -177,12 +159,15 @@
                     let ltmp    = `<li class="list-group-item d-flex justify-content-center" data-category-form>
                         <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
                             <span data-dna="input-group-btn" class="input-group-btn">
-                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.objectId}"><i class="lnr-cross"></i></button>
+                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.slug}"><i class="lnr-cross"></i></button>
                             </span>
                             <input type="hidden" data-category-id value="${result.objectId}" />
                             <input type="text" data-category-name value="${result.name}" class="form-control" placeholder="Category" />
                             <span data-dna="input-group-btn" class="input-group-btn">
-                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-check"></i></button>
+                                <button class="btn btn-secondary" type="button" data-category-toggle='${JSON.stringify(result)}'><i class="lnr-check-square"></i></button>
+                            </span>
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
                             </span>
                         </div>
                     </li>`;
@@ -208,48 +193,59 @@
             });
         };
 
-        const category_search = function () {
-            const par     = $(this).closest('[data-category-form]');
+        const category_search = function (page) {
+            const par     = $('[data-category-form]').first();
             const btn     = par.find('[data-category-save]').first();
             const cont    = $('#widget-post-category-list');
             const txt     = par.find('input[data-category-name]').first();
 
-            cont.html('<li class="list-group-item d-flex justify-content-center"><h6>Searching...</h6></li>');
+            if (page === 1) {
+                cont.html('<li class="list-group-item d-flex justify-content-center"><h6>Searching...</h6></li>');
+            }
 
             btn.attr('disabled', true);
 
             const data = {
                 orderBy    : 'slug',
-                order      : 'ascending'
+                order      : 'ascending',
+                limit      : categories.pagination.limit
             };
 
             if (String(txt.val()).length > 0) {
                 data['find'] = txt.val();
             }
 
-            $.ajax('/REST/categories', {
+            $.ajax('/REST/categories/'+page, {
                 type        : 'get',
                 data        : data,
                 dataType    : 'json'
             }).done((results) => {
+                categories.list          = results.list;
+                categories.pagination    = results.pagination;
 
                 if (results.pagination.pages < 1) {
                     cont.html(`<li class="list-group-item d-flex justify-content-center"><h6 class="mt-2">0 search results</h6></li>`);
                     return;
                 }
 
-                cont.html('');
+                if (page === 1) { cont.html(''); }
 
                 results.list.forEach((result) => {
+                    let icon = category_icon(result);
                     let ltmp = `<li class="list-group-item d-flex justify-content-center" data-category-form>
                         <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
                             <span data-dna="input-group-btn" class="input-group-btn">
-                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.objectId}"><i class="lnr-cross"></i></button>
+                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.slug}"><i class="lnr-cross"></i></button>
                             </span>
                             <input type="hidden" data-category-id value="${result.objectId}" />
                             <input type="text" data-category-name value="${result.name}" class="form-control" placeholder="Category" />
                             <span data-dna="input-group-btn" class="input-group-btn">
-                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-check"></i></button>
+                                <button class="btn btn-secondary" type="button" data-category-toggle='${JSON.stringify(result)}'>
+                                    <i class="${icon}"></i>
+                                </button>
+                            </span>
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
                             </span>
                         </div>
                     </li>`;
@@ -258,13 +254,56 @@
                 });
             }).always(() => {
                 btn.removeAttr('disabled');
+
+                if (categories.pagination.next > categories.pagination.pages) {
+                    $('[data-category-more]').hide(750).removeAttr('disabled');
+                } else {
+                    $('[data-category-more]').show().removeAttr('disabled');
+                }
             });
+        };
+
+        const category_toggle = function () {
+            let cat    = $(this).data('category-toggle');
+            let f      = $('#cat-' + cat.objectId);
+
+            if (f.length > 0) {
+                f.prop("checked", !f.prop("checked"));
+            } else {
+                const widget  = $('#widget-post-categories-checks');
+
+                let ctmp = `<li class="list-group-item">
+                    <label class="check" tabindex="0">
+                        <span data-category-label>${cat.name}</span>
+                        <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="${cat.slug}" data-category="${cat.objectId}" checked aria-checked="true" id="cat-${cat.objectId}" />
+                    </label>
+                </li>`;
+
+                widget.prepend(ctmp);
+            }
+
+            if ($(this).find('i').hasClass('lnr-square')) {
+                $(this).html('<i class="lnr-check-square"></i>');
+            } else {
+                $(this).html('<i class="lnr-square"></i>');
+            }
+
+            $('[data-toggle="check"] input').change();
         };
 
         $(document).on('click', '[data-category-delete]', category_delete);
 
         $(document).on('click', '[data-category-save]', category_save);
 
-        $(document).on('click', '[data-category-search]', category_search);
+        $(document).on('click', '[data-category-search]', function () {
+            category_search(1);
+        });
+
+        $(document).on('click', '[data-category-more]', function () {
+            $(this).attr('disabled', true);
+            category_search(categories.pagination.next);
+        });
+
+        $(document).on('click', '[data-category-toggle]', category_toggle);
     });
 </script>

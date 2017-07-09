@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
 
 		}, (err) => {
             log(__filename);
-		    log(err.message);
+            log(err.message);
 
         }).then(() => { // Get Content/Pages
 
