@@ -7,7 +7,7 @@
     <div class="mb-l"><h5><i class="lnr-pencil ico"></i> Template Editor</h5></div>
 
     <div class="d-flex flex-xs-column flex-sm-column flex-lg-column flex-xl-row justify-content-start align-items-stretch">
-        <div class="mb-s">
+        <div class="blocks">
 
             <!-- Template Title -->
             <div class="input-group mb-l">
@@ -46,13 +46,13 @@
 
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
-                            <div data-dna="btn-group-radio" class="btn-group float-center" data-toggle="buttons">
+                            <select name="metaboxType" class="form-control">
                                 <% meta_types.forEach((type) => { %>
-                                <label class="btn btn-secondary <%=(type['checked'] === true) ? 'active' : ''%>">
-                                    <input <%=(type['checked'] === true) ? 'checked="checked"' : ''%> type="radio" name="metaboxType" autocomplete="off" value="<%=type.value%>"> <%=type.name%>
-                                </label>
+                                <option <%=(type['checked'] === true) ? 'selected' : ''%> value="<%=type.value%>">
+                                    <%=type.name%>
+                                </option>
                                 <% }); %>
-                            </div>
+                            </select>
                         </li>
                         <li class="list-group-item">
                             <div class="input-group">
@@ -76,12 +76,12 @@
                             <div class="input-group">
                                 <span class="input-group-addon bgc-white text-right" style="width: 95px;">Value:</span>
                                 <input type="text" class="form-control" id="metabox-value" name="metaboxValue" />
-                                <span class="input-group-btn">
-                                    <button id="metabox-clone" class="btn btn-primary" type="button" style="width: 50px;" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], input[name='metaboxType'], input[name='metaboxId'], input[name='metaboxValue'], input[name='metaboxLabel']">
-                                        <i class="lnr-plus"></i>
-                                    </button>
-                                </span>
                             </div>
+                        </li>
+                        <li class="list-group-item justify-content-center bgc-gray-lightest">
+                            <button id="metabox-clone" class="btn btn-secondary btn-block text-uppercase" type="button" data-clone="#metabox-hbs" data-target="#admin-template-metaboxes" data-input="input[name='metaboxName'], select[name='metaboxType'], input[name='metaboxId'], input[name='metaboxValue'], input[name='metaboxLabel']">
+                                Add Metabox
+                            </button>
                         </li>
                     </ul>
 
@@ -130,7 +130,7 @@
             </div>
 
         </div>
-        <aside>
+        <aside class="widgets">
             <div class="mb-l">
                 <button
                     type="button"
