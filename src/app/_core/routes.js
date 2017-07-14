@@ -13,6 +13,10 @@ let routes = [
         "controller"    : "/_core/_install/uninstaller.js"
     },
     {
+        "route"         : ["/admin/purge/:type"],
+        "controller"    : "/_core/controller/purge.js"
+    },
+    {
         "route"         : ["/admin", "/dashboard"],
         "controller"    : "/_core/controller/dashboard.js"
     },
@@ -24,10 +28,7 @@ let routes = [
         "route"         : ["/signout", "/logout"],
         "controller"    : "/_core/controller/logout.js"
     },
-    {
-        "route"         : ["/admin/purge/:type"],
-        "controller"    : "/_core/controller/purge.js"
-    },
+
     {
         "route"         : ["/cdn/:file"],
         "controller"    : "/_core/controller/cdn.js"
@@ -46,33 +47,6 @@ user_routes.forEach((r) => {
     routes.push(r);
 });
 
-
-/**
- * 2.0 - Catch all route
- * Note: this MUST be the last route.
- */
-const default_route = {
-    route:      ['*'],
-    controller: '/_core/controller/cms.js'
-};
-
-
-/*
- * ----------------------------------------------------------------------------
- * END middle-ware
- * ----------------------------------------------------------------------------
- */
-
-
-/**
- *
- * routes(req, res, next)
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Applies the `routes` array to the app.
- */
 module.exports = (req, res, next) => {
     if (req.path === '/install' && req.method === 'POST') {
         res.json({status: 'OK'});
@@ -80,13 +54,28 @@ module.exports = (req, res, next) => {
     }
 
     // Get plugin routes and add them to the routes array
-    let rdirs = [appdir + '/_core/plugin', appdir + '/plugin'];
+    let rdirs = [
+        appdir + '/_core/plugin',
+        appdir + '/plugin'
+    ];
     core.find_file(rdirs, 'routes.json').forEach((file) => {
-        let r = require(file);
-        r.forEach((item) => { routes.push(item); });
+        let plugin_dir = file.split('/routes.json').shift().split(appdir).pop();
+
+        require(file).forEach((item) => {
+            // swap the [plugin_dir] str with the plugin_dir value
+            if (item.hasOwnProperty('controller')) {
+                item.controller = item.controller.replace(/\[plugin_dir]/gi, plugin_dir);
+            }
+
+            routes.push(item);
+        });
     });
 
-    routes.push(default_route);
+    // Add the cms route '*'
+    routes.push({
+        route         : ['*'],
+        controller    : '/_core/controller/cms.js'
+    });
 
     // Type of http request methods to handle
     let methods = ['use', 'all', 'get', 'post', 'put', 'delete'];

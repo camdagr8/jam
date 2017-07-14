@@ -3,17 +3,17 @@ const moment = require('moment');
 const recent = (count = 5) => {
     let output    = [];
     let now       = moment();
-    let p         = _.clone(jam.pages);
+    let p         = _.clone(jam.posts);
     let w         = _.where(p, {status: 'delete'});
     p             = _.difference(p, w).slice(0, count);
 
-    p.forEach((page) => {
+    p.forEach((post) => {
 
-        let date = moment(page.updatedAt);
+        let date = moment(post.updatedAt);
 
         let diff = now.diff(date, 'days');
         if (diff <= 7) {
-            output.push(page);
+            output.push(post);
         }
     });
 
@@ -21,7 +21,7 @@ const recent = (count = 5) => {
 };
 
 module.exports = {
-    id: 'pages',
+    id: 'posts',
 
     index: 1,
 
@@ -31,11 +31,11 @@ module.exports = {
 
     use: (req, res, next) => {
         if (jam.is.admin) {
-            Parse.Cloud.run('content_get_pages', {orderBy: 'updatedAt', order: 'decending', limit: 20})
+            Parse.Cloud.run('content_get_posts', {orderBy: 'updatedAt', order: 'decending', limit: 20})
             .then((results) => {
-                jam.pages = results.list;
-                jam.plugin['pages']['recent'] = recent(3);
-                jam.plugin['pages']['pagination'] = results.pagination;
+                jam.posts = results.list;
+                jam.plugin['posts']['recent'] = recent(3);
+                jam.plugin['posts']['pagination'] = results.pagination;
             })
             .always(next);
         } else {

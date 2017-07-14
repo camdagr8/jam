@@ -1,0 +1,21 @@
+<li class="list-menu-heading <%=(url[1] === 'post' || url[1] === 'posts') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
+    <span class="badge badge-info"><%=plugin.posts.pagination.count%></span><h6><i class="lnr-pushpin ico"></i>Posts</h6>
+</li>
+<li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
+    <ul class="list-sub-menu">
+        <li>
+            <a href="<%=baseurl%>/admin/post" class="list-menu-item menu-add">New Post</a>
+        </li>
+        <% if (plugin.posts.recent.length > 0) { %>
+        <li class="list-menu-heading active sub-active" >
+            <h6 style="font-size: 12px;"><i class="lnr-history2 ico"></i>Recent Posts</h6>
+        </li>
+        <% plugin.posts.recent.forEach((item) => { %>
+        <li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>
+        <% }); %>
+        <% } %>
+        <li>
+            <a href="<%=baseurl%>/admin/posts" class="list-menu-item">View All</a>
+        </li>
+    </ul>
+</li>

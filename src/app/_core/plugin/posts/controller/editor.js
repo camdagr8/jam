@@ -12,7 +12,7 @@ const permissions    = ['administrator', 'publisher', 'moderator'];
  * Functions
  * -----------------------------------------------------------------------------
  */
-const page_use = (req, res, next) => {
+const post_use = (req, res, next) => {
     jam['rec'] = {meta: {}};
 
     /**
@@ -25,16 +25,16 @@ const page_use = (req, res, next) => {
     }
 
     // Get widgets
-    core.add_widgets('page-editor');
+    core.add_widgets('post-editor');
 
     // Customize wysiwyg
     if (jam.plugin.hasOwnProperty('wysiwyg')) {
         jam.plugin.wysiwyg['field'] = 'body';
-        jam.plugin.wysiwyg['placeholder'] = 'Page Content';
+        jam.plugin.wysiwyg['placeholder'] = 'Post Content';
     }
 
 
-    // Get page rec if :id specified in url
+    // Get post rec if :id specified in url
     if (req.params['id']) {
 
         // Get the Content record and save it to `jam.rec`
@@ -62,7 +62,7 @@ const page_use = (req, res, next) => {
     }
 };
 
-const page_get = (req, res) => {
+const post_get = (req, res) => {
     let darr       = __dirname.split('/'); darr.pop();
     jam.content    = darr.join('/') + '/view/editor.ejs';
 
@@ -84,7 +84,7 @@ const page_get = (req, res) => {
     });
 };
 
-const page_save = (req, res) => {
+const post_save = (req, res) => {
 
     let nonce = req.body.nonce;
     let output = {data: null, nonce: null};
@@ -122,7 +122,7 @@ const page_save = (req, res) => {
  * Exports
  * -----------------------------------------------------------------------------
  */
-exports.use     = page_use;
-exports.get     = page_get;
-exports.post    = page_save;
-exports.put     = page_save;
+exports.use     = post_use;
+exports.get     = post_get;
+exports.post    = post_save;
+exports.put     = post_save;

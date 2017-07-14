@@ -5,8 +5,6 @@ jam['rec']       = {};
 let item         = {};
 
 exports.use = (req, res, next) => {
-    //log('cms');
-
     req.baseUrl = (req.baseUrl === '') ? '/' : req.baseUrl;
 
     Parse.Cloud.run('content_get', {route: req.baseUrl}).then((result) => {

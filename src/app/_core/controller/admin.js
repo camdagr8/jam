@@ -15,21 +15,9 @@ module.exports = (req, res, next) => {
 
 		    jam.users = users;
 
-		}, (err) => {
-
-		    log(err);
-
-        }).then(() => { // Get Content/Pages
-
-            return Parse.Cloud.run('content_get_pages');
-
-        }).then((pages) => { // Get Content/Pages success
-
-            jam['pages'] = pages;
-
         }, (err) => { // Get Content/Pages error
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => { // Get template files
 
@@ -50,8 +38,8 @@ module.exports = (req, res, next) => {
             });
 
         }, (err) => { // Get template files error
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => { // Get templates array
 
@@ -62,8 +50,8 @@ module.exports = (req, res, next) => {
             jam['templates'] = templates;
 
         }, (err) => {
-
-            log(err);
+            log(__filename);
+            log(err.message);
 
         }).then(() => {
 

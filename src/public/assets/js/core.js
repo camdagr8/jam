@@ -5773,7 +5773,7 @@ $(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(__filename) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -6000,6 +6000,29 @@ $(function () {
             return data;
         },
 
+        post: function post(data) {
+
+            // Status: Publish
+            if (data.hasOwnProperty('publish')) {
+                data.status = data.publish;
+                delete data.publish;
+            }
+
+            // Status: Unpublish
+            if (data.hasOwnProperty('unpublish')) {
+                if (data.unpublish === 'delete') {
+                    data.status = 'delete';
+                    delete data.unpublish;
+                }
+
+                delete data.unpublish;
+            }
+
+            data = parse_data.meta(data);
+
+            return data;
+        },
+
         template: function template(data) {
 
             // Remove unecessary fields
@@ -6090,6 +6113,24 @@ $(function () {
             var req = {
                 template: 'Select a template',
                 title: 'Enter the page title'
+            };
+
+            _.keys(req).forEach(function (fld) {
+                if (err !== null) {
+                    return;
+                }
+                if (!data.hasOwnProperty(fld)) {
+                    err = req[fld];
+                }
+            });
+
+            return err !== null ? err : true;
+        },
+
+        post: function post(data) {
+            var err = null;
+            var req = {
+                title: 'Enter the post title'
             };
 
             _.keys(req).forEach(function (fld) {
@@ -6235,7 +6276,7 @@ $(function () {
                 }, 2000);
             },
             error: function error(xhr, status, err) {
-                console.log('error');
+                console.log(__filename);
                 console.log(err);
                 btn.removeAttr('disabled');
                 $('body').find('.alert').text(err.message).addClass('show');
@@ -6633,7 +6674,7 @@ $(function () {
         });
 
         setTimeout(load_attachments, 250, attachments);
-    });
+    }).change();
 
     // [data-toggle="slide-toggle"] click listener
     $(document).on('click', '[data-toggle="slide-toggle"]', function () {
@@ -6750,6 +6791,7 @@ $(function () {
         dragula([this], opt);
     });
 });
+/* WEBPACK VAR INJECTION */}.call(exports, "/index.js"))
 
 /***/ }),
 /* 18 */

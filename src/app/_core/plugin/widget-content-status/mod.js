@@ -1,11 +1,11 @@
 module.exports = {
-	id: 'page-status',
+	id: 'content-status',
 
 	index: 1,
 
 	perms: ['all'],
 
-	sections: ['page-editor'],
+	sections: ['page-editor', 'post-editor'],
 
 	zone: 'widgets'
 };

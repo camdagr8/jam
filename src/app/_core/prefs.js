@@ -36,6 +36,7 @@ module.exports = (req, res, next) => {
     jam['pages']             = [];
     jam['plugin']            = {};
     jam['plugins']           = [];
+    jam['posts']             = [];
     jam['sidebar']           = [];
     jam['url']               = url;
     jam['users']             = [];
@@ -62,6 +63,7 @@ module.exports = (req, res, next) => {
 
     }, (err) => { // Not able to get the configs
 
+        log(__filename);
         log(err.message);
         jam['installed'] = false;
         prm.reject();
@@ -76,7 +78,7 @@ module.exports = (req, res, next) => {
         jam['currentuser'] = user;
 
     }, (err) => { // No current user: Keep going
-
+        log(__filename);
         log(err.message);
 
     }).then(() => { // Get helpers and plugins
@@ -123,5 +125,4 @@ module.exports = (req, res, next) => {
             next();
         }
     });
-
 };

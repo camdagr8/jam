@@ -1,5 +1,5 @@
 <li class="list-menu-heading <%=(url[1] === 'page' || url[1] === 'pages') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
-    <span class="badge badge-info"><%=pages.length%></span><h6><i class="lnr-file-empty ico"></i>Pages</h6>
+    <span class="badge badge-info"><%=plugin.pages.pagination.count%></span><h6><i class="lnr-file-empty ico"></i>Pages</h6>
 </li>
 <li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
     <ul class="list-sub-menu">
@@ -8,7 +8,7 @@
         </li>
         <% if (plugin.pages.recent.length > 0) { %>
         <li class="list-menu-heading active sub-active" >
-            <h6><i class="lnr-history2 ico"></i>Recent Pages</h6>
+            <h6 style="font-size: 12px;"><i class="lnr-history2 ico"></i>Recent Pages</h6>
         </li>
         <% plugin.pages.recent.forEach((item) => { %>
         <li><a href="<%=item.edit_url%>" class="list-menu-item"><%-item.title%></a></li>

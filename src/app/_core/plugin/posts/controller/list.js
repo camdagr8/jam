@@ -9,8 +9,8 @@ exports.use = (req, res, next) => {
         res.render(core.template.theme + '/templates/404', jam);
     }  else {
         let page = (req.params.hasOwnProperty('page')) ? Number(req.params.page) : 1;
-        Parse.Cloud.run('content_get_pages', {page: page}).then((results) => {
-            jam['pages']         = results.list;
+        Parse.Cloud.run('content_get_posts', {page: page}).then((results) => {
+            jam['posts']         = results.list;
             jam['pagination']    = results.pagination;
         }).catch((err) => {
             log(__filename);

@@ -1,0 +1,316 @@
+<!--// Widget widget-post-categories //-->
+<style>
+    #collapse_widget-post-categories {
+        max-height: 195px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+</style>
+<div class="card card-shadow bgc-white bd-0" id="widget-post-categories">
+    <h6 class="card-header">
+        <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_widget-post-categories" aria-expanded="true">
+            <i class="lnr-chevron-up"></i>
+        </button>
+        <i class="lnr-library ico"></i> Categories
+    </h6>
+    <div class="collapse show" id="collapse_widget-post-categories">
+        <ul class="list-group list-group-flush" data-toggle="check" id="widget-post-categories-checks">
+            <% categories.selected.forEach((item) => { %>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <span data-category-label><%=item.name%></span>
+                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" checked aria-checked="true" id="cat-<%=item.objectId%>" />
+                </label>
+            </li>
+            <% }); %>
+            <% categories.list.forEach((item) => { %>
+            <% if (_.findWhere(categories.selected, {objectId: item.objectId})) { return null; } %>
+            <li class="list-group-item">
+                <label class="check" tabindex="0">
+                    <span data-category-label><%=item.name%></span>
+                    <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="<%=item.slug%>" data-category="<%=item.objectId%>" aria-checked="false" id="cat-<%=item.objectId%>" />
+                </label>
+            </li>
+            <% }); %>
+        </ul>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-outline-primary btn-block text-uppercase" data-toggle="modal" data-target=".bd-widget-post-categories-modal">Manage Categories</button>
+    </div>
+</div>
+
+<div data-dna="modal-lg" class="modal fade bd-widget-post-categories-modal" tabindex="-1" role="dialog" aria-labelledby="widget-post-categories-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="widget-post-categories-modal-label"><i class="lnr-library mr-xs"></i> Category Editor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="lnr-cross" aria-hidden="true"></i>
+                </button>
+            </div>
+            <ul class="list-group list-group-flush" data-toggle="check" style="margin-top: -1px; margin-bottom: -1px;">
+                <li class="list-group-item d-flex justify-content-center bgc-gray-lightest" data-category-form>
+                    <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
+                        <input type="text" class="form-control" placeholder="Category" data-category-name>
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" data-category-search><i class="lnr-magnifier"></i></button>
+                        </span>
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-plus"></i></button>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="list-group list-group-flush" data-toggle="check" style="margin-top: -1px; margin-bottom: -1px;" id="widget-post-category-list">
+                <% categories.list.forEach((result) => { %>
+                <li class="list-group-item d-flex justify-content-center" data-category-form>
+                    <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-outline-danger" type="button" data-category-delete="<%=result.slug%>"><i class="lnr-cross"></i></button>
+                        </span>
+                        <input type="hidden" data-category-id value="<%=result.objectId%>" />
+                        <input type="text" data-category-name value="<%=result.name%>" class="form-control" placeholder="Category" />
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" data-category-toggle='<%-JSON.stringify(result)%>'>
+                                <% if (_.findWhere(categories.selected, {objectId: result.objectId})) { %>
+                                <i class="lnr-check-square"></i>
+                                <% } else { %>
+                                <i class="lnr-square"></i>
+                                <% } %>
+                            </button>
+                        </span>
+                        <span data-dna="input-group-btn" class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
+                        </span>
+                    </div>
+                </li>
+                <% }); %>
+            </ul>
+            <% if (categories.pagination.pages > 1) { %>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-primary col-6 text-uppercase" data-category-more >Load More</button>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const categories = <%-JSON.stringify(categories)%>;
+
+    $(function () {
+        const category_icon = function (item) {
+            let output = 'lnr-square';
+            categories.selected.forEach((i) => { if (i.objectId === item.objectId) { output = 'lnr-check-square'; } });
+
+            return output;
+        };
+
+        const category_delete = function () {
+            const btn    = $(this);
+            const par    = btn.closest('[data-category-form]');
+
+            let id       = btn.data('category-delete');
+            let chk      = $('input[value="'+id+'"]').closest('li.list-group-item');
+            let url      = '/REST/category/' + id;
+
+            par.remove();
+            chk.remove();
+
+            $.ajax(url, {
+                dataType    : 'json',
+                type        : 'delete'
+            });
+        };
+
+        const category_save = function (e) {
+
+            if (e.type === 'keydown') {
+                if (e.which !== 13 || e.keyCode !== 13) {
+                    return;
+                }
+            }
+
+            const par     = $(this).closest('[data-category-form]');
+            const btn     = par.find('[data-category-save]').first();
+            const cont    = $('#widget-post-category-list');
+            const widget  = $('#widget-post-categories-checks');
+            const txt     = par.find('input[data-category-name]').first();
+            const id      = par.find('[data-category-id]').first();
+
+            if (!txt.val() || String(txt.val()).length < 1) {
+                txt.focus();
+                return;
+            }
+            const data    = {
+                category: txt.val(),
+                objectId: id.val()
+            };
+
+            btn.attr('disabled', true);
+
+            let url     = '/REST/category';
+            let type    = 'post';
+
+            if (typeof data.objectId !== 'undefined') {
+                url     += '/' + data.objectId;
+                type    = 'put';
+            }
+
+            $.ajax(url, {
+                dataType    : 'json',
+                type        : type,
+                data        : data
+            }).done((result) => {
+                if (typeof data.objectId === 'undefined') {
+                    let ltmp    = `<li class="list-group-item d-flex justify-content-center" data-category-form>
+                        <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.slug}"><i class="lnr-cross"></i></button>
+                            </span>
+                            <input type="hidden" data-category-id value="${result.objectId}" />
+                            <input type="text" data-category-name value="${result.name}" class="form-control" placeholder="Category" />
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-toggle='${JSON.stringify(result)}'><i class="lnr-check-square"></i></button>
+                            </span>
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
+                            </span>
+                        </div>
+                    </li>`;
+
+                    let ctmp = `<li class="list-group-item">
+                        <label class="check" tabindex="0">
+                            <span data-category-label>${result.name}</span>
+                            <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="${result.slug}" data-category="${result.objectId}" checked aria-checked="true" />
+                        </label>
+                    </li>`;
+
+                    txt.val('');
+                    cont.prepend(ltmp);
+                    widget.prepend(ctmp);
+                    $('[data-toggle="check"] input').change();
+                } else {
+                    let input = widget.find('[data-category="'+result.objectId+'"]').first();
+                    input.val(result.slug);
+                    input.parent().find('[data-category-label]').first().text(result.name);
+                }
+            }).always(() => {
+                btn.removeAttr('disabled');
+            });
+        };
+
+        const category_search = function (page) {
+            const par     = $('[data-category-form]').first();
+            const btn     = par.find('[data-category-save]').first();
+            const cont    = $('#widget-post-category-list');
+            const txt     = par.find('input[data-category-name]').first();
+
+            if (page === 1) {
+                cont.html('<li class="list-group-item d-flex justify-content-center"><h6>Searching...</h6></li>');
+            }
+
+            btn.attr('disabled', true);
+
+            const data = {
+                orderBy    : 'slug',
+                order      : 'ascending',
+                limit      : categories.pagination.limit
+            };
+
+            if (String(txt.val()).length > 0) {
+                data['find'] = txt.val();
+            }
+
+            $.ajax('/REST/categories/'+page, {
+                type        : 'get',
+                data        : data,
+                dataType    : 'json'
+            }).done((results) => {
+                categories.list          = results.list;
+                categories.pagination    = results.pagination;
+
+                if (results.pagination.pages < 1) {
+                    cont.html(`<li class="list-group-item d-flex justify-content-center"><h6 class="mt-2">0 search results</h6></li>`);
+                    return;
+                }
+
+                if (page === 1) { cont.html(''); }
+
+                results.list.forEach((result) => {
+                    let icon = category_icon(result);
+                    let ltmp = `<li class="list-group-item d-flex justify-content-center" data-category-form>
+                        <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-outline-danger" type="button" data-category-delete="${result.slug}"><i class="lnr-cross"></i></button>
+                            </span>
+                            <input type="hidden" data-category-id value="${result.objectId}" />
+                            <input type="text" data-category-name value="${result.name}" class="form-control" placeholder="Category" />
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-toggle='${JSON.stringify(result)}'>
+                                    <i class="${icon}"></i>
+                                </button>
+                            </span>
+                            <span data-dna="input-group-btn" class="input-group-btn">
+                                <button class="btn btn-secondary" type="button" data-category-save><i class="lnr-pencil"></i></button>
+                            </span>
+                        </div>
+                    </li>`;
+
+                    cont.append(ltmp);
+                });
+            }).always(() => {
+                btn.removeAttr('disabled');
+
+                if (categories.pagination.next > categories.pagination.pages) {
+                    $('[data-category-more]').hide(750).removeAttr('disabled');
+                } else {
+                    $('[data-category-more]').show().removeAttr('disabled');
+                }
+            });
+        };
+
+        const category_toggle = function () {
+            let cat    = $(this).data('category-toggle');
+            let f      = $('#cat-' + cat.objectId);
+
+            if (f.length > 0) {
+                f.prop("checked", !f.prop("checked"));
+            } else {
+                const widget  = $('#widget-post-categories-checks');
+
+                let ctmp = `<li class="list-group-item">
+                    <label class="check" tabindex="0">
+                        <span data-category-label>${cat.name}</span>
+                        <input type="checkbox" name="category" autocomplete="off" class="hidden-xs-up" value="${cat.slug}" data-category="${cat.objectId}" checked aria-checked="true" id="cat-${cat.objectId}" />
+                    </label>
+                </li>`;
+
+                widget.prepend(ctmp);
+            }
+
+            if ($(this).find('i').hasClass('lnr-square')) {
+                $(this).html('<i class="lnr-check-square"></i>');
+            } else {
+                $(this).html('<i class="lnr-square"></i>');
+            }
+
+            $('[data-toggle="check"] input').change();
+        };
+
+        $(document).on('click', '[data-category-delete]', category_delete);
+
+        $(document).on('click', '[data-category-save]', category_save);
+
+        $(document).on('click', '[data-category-search]', function () {
+            category_search(1);
+        });
+
+        $(document).on('click', '[data-category-more]', function () {
+            $(this).attr('disabled', true);
+            category_search(categories.pagination.next);
+        });
+
+        $(document).on('click', '[data-category-toggle]', category_toggle);
+    });
+</script>

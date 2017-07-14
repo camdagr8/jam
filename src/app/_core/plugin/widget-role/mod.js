@@ -22,6 +22,7 @@ module.exports = {
             jam.roles = _.sortBy(jam.roles, 'level');
             next();
         }, (err) => {
+            log(__filename);
             log(err);
             next();
         });
