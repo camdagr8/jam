@@ -55,7 +55,7 @@ $ jam install --db mongodb://dbadmin:PASSWORD@localhost:27017/jam-dev --username
 
 ### Start the Local Server
 ```
-$ jam launch
+$ npm test
 ```
 
 ## Running Remotely
