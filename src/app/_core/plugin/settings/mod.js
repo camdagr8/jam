@@ -11,8 +11,6 @@ module.exports = {
 
     use: (req, res, next) => {
         if (jam.is.admin) {
-            // Get themes list
-            //plugin.settings.themes = core.themes();
             next();
         } else {
             next();

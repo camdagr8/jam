@@ -1006,10 +1006,12 @@ $(function () {
     });
 
     if (window.ALERTERROR) {
-        show_msg(window.ALERTERROR)
+        show_msg(window.ALERTERROR);
+        window.ALERTERROR = undefined;
     }
 
     if (window.ALERTSUCCESS) {
         show_success(window.ALERTSUCCESS);
+        window.ALERTSUCCESS = undefined;
     }
 });

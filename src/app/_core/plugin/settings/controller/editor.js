@@ -75,9 +75,9 @@ exports.post = (req, res) => {
         return Parse.Object.saveAll(results);
 
     }).catch((err) => {
-        res.cookie('error', err.message);
+        res.cookie('error', err.message, {maxAge: 2000});
     }).then(() => {
-        res.cookie('status', 'Successfully updated settings');
+        res.cookie('status', 'Successfully updated settings', {maxAge: 2000});
     }).always(() => {
         res.redirect('/admin/settings');
     });
