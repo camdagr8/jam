@@ -10,7 +10,8 @@ exports.use = (req, res, next) => {
     }  else {
         let page = (req.params.hasOwnProperty('page')) ? Number(req.params.page) : 1;
         Parse.Cloud.run('content_get_posts', {page: page}).then((results) => {
-            jam['posts'] = results;
+            jam['posts']         = results.list;
+            jam['pagination']    = results.pagination;
         }).catch((err) => {
             log(__filename);
             log(err.message);

@@ -8,7 +8,14 @@ exports.use = (req, res, next) => {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render(core.template.theme + '/templates/404', jam);
     }  else {
-        next();
+        let page = (req.params.hasOwnProperty('page')) ? Number(req.params.page) : 1;
+        Parse.Cloud.run('content_get_pages', {page: page}).then((results) => {
+            jam['pages']         = results.list;
+            jam['pagination']    = results.pagination;
+        }).catch((err) => {
+            log(__filename);
+            log(err.message);
+        }).always(next);
     }
 };
 

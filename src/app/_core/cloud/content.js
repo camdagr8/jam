@@ -92,21 +92,61 @@ const content_purge = (request, response) => {
  *
  * @returns {Array} Returns an array of Parse.Objects.
  */
-const content_get_pages = (request, response, results = []) => {
+const content_get_pages = (request, response) => {
+
+    let results    = [];
+    let pagination = {};
+    let params     = request.params;
+    let page       = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
+    let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
+    let order      = (params.hasOwnProperty('order')) ? params.order : 'descending';
+    let orderBy    = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'createdAt';
+    let skip       = (limit * page) - limit;
+    skip           = (skip < 0) ? 0 : skip;
+
 
     // 0.1 - Use core.query() to contruct the Parse.Query object
-    let qry = core.query({
-        table:   'Content',
-        skip:    request.params.skip,
-        limit:   request.params.limit,
-        orderBy: 'updatedAt',
-        order:   'descending'
-    });
+    let qopt = {
+        table      : 'Content',
+        orderBy    : orderBy,
+        order      : order
+    };
+
+    const qry = core.query(qopt);
+
+    if (!params.hasOwnProperty('deleted')) {
+        qry.notEqualTo('status', 'delete');
+    }
 
     qry.equalTo('type', 'page');
-    qry.find().then((content) => {
+    qry.count().then((count) => {
+        let pages    = Math.ceil(count / limit);
+        let nxt      = Math.min(page + 1, pages);
+        let prv      = Math.max(page - 1, page);
+        let max      = page + 2;
+        let min      = page - 2;
 
-        content.forEach((item) => {
+        max          = (max > pages) ? pages : max;
+        min          = (min < 1) ? 1 : min;
+
+        pagination = {
+            count    : count,
+            pages    : pages,
+            page     : page,
+            next     : nxt,
+            prev     : prv,
+            max      : max,
+            min      : min,
+            query    : (params.hasOwnProperty('deleted')) ? '?deleted=true' : ''
+        };
+
+        qry.skip(skip);
+        qry.limit(limit);
+        return qry.find();
+
+    }).then((items) => {
+
+        items.forEach((item) => {
             let obj            = item.toJSON();
             obj['status_icon'] = pubicons[obj.status];
             obj['edit_url']    = jam.baseurl + '/admin/page/' + obj.objectId;
@@ -115,16 +155,12 @@ const content_get_pages = (request, response, results = []) => {
             results.push(obj);
         });
 
-        if (content.length === request.params.limit) {
-            request.params.skip += request.params.limit;
-            content_get_pages(request, response, results);
-        } else {
-            response.success(results);
-        }
-
     }, (err) => {
-        log(err);
-        response.success(results);
+        log(__filename);
+        log(err.message);
+    }).always(() => {
+        let output = {pagination: pagination, list: results};
+        response.success(output);
     });
 };
 
@@ -144,6 +180,7 @@ const content_get_pages = (request, response, results = []) => {
 const content_get_posts = (request, response) => {
 
     let results    = [];
+    let pagination = {};
     let params     = request.params;
     let page       = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
     let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
@@ -177,7 +214,8 @@ const content_get_posts = (request, response) => {
         max          = (max > pages) ? pages : max;
         min          = (min < 1) ? 1 : min;
 
-        jam['pagination'] = {
+        pagination = {
+            count    : count,
             pages    : pages,
             page     : page,
             next     : nxt,
@@ -201,13 +239,11 @@ const content_get_posts = (request, response) => {
 
             results.push(obj);
         });
-
-        response.success(results);
-
     }, (err) => {
         log(__filename);
         log(err.message);
-        response.success(results);
+    }).always(() => {
+        response.success({pagination: pagination, list: results});
     });
 };
 

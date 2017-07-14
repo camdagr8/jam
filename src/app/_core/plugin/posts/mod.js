@@ -31,9 +31,16 @@ module.exports = {
 
     use: (req, res, next) => {
         if (jam.is.admin) {
-            jam.plugin['posts']['recent'] = recent(3);
+            Parse.Cloud.run('content_get_posts', {orderBy: 'updatedAt', order: 'decending', limit: 20})
+            .then((results) => {
+                jam.posts = results.list;
+                jam.plugin['posts']['recent'] = recent(3);
+                jam.plugin['posts']['pagination'] = results.pagination;
+            })
+            .always(next);
+        } else {
+            next();
         }
-        next();
     },
 
     type: 'plugin',
