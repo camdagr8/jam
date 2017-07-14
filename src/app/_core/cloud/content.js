@@ -274,6 +274,10 @@ const content_post = (request, response) => {
         obj.unset('unpublishAt');
     }
 
+    if (!request.params.hasOwnProperty('routes')) {
+        obj.unset('routes');
+    }
+
     obj.save(null).then((result) => {
         response.success(result);
     }, (err) => {
@@ -310,6 +314,9 @@ const content_before_save = (request, response) => {
     let routes = request.object.get('routes');
     if (typeof routes === 'string') {
         request.object.set('routes', [routes]);
+    }
+    if (!routes) {
+        request.object.set('routes', []);
     }
 
     let cats = request.object.get('category');

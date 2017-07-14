@@ -1005,4 +1005,11 @@ $(function () {
         dragula([this], opt);
     });
 
+    if (window.ALERTERROR) {
+        show_msg(window.ALERTERROR)
+    }
+
+    if (window.ALERTSUCCESS) {
+        show_success(window.ALERTSUCCESS);
+    }
 });

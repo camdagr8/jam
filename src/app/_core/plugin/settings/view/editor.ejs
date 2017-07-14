@@ -1,17 +1,17 @@
 <script type="text/javascript">
     <% if (jam.plugin.settings.hasOwnProperty('error')) { %>
-    window.growl_error = "<%-jam.plugin.settings.error%>";
+    window.ALERTERROR = "<%-jam.plugin.settings.error%>";
     <% } %>
 
     <% if (jam.plugin.settings.hasOwnProperty('status')) { %>
-    window.growl_success = "<%-jam.plugin.settings.status%>";
+    window.ALERTSUCCESS = "<%-jam.plugin.settings.status%>";
     <% } %>
 </script>
 <form id="settings-form" action="<%=baseurl%>/admin/settings" method="post">
 
     <input type="hidden" name="nonce" value="<%=nonce%>" />
 
-    <div class="mb-l"><h5><i class="lnr-cog2 ico"></i> Settings</h5></div>
+    <div class="mb-l"><h5><i class="lnr-equalizer ico"></i> Settings</h5></div>
 
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
@@ -52,7 +52,7 @@
 
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
             <div class="mt-xl ">
-                <button type="submit" class="btn btn-danger btn-block btn-lg text-uppercase">Save Settings</button>
+                <button type="submit" class="btn btn-primary btn-block btn-lg text-uppercase">Save Settings</button>
             </div>
         </div>
 
