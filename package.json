@@ -1,6 +1,6 @@
 {
   "name": "Jam",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": "Cam Tullos",
   "scripts": {
     "start": "node index.js",

@@ -2,7 +2,7 @@
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title><%=title%></title>
+		<title><%=(jam.hasOwnProperty('title')) ? jam.title : jam.config.title%></title>
 
 		<!-- admin styles -->
 		<link rel="stylesheet" href="/assets/_core/admin/style.css">

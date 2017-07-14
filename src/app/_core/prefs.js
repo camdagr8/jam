@@ -22,6 +22,7 @@ module.exports = (req, res, next) => {
     jam['helpers']           = [];
     jam['is']                = {};
     jam['req']               = req;
+    jam['config']            = {};
 
     jam['meta_types']        = [
         {name: 'HTML',          value: 'HTML'},
@@ -57,15 +58,15 @@ module.exports = (req, res, next) => {
     prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
-        keys.forEach((key) => { jam[key] = result[key]; });
+        keys.forEach((key) => { jam.config[key] = result[key]; });
 
-        core.template.theme = `${appdir}/view/themes/${jam.theme}`;
+        core.template.theme = `${appdir}/view/themes/${jam.config.theme}`;
 
     }, (err) => { // Not able to get the configs
 
         log(__filename);
         log(err.message);
-        jam['installed'] = false;
+        jam.config['installed'] = false;
         prm.reject();
 
     }).then(() => { // Get the current user from session token

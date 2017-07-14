@@ -1,0 +1,6 @@
+[
+    {
+        "route"         : ["/admin/settings"],
+        "controller"    : "[plugin_dir]/controller/editor.js"
+    }
+]

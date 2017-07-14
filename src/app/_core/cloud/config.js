@@ -34,7 +34,7 @@ const config_get = (request, response, skip = 0, output = {}) => {
             } else {
                 response.success();
             }
-        }).catch((err) => {
+        }).catch(() => {
 		    response.success();
         });
 	} else {
