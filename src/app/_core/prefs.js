@@ -22,8 +22,27 @@ module.exports = (req, res, next) => {
     jam['helpers']           = [];
     jam['is']                = {};
     jam['req']               = req;
+    jam['config']            = {};
 
-    jam['meta_types']        = [
+    // normalize cookie functions
+    jam['cookie'] = {
+        get       : function (name) {
+            if (name) {
+                if (req.cookies.hasOwnProperty(name)) {
+                    return req.cookies[name];
+                }
+            } else {
+                return req.cookies;
+            }
+        },
+        set       : function (name, value, options) { res.cookie(name, value, options); },
+        remove    : function (name, options) { res.clearCookie(name, options); }
+    };
+
+    let collapse = jam.cookie.get('collapse') || {};
+    jam.cookie.set('collapse', collapse);
+
+    jam['meta_types'] = [
         {name: 'HTML',          value: 'HTML'},
         {name: 'Plain Text',    value: 'TEXT', checked: true},
         {name: 'Number',        value: 'NUMBER'},
@@ -33,6 +52,7 @@ module.exports = (req, res, next) => {
         {name: 'Radio',         value: 'RADIO'},
         {name: 'Upload',        value: 'UPLOAD'}
     ];
+
     jam['pages']             = [];
     jam['plugin']            = {};
     jam['plugins']           = [];
@@ -57,15 +77,15 @@ module.exports = (req, res, next) => {
     prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
-        keys.forEach((key) => { jam[key] = result[key]; });
+        keys.forEach((key) => { jam.config[key] = result[key]; });
 
-        core.template.theme = `${appdir}/view/themes/${jam.theme}`;
+        core.template.theme = `${appdir}/view/themes/${jam.config.theme}`;
 
     }, (err) => { // Not able to get the configs
 
         log(__filename);
         log(err.message);
-        jam['installed'] = false;
+        jam.config['installed'] = false;
         prm.reject();
 
     }).then(() => { // Get the current user from session token
@@ -105,8 +125,8 @@ module.exports = (req, res, next) => {
         }
 
         if (before.length > 0) {
-            let cnt = before.length;
-            let comp = 0;
+            let cnt     = before.length;
+            let comp    = 0;
 
             before.forEach((fnc) => {
                 let prom = new Promise(function (resolve) {

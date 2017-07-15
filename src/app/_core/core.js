@@ -332,7 +332,7 @@ const scan = (path) => {
 			} else {
 			    let farr = [];
 			    files.forEach((file) => {
-                    if (file.substr(0, 1) !== '_') {
+                    if (file.substr(0, 1) !== '_' && file.substr(0, 1) !== '.') {
                         farr.push(file);
                     }
                 });
@@ -406,6 +406,19 @@ const find_file = (dirs, files) => {
     return output;
 };
 
+const themes_get = () => {
+    let themes = [];
+    let s = fs.readdirSync(appdir + '/view/themes');
+    s.forEach((dir) => {
+        let path = appdir + '/view/themes/' + dir;
+        if (fs.lstatSync(path).isDirectory()) {
+            themes.push({name: dir, path: path});
+        }
+    });
+
+    return themes;
+};
+
 /**
  * Exports
  */
@@ -421,3 +434,4 @@ exports.skey           = 'bD6yXAOEX4xq';
 exports.template       = template;
 exports.timestamper    = timestamper;
 exports.find_file      = find_file;
+exports.themes         = themes_get;

@@ -10,7 +10,15 @@ const hbs              = require('handlebars');
 const slugify          = require('slugify');
 const beautify         = require('js-beautify').js_beautify;
 const beautify_html    = require('js-beautify').html;
+const Cookies          = require('js-cookie');
 const log              = console.log.bind(console);
+
+
+const cookie = {
+    get       : Cookies.getJSON,
+    set       : Cookies.set,
+    remove    : Cookies.remove
+};
 
 $(function () {
 
@@ -52,6 +60,19 @@ $(function () {
         let elm = $(tmp(input)).appendTo(trg);
 
         $(this).trigger('clone', [elm, input]);
+    };
+
+    const collapseToggle = function () {
+        if (cookie.get('collapse')) {
+            let o = cookie.get('collapse');
+            _.keys(o).forEach((k) => {
+                if (o[k] === true) {
+                    $(k).removeClass('show').collapse('hide');
+                } else {
+                    $(k).addClass('show').collapse('show');
+                }
+            });
+        }
     };
 
     const hide_alert = (delay = 0, target = '#admin-alert') => {
@@ -417,6 +438,7 @@ $(function () {
             return (err !== null) ? err : true;
         }
     };
+
 
     /**
      * -------------------------------------------------------------------------
@@ -944,6 +966,19 @@ $(function () {
         }
     });
 
+    $(document).on('click', '[data-toggle="collapse"]', function () {
+
+        let t    = $(this).data('target');
+        t        = (!t) ? $(this).attr('href') : t;
+
+        if (!t) { return; }
+
+        let o    = cookie.get('collapse') || {};
+        o[t]     = !($(this).attr('aria-expanded') === 'true');
+
+        cookie.set('collapse', o);
+    });
+
     // Status toggles
     setTimeout(function () {
         $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
@@ -1005,4 +1040,17 @@ $(function () {
         dragula([this], opt);
     });
 
+    // Cookie monster!!
+    if (cookie.get('error')) {
+        show_msg(cookie.get('error'));
+        cookie.remove('error');
+    }
+
+    if (cookie.get('status')) {
+        show_success(cookie.get('status'));
+        cookie.remove('status');
+    }
+
+    // Must be last function
+    collapseToggle();
 });

@@ -182,7 +182,7 @@ module.exports = (req, res, next) => {
 */
 module.exports = (req, res, next) => {
     //log('installer');
-    if (jam['installed'] === true) {
+    if (jam.config['installed'] === true) {
         next();
     } else {
         jam.title = "Jam Install";

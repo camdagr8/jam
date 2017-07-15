@@ -1,0 +1,52 @@
+
+<form id="settings-form" action="<%=baseurl%>/admin/settings" method="post">
+
+    <input type="hidden" name="nonce" value="<%=nonce%>" />
+
+    <div class="mb-l"><h5><i class="lnr-equalizer ico"></i> Settings</h5></div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+
+            <div class="mb-l">
+                <label for="config-title">Title</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" aria-label="Title" id="config-title" value="<%=config.title%>" name="title" />
+                    <span class="input-group-addon" data-toggle="tooltip" title="The admin title value">?</span>
+                </div>
+            </div>
+
+            <div class="mb-l">
+                <label for="config-theme">Theme</label>
+                <div>
+                    <select class="form-control" name="theme" title="Theme">
+                        <% core.themes().forEach((item) => {%>
+                        <option value="<%=item.name%>" <%=(config.theme === item.name) ? 'selected' : ''%>><%=item.name%></option>
+                        <% }); %>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+
+            <div class="blocks">
+            <% if (blocks) { %>
+
+            <% blocks.forEach(function (block, i) { %>
+            <%- include(block, {index: i}) -%>
+            <% }); %>
+
+            <% } %>
+            </div>
+
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+            <div class="mt-xl ">
+                <button type="submit" class="btn btn-primary btn-block btn-lg text-uppercase">Save Settings</button>
+            </div>
+        </div>
+
+    </div>
+</form>
