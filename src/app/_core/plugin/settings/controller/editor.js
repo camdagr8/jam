@@ -23,17 +23,6 @@ exports.get = (req, res) => {
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
 
-        if (req.cookies.hasOwnProperty('error')) {
-            jam.plugin.settings['error'] = req.cookies['error'];
-        }
-
-        if (req.cookies.hasOwnProperty('status')) {
-            jam.plugin.settings['status'] = req.cookies['status'];
-        }
-
-        res.clearCookie('error');
-        res.clearCookie('status');
-
         jam.nonce = result;
         res.render(core.template.admin, jam);
 
@@ -75,9 +64,9 @@ exports.post = (req, res) => {
         return Parse.Object.saveAll(results);
 
     }).catch((err) => {
-        res.cookie('error', err.message, {maxAge: 2000});
+        jam.cookie.set('error', err.message);
     }).then(() => {
-        res.cookie('status', 'Successfully updated settings', {maxAge: 2000});
+        jam.cookie.set('status', 'Successfully updated settings');
     }).always(() => {
         res.redirect('/admin/settings');
     });

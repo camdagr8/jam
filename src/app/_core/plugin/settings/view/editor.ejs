@@ -1,12 +1,4 @@
-<script type="text/javascript">
-    <% if (jam.plugin.settings.hasOwnProperty('error')) { %>
-    window.ALERTERROR = "<%-jam.plugin.settings.error%>";
-    <% } %>
 
-    <% if (jam.plugin.settings.hasOwnProperty('status')) { %>
-    window.ALERTSUCCESS = "<%-jam.plugin.settings.status%>";
-    <% } %>
-</script>
 <form id="settings-form" action="<%=baseurl%>/admin/settings" method="post">
 
     <input type="hidden" name="nonce" value="<%=nonce%>" />
