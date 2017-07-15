@@ -1,6 +1,6 @@
 # Jam
 
-[![Develop - Build Status](https://travis-ci.org/camdagr8/jam.svg?branch=develop)](https://travis-ci.org/camdagr8/jam) [![Master - Build Status](https://travis-ci.org/camdagr8/jam.svg?branch=master)](https://travis-ci.org/camdagr8/jam)
+[![Build Status](https://travis-ci.org/camdagr8/jam.svg?branch=master)](https://travis-ci.org/camdagr8/jam)
 
 
 ## Quick Start
