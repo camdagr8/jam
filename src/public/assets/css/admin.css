@@ -1,1 +1,10 @@
-#dashboard .card-body{width:100%;height:280px;overflow:hidden}#dashboard .big-icon i{font-size:72px;text-shadow:1px 1px 3px rgba(0,0,0,.25)}
+#dashboard .card-body {
+  width: 100%;
+  height: 280px;
+  overflow: hidden; }
+
+#dashboard .big-icon i {
+  font-size: 72px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25); }
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFkbWluLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFFUSxZQUFrQjtFQUNsQixjQUFtQjtFQUNuQixpQkFBb0IsRUFDdkI7O0FBTEw7RUFRUSxnQkFBcUI7RUFDckIsNkNBQWdELEVBQ25EIiwiZmlsZSI6ImFkbWluLmNzcyIsInNvdXJjZXNDb250ZW50IjpbIiNkYXNoYm9hcmQge1xuICAgIC5jYXJkLWJvZHkge1xuICAgICAgICB3aWR0aCAgICAgICA6IDEwMCU7XG4gICAgICAgIGhlaWdodCAgICAgIDogMjgwcHg7XG4gICAgICAgIG92ZXJmbG93ICAgIDogaGlkZGVuO1xuICAgIH1cblxuICAgIC5iaWctaWNvbiBpIHtcbiAgICAgICAgZm9udC1zaXplICAgICAgOiA3MnB4O1xuICAgICAgICB0ZXh0LXNoYWRvdyAgICA6IDFweCAxcHggM3B4IHJnYmEoMCwgMCwgMCwgMC4yNSk7XG4gICAgfVxufVxuIl19 */

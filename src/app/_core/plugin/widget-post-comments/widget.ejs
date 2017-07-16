@@ -1,0 +1,36 @@
+<% if (jam.is.admin === true) { %>
+<% if (comments.pagination.hasOwnProperty('count')) { %>
+<!--// widget-post-comments //-->
+<div class="card card-shadow bgc-white bd-0" id="widget-post-comments">
+    <h6 class="card-header">
+        <button type="button" class="float-right btn btn-clear" data-toggle="collapse" data-target="#collapse_widget-post-comments" aria-expanded="true">
+            <i class="lnr-chevron-up"></i>
+        </button>
+        <i class="lnr-bubbles ico"></i> Comments
+    </h6>
+    <div class="collapse" id="collapse_widget-post-comments">
+        <div class="card-body p-4">
+
+            <% if (comments.pagination.count === 1) { %>
+            <span id="comment-count">1 Comment</span>
+            <% } else { %>
+            <span id="comment-count"><%-comments.pagination.count%> Comments</span>
+            <% } %>
+
+        </div>
+        <div class="card-footer" style="margin-top: -1px;">
+            <% if (comments.waiting > 0) { %>
+            <a href="/admin/comments/1/<%=rec.objectId%>/wait" class="btn btn-block text-uppercase btn-info">
+                <%=comments.waiting%> waiting approval
+            </a>
+            <% } else { %>
+            <a href="/admin/comments/1/<%=rec.objectId%>" class="btn btn-block text-uppercase btn-outline-primary">
+                Moderate Comments
+            </a>
+            <% } %>
+        </div>
+    </div>
+</div>
+<!--// widget-post-comments end //-->
+<% } %>
+<% } %>

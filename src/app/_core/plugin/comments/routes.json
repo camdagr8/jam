@@ -1,0 +1,6 @@
+[
+  {
+    "route"         : ["/admin/comments/:page/:id/:status", "/admin/comments/:page/:id", "/admin/comments/:page", "/admin/comments"],
+    "controller"    : "[plugin_dir]/controller/list.js"
+  }
+]

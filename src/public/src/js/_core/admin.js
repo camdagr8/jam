@@ -1051,6 +1051,9 @@ $(function () {
         cookie.remove('status');
     }
 
-    // Must be last function
+    // Toggle collapseables
     collapseToggle();
+
+    // Show sidebar
+    $('#admin-menu .list-menu:first-child').fadeIn(250);
 });
