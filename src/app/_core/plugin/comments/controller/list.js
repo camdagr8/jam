@@ -42,7 +42,7 @@ exports.all = (req, res) => {
         query         : {}
     };
 
-    let filtered    = false;
+    let filtered    = 0;
     let params      = {};
     let darr        = __dirname.split('/'); darr.pop();
     jam.content     = darr.join('/') + '/view/list.ejs';
@@ -73,7 +73,7 @@ exports.all = (req, res) => {
         }
 
         opt['status'] = (typeof params.status === 'string') ? [params.status] : params.status;
-        filtered = true;
+        filtered += 1;
 
     } else {
         opt['status'] = ['publish', 'wait'];
@@ -82,13 +82,31 @@ exports.all = (req, res) => {
     if (params.hasOwnProperty('id')) {
         if (String(params.id).toLowerCase() !== 'all') {
             opt['post'] = params.id;
-            filtered = true;
+            filtered += 1;
         }
     }
 
     if (req.query['user']) {
         opt['author'] = req.query.user;
-        filtered = true;
+        filtered += 1;
+    }
+
+    if (req.query['find']) {
+        opt['find'] = req.query.find;
+        filtered += 1;
+    }
+
+    if (req.query['sortby']) {
+        opt['orderBy'] = req.query.sortby;
+    }
+
+    if (req.query['sort']) {
+        opt['order'] = req.query.sort;
+    }
+
+    if (req.query['flagged']) {
+        opt['flagged'] = Boolean(req.query.flagged === 'true');
+        filtered += 1;
     }
 
     Parse.Cloud.run('comment_list', opt).then((results) => {

@@ -60,10 +60,22 @@ const list = (request, response) => {
         qry.equalTo('author', author);
     }
 
+    if (params.hasOwnProperty('flagged')) {
+        qry.equalTo('flagged', params.flagged);
+    }
+
+    if (params.hasOwnProperty('containedIn')) {
+        qry.containedIn('objectId', params.containedIn);
+    }
+
+    if (params.hasOwnProperty('notContainedIn')) {
+        qry.notContainedIn('objectId', params.notContainedIn);
+    }
+
     qry.count().then((count) => {
         let pages    = Math.ceil(count / limit);
         let nxt      = page + 1;
-        let prv      = Math.min(page - 1, 1);
+        let prv      = page - 1;
         let max      = page + 2;
         let min      = page - 2;
 
@@ -81,18 +93,6 @@ const list = (request, response) => {
             max      : max,
             min      : min,
         };
-
-        if (params.hasOwnProperty('containedIn')) {
-            qry.containedIn('objectId', params.containedIn);
-        }
-
-        if (params.hasOwnProperty('notContainedIn')) {
-            qry.notContainedIn('objectId', params.notContainedIn);
-        }
-
-        if (params.hasOwnProperty('flagged')) {
-            qry.equalTo('flagged', params.flagged);
-        }
 
         if (params.hasOwnProperty('include')) {
             params.include = (typeof params.include === 'string') ? [params.include] : params.include;

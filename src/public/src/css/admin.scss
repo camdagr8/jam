@@ -10,3 +10,98 @@
         text-shadow    : 1px 1px 3px rgba(0, 0, 0, 0.25);
     }
 }
+
+ .nogrow {
+     flex-grow: 0 !important;
+ }
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.admin-comment-list {
+    width: 100%;
+    padding: 3px;
+
+
+    .comment {
+        position: relative;
+        width: 100%;
+    }
+
+    .comment-date-wrap {
+        width: 150px;
+    }
+
+    .comment-date {
+        float: left;
+        width: 100px;
+        height: 100px;
+        margin-right: 50px;
+    }
+
+    .comment-date:before {
+        border-bottom: 1px solid #E9E9E9;
+        position: absolute;
+        height: 1px;
+        width: 50px;
+        left: 100px;
+        top: 50%;
+        content: '';
+    }
+
+    .comment-date:after {
+        border-right: 1px solid #E9E9E9;
+        position: absolute;
+        height: 150px;
+        width: 1px;
+        left: 123px;
+        top: -25px;
+        content: '';
+    }
+
+    .comment-date div {
+        font-size: 1.75rem;
+        line-height: 1;
+    }
+
+    .comment-date div:first-child {
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+    .comment-date div:last-child {
+        font-size: .7rem;
+    }
+
+    .comment-excerpt {
+        height: 99px;
+        padding: 15px;
+        overflow: hidden;
+        flex-grow: 1 !important;
+    }
+
+    .comment-body {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 20px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        content: "";
+        display: inline-block;
+        margin: 0 10px 1px 10px;
+    }
+
+    .comment:first-child .comment-date-wrap:after {
+        width: 11px;
+        height: 11px;
+        content: "";
+        top: -29px;
+        left: 118px;
+        position: absolute;
+        background-color: #E9E9E9;
+        border-radius: 100%;
+    }
+}

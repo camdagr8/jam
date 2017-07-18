@@ -979,6 +979,15 @@ $(function () {
         cookie.set('collapse', o);
     });
 
+    $(document).on('click', '.comment-filters [data-without]', function () {
+        let d    = $(this).data('without');
+        let w    = (d.hasOwnProperty('with')) ? d.with : '';
+        let u    = d.string.split(d.value).join(w).split('//').join('/');
+        let q    = u.split('?').pop();
+
+        window.location.href = (q.length < 1) ? u.split('?').shift() : u;
+    });
+
     // Status toggles
     setTimeout(function () {
         $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {

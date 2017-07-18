@@ -6765,6 +6765,15 @@ $(function () {
         cookie.set('collapse', o);
     });
 
+    $(document).on('click', '.comment-filters [data-without]', function () {
+        var d = $(this).data('without');
+        var w = d.hasOwnProperty('with') ? d.with : '';
+        var u = d.string.split(d.value).join(w).split('//').join('/');
+        var q = u.split('?').pop();
+
+        window.location.href = q.length < 1 ? u.split('?').shift() : u;
+    });
+
     // Status toggles
     setTimeout(function () {
         $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
