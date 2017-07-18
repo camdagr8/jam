@@ -42,6 +42,8 @@ exports.all = (req, res) => {
         query         : {}
     };
 
+    jam['can_moderate'] = core.perm_check(permissions, jam.currentuser);
+
     let filtered    = 0;
     let params      = {};
     let darr        = __dirname.split('/'); darr.pop();
@@ -108,6 +110,7 @@ exports.all = (req, res) => {
         opt['flagged'] = Boolean(req.query.flagged === 'true');
         filtered += 1;
     }
+
 
     Parse.Cloud.run('comment_list', opt).then((results) => {
 

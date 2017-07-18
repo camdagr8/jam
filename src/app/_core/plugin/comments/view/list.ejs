@@ -132,14 +132,14 @@
                 <div class="d-flex align-items-center">
                     <div>
                         <div class="comment-post bold txtc-gray">
-                            <i class="lnr-pushpin txtc-gray mr-2"></i>
+                            <i class="lnr-pushpin txtc-gray mr-2" aria-hidden="true"></i>
                             <a href="/admin/comments/1/<%=item.post.objectId%>" class="txtc-gray"><%=item.post.title%></a>
                         </div>
                         <div class="comment-author my-1 d-block" style="height: 20px; overflow: hidden;">
                             <% if (item.op === true) { %>
-                            <i class="lnr-user txtc-gray mr-2"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray"><%=item.author.username%></a>
+                            <i class="lnr-user txtc-gray mr-2" aria-hidden="true"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray"><%=item.author.username%></a>
                             <% } else { %>
-                            <i class="lnr-user txtc-gray mr-2"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray-light"><%=item.author.username%></a>
+                            <i class="lnr-user txtc-gray mr-2" aria-hidden="true"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray-light"><%=item.author.username%></a>
                             <% } %>
 
                             <a href="/admin/comments/1/<%=item.post.objectId%>/<%=item.status%>" class="dot rounded-circle bgc-<%=item.status_color%>"></a>
@@ -147,25 +147,29 @@
                             <span class="txtc-gray-light monospace" style="font-size: 1rem"><%=item.time%></span>
                         </div>
                         <div class="comment-body txtc-gray-light">
-                            <i class="lnr-<%=(item.flagged === true) ? 'flag2 txtc-danger' : 'bubble'%> txtc-gray mr-2"></i>
+                            <i class="lnr-<%=(item.flagged === true) ? 'flag2 txtc-danger' : 'bubble'%> txtc-gray mr-2" aria-hidden="true"></i>
                             <%-core.hbsParse(item.body)%>
                         </div>
                     </div>
                 </div>
+                <% if (can_moderate === true) { %>
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="text-right" style="width: 110px;">
                         <div class="btn-group nogrow" role="group" aria-label="...">
                             <% if (item.status === 'wait') { %>
-                            <button data-approve="<%=item.objectId%>" class="btn btn-sm btn-secondary text-uppercase pt-2" data-toggle="tooltip" data-placement="left" title="APPROVE">
-                                <i class="lnr-thumbs-up"></i>
+                            <button class="btn btn-sm btn-secondary text-uppercase pt-2" data-comment-approve="<%=item.objectId%>" data-toggle="tooltip" data-placement="left" title="APPROVE">
+                                <i class="lnr-thumbs-up" aria-hidden="true"></i>
+                                <span class="sr-only">Approve comment</span>
                             </button>
                             <% } %>
-                            <button data-moderate="<%=item.objectId%>" class="btn btn-sm btn-secondary text-uppercase pt-2" data-toggle="tooltip" data-placement="left" title="MODERATE">
-                                <i class="lnr-pen"></i>
+                            <button class="btn btn-sm btn-secondary text-uppercase pt-2" data-comment-moderate="<%=item.objectId%>" data-toggle="tooltip" data-placement="left" title="MODERATE">
+                                <i class="lnr-pen" aria-hidden="true"></i>
+                                <span class="sr-only">Moderate comment</span>
                             </button>
                         </div>
                     </div>
                 </div>
+                <% } %>
             </div>
         </div>
         <% }); %>
@@ -222,3 +226,4 @@
 </nav>
 <div class="clearfix"></div>
 <% } %>
+

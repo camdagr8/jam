@@ -6774,6 +6774,25 @@ $(function () {
         window.location.href = q.length < 1 ? u.split('?').shift() : u;
     });
 
+    $(document).on('click', '[data-comment-approve]', function () {
+        var id = $(this).data('comment-approve');
+        var u = '/admin/comment/' + id + '/approve';
+
+        $.ajax({
+            url: u,
+            data: { status: 'publish' },
+            method: 'POST',
+            dataType: 'json',
+            success: function success(result) {
+                log(result);
+            },
+            error: function error(xhr, status, err) {
+                console.log(__filename);
+                console.log(err);
+            }
+        });
+    });
+
     // Status toggles
     setTimeout(function () {
         $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
