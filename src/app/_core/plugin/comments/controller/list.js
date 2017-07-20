@@ -111,7 +111,6 @@ exports.all = (req, res) => {
         filtered += 1;
     }
 
-
     Parse.Cloud.run('comment_list', opt).then((results) => {
 
         jam.comments['pagination'] = results.pagination;

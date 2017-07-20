@@ -63,16 +63,16 @@ $(function () {
     };
 
     const collapseToggle = function () {
-        if (cookie.get('collapse')) {
-            let o = cookie.get('collapse');
-            _.keys(o).forEach((k) => {
-                if (o[k] === true) {
-                    $(k).removeClass('show').collapse('hide');
-                } else {
-                    $(k).addClass('show').collapse('show');
-                }
-            });
-        }
+        let o    = cookie.get('collapse') || {};
+        o        = (typeof o === 'string') ? {} : o;
+
+        _.keys(o).forEach((k) => {
+            if (o[k] === true) {
+                $(k).removeClass('show').collapse('hide');
+            } else {
+                $(k).addClass('show').collapse('show');
+            }
+        });
     };
 
     const hide_alert = (delay = 0, target = '#admin-alert') => {
@@ -974,6 +974,7 @@ $(function () {
         if (!t) { return; }
 
         let o    = cookie.get('collapse') || {};
+        o        = (typeof o === 'string') ? {} : o;
         o[t]     = !($(this).attr('aria-expanded') === 'true');
 
         cookie.set('collapse', o);
@@ -989,8 +990,9 @@ $(function () {
     });
 
     $(document).on('click', '[data-comment-approve]', function () {
-        let id = $(this).data('comment-approve');
-        let u = `/admin/comment/${id}/approve`;
+        let id     = $(this).data('comment-approve');
+        let u      = `/admin/comment/${id}/approve`;
+        let btn    = $(this);
 
         $.ajax({
             url:      u,
@@ -998,11 +1000,18 @@ $(function () {
             method:   'POST',
             dataType: 'json',
             success:  function (result) {
-                log(result);
+                if (result.status === 'OK') {
+                    show_success('Comment approved!');
+                    btn.fadeOut(250);
+                    $(`#${id} .bdc-warning`).addClass('bdc-success').removeClass('bdc-warning');
+                    $(`#${id} .dot`).addClass('bgc-success').removeClass('bgc-warning');
+                } else {
+                    show_msg(result.message);
+                }
             },
             error:    function (xhr, status, err) {
-                console.log(__filename);
-                console.log(err);
+                log(__filename);
+                log(err);
             }
         });
     });

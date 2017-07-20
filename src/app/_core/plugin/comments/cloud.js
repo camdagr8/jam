@@ -1,4 +1,22 @@
 
+const approve = (request, response) => {
+    const params = request.params;
+    if (!params.hasOwnProperty('id')) {
+        response.error('comment id is a required parameter');
+        return;
+    }
+
+    log(request.user.get('sessionToken'));
+
+    let comment = new Parse.Object('Comment');
+    comment.set('objectId', params.id);
+    comment.set('status', 'publish');
+    comment.save(null, {sessionToken: request.user.get('sessionToken')}).then(() => {
+        response.success({status: 'OK'});
+    }).catch((err) => {
+        response.error(err.message);
+    });
+};
 
 const list = (request, response) => {
     let results    = [];
@@ -207,6 +225,8 @@ const save = (request, response) => {
         response.error(err.message);
     });
 };
+
+Parse.Cloud.define('comment_approve', approve);
 
 Parse.Cloud.define('comment_list', list);
 
