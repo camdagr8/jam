@@ -6,11 +6,11 @@ const approve = (request, response) => {
         return;
     }
 
-    log(request.user.get('sessionToken'));
-
     let comment = new Parse.Object('Comment');
     comment.set('objectId', params.id);
     comment.set('status', 'publish');
+    comment.set('approvedBy', request.user);
+    comment.set('approvedAt', new Date());
     comment.save(null, {sessionToken: request.user.get('sessionToken')}).then(() => {
         response.success({status: 'OK'});
     }).catch((err) => {
