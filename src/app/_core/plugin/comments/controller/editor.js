@@ -9,10 +9,10 @@ exports.approve = function (req, res) {
             if (_.isEmpty(req.body['status'])) {
                 res.json({status: 'ERROR', message: 'status is a required parameter'});
             } else {
-                let status = req.body.status;
-                let id = req.params.id;
+                let id        = req.params.id;
+                let status    = req.body.status;
+                let stoken    = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
 
-                let stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
                 Parse.Cloud.run('comment_approve', {id: id}, {sessionToken: stoken}).then(() => {
                     res.json({status: 'OK'});
                 }).catch((err) => {

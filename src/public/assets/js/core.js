@@ -6778,7 +6778,9 @@ $(function () {
     $(document).on('click', '[data-comment-approve]', function () {
         var id = $(this).data('comment-approve');
         var u = '/admin/comment/' + id + '/approve';
-        var btn = $(this);
+        var btn = $('#' + id + ' [data-comment-approve]');
+
+        btn.prop('disabled', true);
 
         $.ajax({
             url: u,
@@ -6792,10 +6794,12 @@ $(function () {
                     $('#' + id + ' .bdc-warning').addClass('bdc-success').removeClass('bdc-warning');
                     $('#' + id + ' .dot').addClass('bgc-success').removeClass('bgc-warning');
                 } else {
+                    btn.prop('disabled', false);
                     show_msg(result.message);
                 }
             },
             error: function error(xhr, status, err) {
+                btn.prop('disabled', false);
                 log(__filename);
                 log(err);
             }
