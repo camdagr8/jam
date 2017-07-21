@@ -1,0 +1,64 @@
+<style>
+    .modal .trumbowyg-textarea,
+    .modal .trumbowyg-box,
+    .modal .trumbowyg-editor { min-height: 350px; }
+    .modal .trumbowyg-box, .trumbowyg-editor {
+        margin: -1px auto;
+    }
+
+    .modal .modal-header {
+        padding: 15px 12px;
+    }
+
+</style>
+
+<div class="modal fade" id="comment-moderator">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title raleway"><i class="lnr-bubble mr-2"></i> Moderate Comment</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="lnr-cross"></i>
+                    </button>
+                </div>
+                <div class="bgc-gray-lightest p-2 d-flex justify-content-start align-items-center">
+                    <div class="nogrow d-flex">
+                        <select id="comment-moderator-status" class="form-control form-control-sm mr-auto text-uppercase nogrow" name="status" title="comment status" style="width: 120px;">
+                            <option value="">Status</option>
+                            <option value="publish">Approve</option>
+                            <option value="wait">Wait</option>
+                            <option value="delete">Delete</option>
+                        </select>
+
+                        <button id="comment-moderator-edit" type="button" class="btn btn-sm btn-secondary text-uppercase ml-2" data-toggle="disabled" data-target="#comment-body-wysiwyg" style="border-radius: 4px;">
+                            <i class="lnr-pen ico mr-xs float-left" style="margin-top: 2px;"></i> EDIT
+                        </button>
+                    </div>
+
+                    <div class="ml-auto d-flex align-items-center">
+                        <label class="check mr-xxs" data-toggle="check" style="width: 140px;">
+                            <i class="lnr-flag2 ico mt-xxs mr-xs"></i> FLAGGED
+                            <input type="checkbox" name="flagged" autocomplete="off" class="hidden-xs-up" value="true" aria-checked="false" checked="">
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <textarea name="body" data-wysiwyg id="comment-body-wysiwyg" title="comment body" disabled></textarea>
+                </div>
+                <div class="modal-footer">
+                    <span id="comment-moderator-author" class="raleway nogrow mr-auto"></span>
+                    <button type="button" data-dismiss="modal" class="btn btn-primary text-uppercase" style="width: 140px;">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% if (blocks) { %>
+
+<% blocks.forEach(function (block, i) { %>
+<%- include(block, {index: i}) -%>
+<% }); %>
+
+<% } %>

@@ -29,9 +29,20 @@ exports.use = (req, res, next) => {
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render(core.template.theme + '/templates/404', jam);
-    }  else {
-        next();
+        return;
     }
+
+    // Get widgets
+    core.add_widgets('comment-list');
+
+    // Customize wysiwyg
+    if (jam.plugin.hasOwnProperty('wysiwyg')) {
+        jam.plugin.wysiwyg['field'] = 'body';
+        jam.plugin.wysiwyg['placeholder'] = 'Comment';
+    }
+
+
+    next();
 };
 
 exports.all = (req, res) => {

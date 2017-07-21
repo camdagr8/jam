@@ -1020,6 +1020,22 @@ $(function () {
         });
     });
 
+    $(document).on('click', '[data-toggle="disabled"]', function () {
+        let targ = ($(this).data('target')) ? $($(this).data('target')) : $(this);
+        targ.prop('disabled', !targ.prop('disabled'));
+
+        if (targ['trumbowyg']) {
+            let state = (targ.prop('disabled') === true) ? 'disable' : 'enable';
+            targ.trumbowyg(state);
+        }
+    });
+
+    $(document).on('click', '[data-toggle="active"]', function () {
+        let targ = ($(this).data('target')) ? $($(this).data('target')) : $(this);
+        targ.toggleClass('active');
+    });
+
+
     // Status toggles
     setTimeout(function () {
         $('input[name="publish"], input[name="unpublish"]').on('change', function (e) {
