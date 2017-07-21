@@ -5454,13 +5454,17 @@ $(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(__filename) {
 
 var log = console.log.bind(console);
 var _ = __webpack_require__(2);
 
 $(function () {
     if ($('#comment-moderator').length > 0) {
+
+        var after_show_moderator = function after_show_moderator() {
+            $('#comment-moderator-status').focus();
+        };
 
         var before_show_moderator = function before_show_moderator(e) {
             var btn = $(e.relatedTarget);
@@ -5469,9 +5473,17 @@ $(function () {
             var body = modal.find('[data-wysiwyg]');
             var status = modal.find('select[name="status"] option[value="' + comment.status + '"]');
             var title = modal.find('#comment-moderator-author');
+            var form = modal.find('form');
+            var url = '/admin/comment/' + comment.objectId;
+            var flagged = modal.find('input[name="flagged"]');
+            var author = modal.find('[name="author"]');
 
+            form.attr('action', url);
+            author.val(comment.author.objectId);
             title.html('<i class="lnr-user mr-2"></i> ' + comment.author.username);
             status.prop('selected', true);
+            flagged.prop('checked', comment.flagged);
+            flagged.change();
             body.trumbowyg('disable');
             body.trumbowyg('html', comment.body);
             $('#comment-moderator-edit').removeClass('active');
@@ -5483,19 +5495,100 @@ $(function () {
             }
         };
 
-        var after_show_moderator = function after_show_moderator() {
-            $('#comment-moderator-status').focus();
+        var save_moderated_comment = function save_moderated_comment(e) {
+            e.preventDefault();
+
+            var u = $(this).attr('action');
+            var frm = $(this).serializeArray();
+            var data = {};
+
+            // Convert the form data into an object
+            frm.forEach(function (item) {
+                var v = item.value;
+                v = v === 'true' ? true : v;
+                v = v === 'false' ? false : v;
+
+                if (v === '' || typeof v === 'null' || typeof v === 'undefined') {
+                    return;
+                }
+
+                if (data[item.name] && !_.isArray(data[item.name])) {
+                    data[item.name] = [data[item.name]];
+                }
+
+                if (data[item.name]) {
+                    data[item.name].push(v);
+                } else {
+                    data[item.name] = v;
+                }
+            });
+
+            data['flagged'] = !data.hasOwnProperty('flagged') ? false : data.flagged;
+        };
+
+        var show_msg = function show_msg(message) {
+            var cls = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'alert-danger';
+
+            var type = cls.split('-').pop();
+            var w = window.innerWidth < 400 ? 200 : 400;
+            $.bootstrapGrowl(message, { delay: 4000, type: type, width: w, offset: { from: 'top', amount: 10 } });
+        };
+
+        var show_success = function show_success(message) {
+            show_msg(message, 'alert-success');
         };
 
         $(document).on('click', '#comment-moderator-edit', function () {
             $(this).toggleClass('active');
         });
 
+        $(document).on('click', '.comment-filters [data-without]', function () {
+            var d = $(this).data('without');
+            var w = d.hasOwnProperty('with') ? d.with : '';
+            var u = d.string.split(d.value).join(w).split('//').join('/');
+            var q = u.split('?').pop();
+
+            window.location.href = q.length < 1 ? u.split('?').shift() : u;
+        });
+
+        $(document).on('click', '[data-comment-approve]', function () {
+            var id = $(this).data('comment-approve');
+            var u = '/admin/comment/' + id + '/approve';
+            var btn = $('#' + id + ' [data-comment-approve]');
+
+            btn.prop('disabled', true);
+
+            $.ajax({
+                url: u,
+                data: { status: 'publish' },
+                method: 'POST',
+                dataType: 'json',
+                success: function success(result) {
+                    if (!result.hasOwnProperty('error')) {
+                        show_success('Comment approved!');
+                        btn.fadeOut(250);
+                        $('#' + id + ' .bdc-warning').addClass('bdc-success').removeClass('bdc-warning');
+                        $('#' + id + ' .dot').addClass('bgc-success').removeClass('bgc-warning');
+                    } else {
+                        btn.prop('disabled', false);
+                        show_msg(result.error.message);
+                    }
+                },
+                error: function error(xhr, status, err) {
+                    btn.prop('disabled', false);
+                    log(__filename, err);
+                }
+            });
+        });
+
         $(document).on('show.bs.modal', '#comment-moderator', before_show_moderator);
 
         $(document).on('shown.bs.modal', '#comment-moderator', after_show_moderator);
+
+        $(document).on('submit', '#comment-moderator form', save_moderated_comment);
     }
 });
+/* WEBPACK VAR INJECTION */}.call(exports, "/index.js"))
 
 /***/ }),
 /* 15 */
@@ -6812,46 +6905,6 @@ $(function () {
         o[t] = !($(this).attr('aria-expanded') === 'true');
 
         cookie.set('collapse', o);
-    });
-
-    $(document).on('click', '.comment-filters [data-without]', function () {
-        var d = $(this).data('without');
-        var w = d.hasOwnProperty('with') ? d.with : '';
-        var u = d.string.split(d.value).join(w).split('//').join('/');
-        var q = u.split('?').pop();
-
-        window.location.href = q.length < 1 ? u.split('?').shift() : u;
-    });
-
-    $(document).on('click', '[data-comment-approve]', function () {
-        var id = $(this).data('comment-approve');
-        var u = '/admin/comment/' + id + '/approve';
-        var btn = $('#' + id + ' [data-comment-approve]');
-
-        btn.prop('disabled', true);
-
-        $.ajax({
-            url: u,
-            data: { status: 'publish' },
-            method: 'POST',
-            dataType: 'json',
-            success: function success(result) {
-                if (result.status === 'OK') {
-                    show_success('Comment approved!');
-                    btn.fadeOut(250);
-                    $('#' + id + ' .bdc-warning').addClass('bdc-success').removeClass('bdc-warning');
-                    $('#' + id + ' .dot').addClass('bgc-success').removeClass('bgc-warning');
-                } else {
-                    btn.prop('disabled', false);
-                    show_msg(result.message);
-                }
-            },
-            error: function error(xhr, status, err) {
-                btn.prop('disabled', false);
-                log(__filename);
-                log(err);
-            }
-        });
     });
 
     $(document).on('click', '[data-toggle="disabled"]', function () {

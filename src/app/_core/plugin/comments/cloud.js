@@ -171,11 +171,14 @@ const before_save = (request, response) => {
     }
 
     // Author Pointer
+    if (!params.hasOwnProperty('author')) {
+        params['author'] = request.user;
+    }
+
     if (typeof params.author === 'string') {
         let author = new Parse.Object('_User');
         author.set('objectId', params.author);
         request.object.set('author', author);
-
     }
 
     // New object?
@@ -191,6 +194,15 @@ const before_save = (request, response) => {
         acl.setRoleWriteAccess("Moderator", true);
 
         request.object.setACL(acl);
+    } else {
+        // moderator?
+        let authorID    = request.params.author;
+        let userID      = request.user.get('objectId');
+
+        if (authorID !== userID) {
+            request['moderatedBy'] = request.user;
+            request['moderatedAt'] = new Date();
+        }
     }
 
     // Status
@@ -219,7 +231,7 @@ const after_save = (request) => {
 const save = (request, response) => {
     let obj = new Parse.Object('Comment');
 
-    obj.save(request.params).then((result) => {
+    obj.save(request.params, {sessionToken: request.user.get('sessionToken')}).then((result) => {
         response.success(result.toJSON());
     }).catch((err) => {
         response.error(err.message);

@@ -9,12 +9,13 @@
     .modal .modal-header {
         padding: 15px 12px;
     }
-
 </style>
 
 <div class="modal fade" id="comment-moderator">
     <div class="modal-dialog modal-lg" role="document">
-        <form method="post">
+        <form method="post" action="">
+            <input type="hidden" name="nonce" value="<%=nonce%>" />
+            <input type="hidden" name="author" value="" />
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title raleway"><i class="lnr-bubble mr-2"></i> Moderate Comment</h6>
@@ -32,14 +33,14 @@
                         </select>
 
                         <button id="comment-moderator-edit" type="button" class="btn btn-sm btn-secondary text-uppercase ml-2" data-toggle="disabled" data-target="#comment-body-wysiwyg" style="border-radius: 4px;">
-                            <i class="lnr-pen ico mr-xs float-left" style="margin-top: 2px;"></i> EDIT
+                            <i class="lnr-pen ico mr-sm-2 float-left" style="margin-top: 2px;"></i> <span class="hidden-xs-down">EDIT</span>
                         </button>
                     </div>
 
                     <div class="ml-auto d-flex align-items-center">
                         <label class="check mr-xxs" data-toggle="check" style="width: 140px;">
                             <i class="lnr-flag2 ico mt-xxs mr-xs"></i> FLAGGED
-                            <input type="checkbox" name="flagged" autocomplete="off" class="hidden-xs-up" value="true" aria-checked="false" checked="">
+                            <input type="checkbox" name="flagged" autocomplete="off" class="hidden-xs-up" value="true" aria-checked="false">
                         </label>
                     </div>
                 </div>
@@ -47,8 +48,8 @@
                     <textarea name="body" data-wysiwyg id="comment-body-wysiwyg" title="comment body" disabled></textarea>
                 </div>
                 <div class="modal-footer">
-                    <span id="comment-moderator-author" class="raleway nogrow mr-auto"></span>
-                    <button type="button" data-dismiss="modal" class="btn btn-primary text-uppercase" style="width: 140px;">Save</button>
+                    <span id="comment-moderator-author" class="raleway mr-auto"></span>
+                    <button type="submit" class="btn btn-primary text-uppercase" style="width: 140px;">Save</button>
                 </div>
             </div>
         </form>

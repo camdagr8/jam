@@ -980,46 +980,6 @@ $(function () {
         cookie.set('collapse', o);
     });
 
-    $(document).on('click', '.comment-filters [data-without]', function () {
-        let d    = $(this).data('without');
-        let w    = (d.hasOwnProperty('with')) ? d.with : '';
-        let u    = d.string.split(d.value).join(w).split('//').join('/');
-        let q    = u.split('?').pop();
-
-        window.location.href = (q.length < 1) ? u.split('?').shift() : u;
-    });
-
-    $(document).on('click', '[data-comment-approve]', function () {
-        let id     = $(this).data('comment-approve');
-        let u      = `/admin/comment/${id}/approve`;
-        let btn    = $(`#${id} [data-comment-approve]`);
-
-        btn.prop('disabled', true);
-
-        $.ajax({
-            url:      u,
-            data:     {status: 'publish'},
-            method:   'POST',
-            dataType: 'json',
-            success:  function (result) {
-                if (result.status === 'OK') {
-                    show_success('Comment approved!');
-                    btn.fadeOut(250);
-                    $(`#${id} .bdc-warning`).addClass('bdc-success').removeClass('bdc-warning');
-                    $(`#${id} .dot`).addClass('bgc-success').removeClass('bgc-warning');
-                } else {
-                    btn.prop('disabled', false);
-                    show_msg(result.message);
-                }
-            },
-            error:    function (xhr, status, err) {
-                btn.prop('disabled', false);
-                log(__filename);
-                log(err);
-            }
-        });
-    });
-
     $(document).on('click', '[data-toggle="disabled"]', function () {
         let targ = ($(this).data('target')) ? $($(this).data('target')) : $(this);
         targ.prop('disabled', !targ.prop('disabled'));

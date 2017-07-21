@@ -1,5 +1,5 @@
 const moment         = require('moment');
-const permissions    = ['administrator', 'moderator'];
+const permissions    = require('../perms.json');
 
 const status_color = (status) => {
     let color = 'gray';
@@ -32,17 +32,27 @@ exports.use = (req, res, next) => {
         return;
     }
 
-    // Get widgets
-    core.add_widgets('comment-list');
+    // Get nonce
+    Parse.Cloud.run('nonce_create').then((result) => {
+        // Get widgets
+        core.add_widgets('comment-list');
 
-    // Customize wysiwyg
-    if (jam.plugin.hasOwnProperty('wysiwyg')) {
-        jam.plugin.wysiwyg['field'] = 'body';
-        jam.plugin.wysiwyg['placeholder'] = 'Comment';
-    }
+        // Set nonce value
+        jam.nonce = result;
 
+        // Customize wysiwyg
+        if (jam.plugin.hasOwnProperty('wysiwyg')) {
+            jam.plugin.wysiwyg['field'] = 'body';
+            jam.plugin.wysiwyg['placeholder'] = 'Comment';
+        }
 
-    next();
+        next();
+
+    }, (err) => {
+        log(__filename, err);
+        jam['err'] = {code: 400, message: 'Bad Request'};
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+    });
 };
 
 exports.all = (req, res) => {
