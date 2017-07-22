@@ -1,8 +1,13 @@
 [
   {
-    "method"        : "post",
+    "method"        : "put",
     "func"          : "approve",
     "route"         : ["/admin/comment/:id/approve"],
+    "controller"    : "[plugin_dir]/controller/editor.js"
+  },
+  {
+    "method"        : "put",
+    "route"         : ["/admin/comment/:id"],
     "controller"    : "[plugin_dir]/controller/editor.js"
   },
   {

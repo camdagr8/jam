@@ -13,7 +13,7 @@ Parse.Cloud.define('nonce_create', (request, response) => {
 
 	let obj = new Parse.Object('Nonce');
 
-	obj.save().then((rec) => {
+	obj.save(null, {sessionToken: stoken}).then((rec) => {
 		response.success(rec.id);
 	}, (err) => {
 		response.error(err);
@@ -41,7 +41,7 @@ Parse.Cloud.define('nonce_delete', (request, response) => {
 
 	let obj = new Parse.Object('Nonce');
 	obj.set('objectId', request.params.id);
-	obj.destroy().then(() => {
+	obj.destroy(null, {sessionToken: stoken}).then(() => {
 		response.success(true);
 	}, (err) => {
 		response.error(err);

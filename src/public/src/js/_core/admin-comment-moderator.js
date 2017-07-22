@@ -4,6 +4,50 @@ const _      = require('underscore');
 $(function () {
     if ($('#comment-moderator').length > 0) {
 
+        const update_status_color = function (status, id) {
+            let clr = 'info';
+            switch(status) {
+                case 'publish':
+                    clr = 'success';
+                    break;
+                case 'delete':
+                    clr = 'danger';
+                    break;
+                case 'wait':
+                    clr = 'warning';
+                    break;
+            }
+
+            $(`#${id} .comment-excerpt`).removeClass('bdc-warning bdc-danger bdc-success').addClass('bdc-' + clr);
+            $(`#${id} .dot`).removeClass('bgc-warning bgc-danger bgc-success').addClass('bgc-' + clr);
+        };
+
+        const update_comment_list = function (data, id) {
+            update_status_color(data.status, id);
+
+            let row        = $(`#${id}`);
+            let body       = row.find('.comment-body');
+            let appr       = row.find('[data-comment-approve]');
+            let idx        = _.findIndex(window.comments, {objectId: id});
+            let fclr       = (data['flagged'] === true) ? 'danger' : 'gray';
+            let ficon      = (data['flagged'] === true) ? 'flag2' : 'bubble';
+            let flagged    = `<i class="lnr-${ficon} txtc-${fclr} txtc-gray mr-2" aria-hidden="true"></i>`;
+
+            if (data.hasOwnProperty('body')) {
+                body.html(flagged + data.body);
+            }
+
+            if (data.status !== 'wait') {
+                appr.fadeOut(250);
+            } else {
+                appr.removeClass('hidden-xs-up');
+                appr.hide();
+                appr.fadeIn(250);
+            }
+
+            for (let prop in data) { window.comments[idx][prop] = data[prop]; }
+        };
+
 
         const after_show_moderator = function () {
             $('#comment-moderator-status').focus();
@@ -41,9 +85,10 @@ $(function () {
         const save_moderated_comment = function (e) {
             e.preventDefault();
 
-            let u = $(this).attr('action');
-            let frm  = $(this).serializeArray();
-            let data = {};
+            let data    = {};
+            let u       = $(this).attr('action');
+            let frm     = $(this).serializeArray();
+            let btn     = $(this).find('button[type="submit"]');
 
             // Convert the form data into an object
             frm.forEach((item) => {
@@ -66,7 +111,40 @@ $(function () {
                 }
             });
 
-            data['flagged'] = (!data.hasOwnProperty('flagged')) ? false : data.flagged;
+            data['body']       = $(this).find('[name="body"]').trumbowyg('html');
+            data['flagged']    = (!data.hasOwnProperty('flagged')) ? false : data.flagged;
+
+            btn.prop('disabled', true);
+
+            // find the record in the comments array and update it.
+            let id     = u.split('/').pop();
+
+            $.ajax({
+                url         : u,
+                data        : data,
+                method      : 'PUT',
+                dataType    : 'json',
+                success     : function (result) {
+                    log(result);
+
+                    if (result.hasOwnProperty('error')) {
+                        show_msg(result.error.message);
+                    } else {
+                        delete data['nonce'];
+                        delete data['author'];
+                        update_comment_list(data, id);
+                        show_success('Comment moderated!');
+
+                        $('#comment-moderator [name="nonce"]').val(result.nonce);
+                    }
+
+                    btn.prop('disabled', false);
+                },
+                error:    function (xhr, status, err) {
+                    btn.prop('disabled', false);
+                    log(__filename, err);
+                }
+            });
         };
 
         const show_msg = (message, cls = 'alert-danger') => {
@@ -93,28 +171,27 @@ $(function () {
         });
 
         $(document).on('click', '[data-comment-approve]', function () {
-            let id     = $(this).data('comment-approve');
-            let u      = `/admin/comment/${id}/approve`;
-            let btn    = $(`#${id} [data-comment-approve]`);
+            let id      = $(this).data('comment-approve');
+            let u       = `/admin/comment/${id}/approve`;
+            let btn     = $(`#${id} [data-comment-approve]`);
+            let data    = {status: 'publish', objectId: id};
 
             btn.prop('disabled', true);
 
-
             $.ajax({
-                url:      u,
-                data:     {status: 'publish'},
-                method:   'POST',
-                dataType: 'json',
-                success:  function (result) {
+                url         : u,
+                data        : data,
+                method      : 'PUT',
+                dataType    : 'json',
+                success     : function (result) {
                     if (!result.hasOwnProperty('error')) {
                         show_success('Comment approved!');
-                        btn.fadeOut(250);
-                        $(`#${id} .bdc-warning`).addClass('bdc-success').removeClass('bdc-warning');
-                        $(`#${id} .dot`).addClass('bgc-success').removeClass('bgc-warning');
+                        update_comment_list(data, id);
                     } else {
-                        btn.prop('disabled', false);
                         show_msg(result.error.message);
                     }
+
+                    btn.prop('disabled', false);
                 },
                 error:    function (xhr, status, err) {
                     btn.prop('disabled', false);

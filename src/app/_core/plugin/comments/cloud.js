@@ -1,21 +1,107 @@
 
+
+const after_save = (request) => {
+    let post = request.object.get('post');
+
+    let rel = post.relation('comments');
+    rel.add(request.object);
+
+    post.save(null, {useMasterKey: true});
+};
+
 const approve = (request, response) => {
+
     const params = request.params;
-    if (!params.hasOwnProperty('id')) {
-        response.error('comment id is a required parameter');
+    if (!params.hasOwnProperty('objectId')) {
+        response.error('objectId is a required parameter');
         return;
     }
 
     let comment = new Parse.Object('Comment');
-    comment.set('objectId', params.id);
+    comment.set('objectId', params.objectId);
     comment.set('status', 'publish');
     comment.set('approvedBy', request.user);
     comment.set('approvedAt', new Date());
-    comment.save(null, {sessionToken: request.user.get('sessionToken')}).then(() => {
+    comment.save(null, {sessionToken: stoken}).then(() => {
         response.success({status: 'OK'});
     }).catch((err) => {
         response.error(err.message);
     });
+};
+
+const before_save = (request, response) => {
+
+    let params = request.object.toJSON();
+
+    // Validate required fields
+    let emsg = validate(params);
+    if (emsg) {
+        response.error(err);
+        return;
+    }
+
+    // Post Pointer
+    if (typeof params.post === 'string') {
+        let post = new Parse.Object('Content');
+        post.set('objectId', params.post);
+        request.object.set('post', post);
+    }
+
+    // Author Pointer
+    if (!params.hasOwnProperty('author') && jam.hasOwnProperty('currentuser')) {
+        params['author'] = jam.currentuser.id;
+    }
+
+    if (typeof params.author === 'string') {
+        let author = new Parse.User();
+        author.set('objectId', params.author);
+        request.object.set('author', author);
+    }
+    params['author'] = request.object.get('author');
+
+    // New object?
+    if (!params.hasOwnProperty('objectId')) {
+        // Flagged value
+        request.object.set('flagged', false);
+
+        // ACL
+        let acl = new Parse.ACL();
+        acl.setPublicReadAccess(true);
+        acl.setWriteAccess(params.author, true);
+        acl.setRoleWriteAccess("Administator", true);
+        acl.setRoleWriteAccess("Moderator", true);
+
+        request.object.setACL(acl);
+    } else {
+        // moderator?
+        if (jam.hasOwnProperty('currentuser')) {
+            if (params.author.id !== jam.currentuser.id) {
+                request.object.set('moderatedBy', jam.currentuser);
+                request.object.set('moderatedAt', new Date());
+            }
+        }
+    }
+
+    // Status
+    if (!params.hasOwnProperty('status')) {
+        // Use default publish method for comments
+        request.object.set('status', 'publish');
+    }
+
+    // Body
+    params.body = core.hbsParse(params.body);
+    request.object.set('body', params.body);
+
+    // Flagged
+    if (params.hasOwnProperty('flagged')) {
+        if (typeof params['flagged'] === 'string') {
+            params['flagged'] = Boolean(params.flagged === 'true');
+            request.object.set('flagged', params.flagged);
+        }
+    }
+
+    response.success();
+
 };
 
 const list = (request, response) => {
@@ -138,6 +224,16 @@ const list = (request, response) => {
     });
 };
 
+const save = (request, response) => {
+    let obj = new Parse.Object('Comment');
+
+    obj.save(request.params, {sessionToken: stoken}).then((result) => {
+        response.success(result.toJSON());
+    }).catch((err) => {
+        response.error(err.message);
+    });
+};
+
 const validate = (params) => {
     let required = {
         'author'    : 'author is a required parameter',
@@ -150,92 +246,6 @@ const validate = (params) => {
             return required[prop];
         }
     }
-};
-
-const before_save = (request, response) => {
-    let params = request.object.toJSON();
-
-    // Validate required fields
-    let emsg = validate(params);
-    if (emsg) {
-        response.error(err);
-        return;
-    }
-
-    // Post Pointer
-    if (typeof params.post === 'string') {
-        let post = new Parse.Object('Content');
-        post.set('objectId', params.post);
-        request.object.set('post', post);
-
-    }
-
-    // Author Pointer
-    if (!params.hasOwnProperty('author')) {
-        params['author'] = request.user;
-    }
-
-    if (typeof params.author === 'string') {
-        let author = new Parse.Object('_User');
-        author.set('objectId', params.author);
-        request.object.set('author', author);
-    }
-
-    // New object?
-    if (!params.hasOwnProperty('objectId')) {
-        // Flagged value
-        request.object.set('flagged', false);
-
-        // ACL
-        let acl = new Parse.ACL();
-        acl.setPublicReadAccess(true);
-        acl.setWriteAccess(params.author, true);
-        acl.setRoleWriteAccess("Administator", true);
-        acl.setRoleWriteAccess("Moderator", true);
-
-        request.object.setACL(acl);
-    } else {
-        // moderator?
-        let authorID    = request.params.author;
-        let userID      = request.user.get('objectId');
-
-        if (authorID !== userID) {
-            request['moderatedBy'] = request.user;
-            request['moderatedAt'] = new Date();
-        }
-    }
-
-    // Status
-    if (!params.hasOwnProperty('status')) {
-        // Use default publish method for comments
-        request.object.set('status', 'publish');
-    }
-
-    // Body
-    params.body = core.hbsParse(params.body);
-    request.object.set('body', params.body);
-
-    response.success();
-
-};
-
-const after_save = (request) => {
-    let post = request.object.get('post');
-
-    let rel = post.relation('comments');
-    rel.add(request.object);
-
-    post.save(null, {useMasterKey: true});
-};
-
-const save = (request, response) => {
-    let obj = new Parse.Object('Comment');
-
-    obj.save(request.params, {sessionToken: request.user.get('sessionToken')}).then((result) => {
-        response.success(result.toJSON());
-    }).catch((err) => {
-        response.error(err.message);
-    });
 };
 
 Parse.Cloud.define('comment_approve', approve);

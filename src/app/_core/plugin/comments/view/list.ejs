@@ -156,12 +156,10 @@
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="text-right" style="width: 110px;">
                         <div class="btn-group nogrow" role="group" aria-label="...">
-                            <% if (item.status === 'wait') { %>
-                            <button class="btn btn-sm btn-secondary text-uppercase pt-2" data-comment-approve="<%=item.objectId%>" data-toggle="tooltip" data-placement="left" title="APPROVE">
+                            <button class="btn btn-sm btn-secondary text-uppercase pt-2 <%=(item.status !== 'wait') ? 'hidden-xs-up' : ''%>" data-comment-approve="<%=item.objectId%>" data-toggle="tooltip" data-placement="left" title="APPROVE">
                                 <i class="lnr-thumbs-up" aria-hidden="true"></i>
                                 <span class="sr-only">Approve comment</span>
                             </button>
-                            <% } %>
                             <button class="btn btn-sm btn-secondary text-uppercase pt-2" data-comment-moderate="<%=item.objectId%>" data-target="#comment-moderator" data-toggle="modal" title="MODERATE">
                                 <i class="lnr-pen" aria-hidden="true"></i>
                                 <span class="sr-only">Moderate comment</span>

@@ -1,13 +1,19 @@
 const permissions = require('../perms.json');
-let stoken;
 
 exports.use = (req, res, next) =>  {
+
     if (!core.perm_check(permissions)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render(core.template.theme + '/templates/404', jam);
     }  else {
         stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
-        next();
+
+        if (!stoken || typeof stoken === 'undefined') {
+            jam['err'] = {code: '403', message: 'Forbidden'};
+            res.render(core.template.theme + '/templates/404', jam);
+        } else {
+            next();
+        }
     }
 };
 
@@ -21,12 +27,12 @@ exports.approve = (req, res) => {
             let id        = req.params.id;
             let status    = req.body.status;
 
-            Parse.Cloud.run('comment_approve', {id: id}, {sessionToken: stoken}).then((result) => {
+            Parse.Cloud.run('comment_approve', {objectId: id, status: 'publish'}, {sessionToken: stoken}).then((result) => {
                 output['data']      = result;
                 output['status']    = 'OK';
                 res.json(output);
             }).catch((err) => {
-                res.json({error: {message: err.message}});
+                res.json({error: {message: err}});
             });
         }
     } else {
@@ -45,14 +51,16 @@ exports.put = (req, res) => {
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
         delete req.body.nonce;
-
-        output.nonce            = nonce;
-        req.body['objectId']    = req.params.id;
-
+        req.body['objectId'] = req.params.id;
         return Parse.Cloud.run('comment_save', req.body, {sessionToken: stoken});
-    }).then(() => {
-        res.json(output);
+    }).then((result) => {
+        output.data = result;
+        return Parse.Cloud.run('nonce_create');
+    }).then((nonce) => {
+        output.nonce = nonce;
     }).catch((err) => {
-        res.json({error: err});
+        output['error'] = err.message;
+    }).always(() => {
+        res.json(output);
     });
 };
