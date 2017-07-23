@@ -6,8 +6,7 @@
     "controller"    : "[plugin_dir]/controller/editor.js"
   },
   {
-    "method"        : "put",
-    "route"         : ["/admin/comment/:id"],
+    "route"         : ["/admin/comment/:id", "/admin/comment"],
     "controller"    : "[plugin_dir]/controller/editor.js"
   },
   {

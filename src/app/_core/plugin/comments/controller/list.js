@@ -59,7 +59,6 @@ exports.all = (req, res) => {
     jam['comments']    = {
         list          : [],
         pagination    : {},
-        waiting       : 0,
         query         : {}
     };
 
@@ -138,20 +137,20 @@ exports.all = (req, res) => {
 
         let output = [];
         results.list.forEach((item) => {
-            let d                   = moment(item.createdAt);
-            item['date']            = d.format('MMM DD YYYY');
-            item['post']            = item.post.toJSON();
-            item['author']          = item.author.toJSON();
-            item['op']              = Boolean(item.post.creator.objectId === item.author.objectId);
-            item['time']            = d.format('LT');
-            item['status_color']    = status_color(item.status);
+            let d                = moment(item.createdAt);
+            item['date']         = d.format('MMM DD YYYY');
+            item['post']         = item.post.toJSON();
+            item['author']       = item.author.toJSON();
+            item['op']           = Boolean(item.post.creator.objectId === item.author.objectId);
+            item['time']         = d.format('LT');
+            item['status_color'] = status_color(item.status);
 
             output.push(item);
         });
 
-        jam.comments['query']       = opt;
-        jam.comments['list']        = output;
-        jam.comments['filtered']    = filtered;
+        jam.comments['query']    = opt;
+        jam.comments['list']     = output;
+        jam.comments['filtered'] = filtered;
 
     }).catch((err) => {
         log(__filename, err.message);

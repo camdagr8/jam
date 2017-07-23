@@ -4,6 +4,46 @@ const _      = require('underscore');
 $(function () {
     if ($('#comment-moderator').length > 0) {
 
+        const show_msg = (message, cls = 'alert-danger') => {
+            let type = cls.split('-').pop();
+            let w = (window.innerWidth < 400) ? 200 : 400;
+            $.bootstrapGrowl(message, {delay: 4000, type: type, width: w, offset: {from: 'top', amount: 10}});
+        };
+
+        const show_success = (message) => {
+            show_msg(message, 'alert-success');
+        };
+
+        const approve_comment = function () {
+            let id      = $(this).data('comment-approve');
+            let u       = `/admin/comment/${id}/approve`;
+            let btn     = $(`#${id} [data-comment-approve]`);
+            let data    = {status: 'publish', objectId: id};
+
+            btn.prop('disabled', true);
+
+            $.ajax({
+                url         : u,
+                data        : data,
+                method      : 'PUT',
+                dataType    : 'json',
+                success     : function (result) {
+                    if (!result.hasOwnProperty('error')) {
+                        show_success('Comment approved!');
+                        update_comment_list(data, id);
+                    } else {
+                        show_msg(result.error.message);
+                    }
+
+                    btn.prop('disabled', false);
+                },
+                error:    function (xhr, status, err) {
+                    btn.prop('disabled', false);
+                    log(__filename, err);
+                }
+            });
+        };
+
         const update_status_color = function (status, id) {
             let clr = 'info';
             switch(status) {
@@ -48,7 +88,6 @@ $(function () {
             for (let prop in data) { window.comments[idx][prop] = data[prop]; }
         };
 
-
         const after_show_moderator = function () {
             $('#comment-moderator-status').focus();
         };
@@ -67,7 +106,7 @@ $(function () {
 
             form.attr('action', url);
             author.val(comment.author.objectId);
-            title.html(`<i class="lnr-user mr-2"></i> ${comment.author.username}`);
+            title.html(`<i class="lnr-user mr-2 nogrow"></i> ${comment.author.username}`);
             status.prop('selected', true);
             flagged.prop('checked', comment.flagged);
             flagged.change();
@@ -80,6 +119,29 @@ $(function () {
             } else {
                 $('#comment-moderator-flagged').removeClass('active');
             }
+        };
+
+        const purge_comments = function () {
+
+            let nonce    = $('#comment-moderator [name="nonce"]');
+            let btn      = $('button[data-purge="comment"]');
+
+            btn.prop('disabled', true);
+
+            $.ajax({
+                dataType    : 'json',
+                method      : 'DELETE',
+                url         : '/admin/comment',
+                data        : {nonce: nonce.val()},
+                success     : function (result) {
+                    if (result.hasOwnProperty('error')) {
+                        btn.prop('disabled', false);
+                        show_message(error.message);
+                    } else {
+                        window.location.href = '/admin/comments/1/all';
+                    }
+                }
+            });
         };
 
         const save_moderated_comment = function (e) {
@@ -125,7 +187,6 @@ $(function () {
                 method      : 'PUT',
                 dataType    : 'json',
                 success     : function (result) {
-                    log(result);
 
                     if (result.hasOwnProperty('error')) {
                         show_msg(result.error.message);
@@ -134,10 +195,9 @@ $(function () {
                         delete data['author'];
                         update_comment_list(data, id);
                         show_success('Comment moderated!');
-
-                        $('#comment-moderator [name="nonce"]').val(result.nonce);
                     }
 
+                    $('#comment-moderator [name="nonce"]').val(result.nonce);
                     btn.prop('disabled', false);
                 },
                 error:    function (xhr, status, err) {
@@ -145,16 +205,6 @@ $(function () {
                     log(__filename, err);
                 }
             });
-        };
-
-        const show_msg = (message, cls = 'alert-danger') => {
-            let type = cls.split('-').pop();
-            let w = (window.innerWidth < 400) ? 200 : 400;
-            $.bootstrapGrowl(message, {delay: 4000, type: type, width: w, offset: {from: 'top', amount: 10}});
-        };
-
-        const show_success = (message) => {
-            show_msg(message, 'alert-success');
         };
 
         $(document).on('click', '#comment-moderator-edit', function () {
@@ -166,39 +216,15 @@ $(function () {
             let w    = (d.hasOwnProperty('with')) ? d.with : '';
             let u    = d.string.split(d.value).join(w).split('//').join('/');
             let q    = u.split('?').pop();
+            u        = (q.length < 1) ? u.split('?').shift() : u;
+            u        = u.replace(/\/[0-9]\//gi, '/1/');
 
-            window.location.href = (q.length < 1) ? u.split('?').shift() : u;
+            window.location.href = u;
         });
 
-        $(document).on('click', '[data-comment-approve]', function () {
-            let id      = $(this).data('comment-approve');
-            let u       = `/admin/comment/${id}/approve`;
-            let btn     = $(`#${id} [data-comment-approve]`);
-            let data    = {status: 'publish', objectId: id};
+        $(document).on('click', '[data-comment-approve]', approve_comment);
 
-            btn.prop('disabled', true);
-
-            $.ajax({
-                url         : u,
-                data        : data,
-                method      : 'PUT',
-                dataType    : 'json',
-                success     : function (result) {
-                    if (!result.hasOwnProperty('error')) {
-                        show_success('Comment approved!');
-                        update_comment_list(data, id);
-                    } else {
-                        show_msg(result.error.message);
-                    }
-
-                    btn.prop('disabled', false);
-                },
-                error:    function (xhr, status, err) {
-                    btn.prop('disabled', false);
-                    log(__filename, err);
-                }
-            });
-        });
+        $(document).on('click', '[data-purge="comment"]', purge_comments);
 
         $(document).on('show.bs.modal', '#comment-moderator', before_show_moderator);
 

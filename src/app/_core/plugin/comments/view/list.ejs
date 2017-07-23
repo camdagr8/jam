@@ -20,8 +20,9 @@
 %>
 
 <section class="admin-list">
-    <div class="mt-sm-2 mt-md-4 mt-lg-0">
-        <h5 class="d-inline-block"><i class="lnr-bubbles ico"></i> Comments</h5>
+    <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
+        <span><h5 class="d-inline-block"><i class="lnr-bubbles ico"></i> Comments</h5></span>
+        <span class="text-right small"><%=comments.pagination.page%> of <%=comments.pagination.pages%></span>
     </div>
 
     <!--// Filters //-->
@@ -175,56 +176,101 @@
 
 </section>
 
+<div class="row flex-sm-row flex-column-reverse">
+    <div class="col-12 col-sm-4 col-md-3 col-xl-2 mb-4 mt-2 mt-sm-0 mb-sm-0 text-center text-sm-left">
+        <% if (comments.query.hasOwnProperty('status') && comments.list.length > 0) { %>
+        <% if (comments.query.status[0] === 'delete') { %>
+        <button type="button" class="btn btn-danger text-uppercase col-12" style="min-width: 250px;" data-toggle="modal" data-target="#comment_purge_modal">
+            Purge Deleted
+        </button>
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="purgeModalLabel" aria-hidden="true" id="comment_purge_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purgeModalLabel">Confirm Purge</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center pb-3">
+                        <p class="mt-2 mb-0">Purging deleted comments can not be undone</p>
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="col-2 text-uppercase btn btn-secondary" data-dismiss="modal">No</button>
+                        <button type="button" class="col-2 text-uppercase btn btn-primary nogrow" data-purge="comment">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } } %>
+    </div>
+
 <% if (comments.pagination.pages > 1) { %>
-<!--// Pagination //-->
-<nav aria-label="pagination" class="float-right">
-    <ul class="pagination">
-        <li class="page-item">
-            <% if (comments.pagination.page > 1) { %>
-            <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.prev+'/');%>" aria-label="Previous">
-                <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
-                <span class="sr-only">Previous</span>
-            </a>
-            <% } else { %>
-            <div class="page-link txtc-gray bgc-gray-lightest">
-                <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
-            </div>
-            <% } %>
-        </li>
+    <!--// Pagination //-->
+    <div class="col-12 col-sm-8 col-md-9 col-xl-10 text-center text-sm-right mt-2 mt-sm-0">
+        <ul class="pagination d-inline-flex">
+            <li class="page-item">
+                <% if (comments.pagination.page > 1) { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.prev+'/');%>" aria-label="Previous">
+                    <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <% } else { %>
+                <div class="page-link txtc-gray bgc-gray-lightest">
+                    <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                </div>
+                <% } %>
+            </li>
 
-        <% for (let p = comments.pagination.min; p <= comments.pagination.max; p++) { %>
-        <li class="page-item">
-            <% if (p === comments.pagination.page) { %>
-            <span class="page-link txtc-primary bgc-gray-lightest">
-                <span class="sr-only">Current page</span>
-                <%=p%>
-            </span>
-            <% } else { %>
-            <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+p+'/');%>">
-                <span class="sr-only">Page</span>
-                <%=p%>
-            </a>
+            <% for (let p = comments.pagination.min; p <= comments.pagination.max; p++) { %>
+            <li class="page-item">
+                <% if (p === comments.pagination.page) { %>
+                <span class="page-link txtc-primary bgc-gray-lightest">
+                    <span class="sr-only">Current page</span>
+                    <%=p%>
+                </span>
+                <% } else { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+p+'/');%>">
+                    <span class="sr-only">Page</span>
+                    <%=p%>
+                </a>
+                <% } %>
+            </li>
             <% } %>
-        </li>
-        <% } %>
 
-        <li class="page-item">
-            <% if (comments.pagination.next <= comments.pagination.pages) { %>
-            <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.next+'/');%>" aria-label="Next">
-                <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
-                <span class="sr-only">Next</span>
-            </a>
-            <% } else { %>
-            <div class="page-link txtc-gray bgc-gray-lightest">
-                <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
-            </div>
+            <% if (comments.pagination.pages > 3) { %>
+            <li class="page-item dropup">
+                <button type="button" class="page-link txtc-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Pages</span>
+                    &hellip;
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <% for (let p = 1; p <= comments.pagination.pages; p++) { %>
+                    <a class="dropdown-item <%=(comments.pagination.page === p) ? 'active' : ''%>" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+p+'/');%>">
+                        PAGE <%=p%>
+                    </a>
+                    <% } %>
+                </div>
+            </li>
             <% } %>
-        </li>
-    </ul>
-</nav>
-<div class="clearfix"></div>
+
+            <li class="page-item">
+                <% if (comments.pagination.next <= comments.pagination.pages) { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.next+'/');%>" aria-label="Next">
+                    <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    <span class="sr-only">Next</span>
+                </a>
+                <% } else { %>
+                <div class="page-link txtc-gray bgc-gray-lightest">
+                    <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                </div>
+                <% } %>
+            </li>
+        </ul>
+    </div>
 <% } %>
-
+</div>
 <% include ./editor %>
 
 <script type="text/javascript">

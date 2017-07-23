@@ -1,5 +1,4 @@
 
-
 const after_save = (request) => {
     let post = request.object.get('post');
 
@@ -36,7 +35,7 @@ const before_save = (request, response) => {
     // Validate required fields
     let emsg = validate(params);
     if (emsg) {
-        response.error(err);
+        response.error(emsg);
         return;
     }
 
@@ -60,7 +59,7 @@ const before_save = (request, response) => {
     params['author'] = request.object.get('author');
 
     // New object?
-    if (!params.hasOwnProperty('objectId')) {
+    if (request.object.isNew()) {
         // Flagged value
         request.object.set('flagged', false);
 
@@ -224,6 +223,41 @@ const list = (request, response) => {
     });
 };
 
+const purge = (request, response) => {
+
+    let last;
+    let count     = 0;
+    let params    = request.params;
+    let qry       = new Parse.Query('Comment');
+    let limit     = (params.hasOwnProperty('limit')) ? params.limit : 1000;
+
+    qry.equalTo('status', 'delete');
+    qry.descending('createdAt');
+    qry.limit(limit);
+
+    let promise = qry.find({sessionToken: stoken}).then((results) => {
+        count    = results.length;
+        last     = _.last(results);
+        return Parse.Object.destroyAll(results, {sessionToken: stoken});
+    }).then(() => {
+        if (count === limit) {
+            return {request: request, response: response};
+        } else {
+            return 'OK';
+        }
+    }).then((result) => {
+        if (result === 'OK') {
+            response.success(result);
+        } else {
+            purge(result.request, result.response);
+        }
+
+        promise.resolve();
+    }).catch((err) => {
+        response.error(err.message);
+    });
+};
+
 const save = (request, response) => {
     let obj = new Parse.Object('Comment');
 
@@ -236,7 +270,6 @@ const save = (request, response) => {
 
 const validate = (params) => {
     let required = {
-        'author'    : 'author is a required parameter',
         'post'      : 'post is a required parameter',
         'body'      : 'body is a required parameter'
     };
@@ -251,6 +284,8 @@ const validate = (params) => {
 Parse.Cloud.define('comment_approve', approve);
 
 Parse.Cloud.define('comment_list', list);
+
+Parse.Cloud.define('comment_purge', purge);
 
 Parse.Cloud.define('comment_save', save);
 
