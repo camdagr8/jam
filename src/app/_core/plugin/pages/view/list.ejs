@@ -1,101 +1,241 @@
+<%
+    let qarr        = req.originalUrl.split('?');
+    let q           = (qarr.length > 1) ? '?' + qarr.pop() : '';
+    let statuses    = {"publish": "Published", "draft": "Drafts", "delete": "Deleted", "publish-later": "Publish Later", "unpublish-later": "Unpublish Later"};
+    let stat        = (pages.query.hasOwnProperty('status')) ? pages.query.status.join('') : '';
+    let link        = '/admin/pages/[PAGE]/[STATUS][PARAMS]';
+    link            = link.split('[PARAMS]').join(q);
+    link            = link.split('[PAGE]').join(1);
+    link            = (link.substr(link.length - 1, 1) === '?') ? link.split('?').shift() : link;
+
+    let sstat       = (stat === 'publishdraft' || stat == 'draftpublish') ? '' : stat;
+    let sortlink    = link.replace('[STATUS]', sstat);
+    sortlink        = sortlink.split('sortBy=createdAt').join('');
+    sortlink        = sortlink.split('sort=ascending').join('');
+    sortlink        = sortlink.split('sort=descending').join('')
+    sortlink        = sortlink.replace(/(&&+)/g, '&');
+    sortlink        = (sortlink.substr(sortlink.length - 1, 1) === '&') ? sortlink.split('&').shift() : sortlink;
+    sortlink        = (sortlink.substr(sortlink.length - 1, 1) === '?') ? sortlink.split('?').shift() : sortlink;
+%>
+
 <section class="admin-list">
-    <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
-        <h5 class="d-inline-block"><i class="lnr-file-empty ico"></i> Pages</h5>
-        <a href="<%=baseurl%>/admin/page" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Page</a>
+    <input type="hidden" id="thread-nonce" value="<%=nonce%>" />
+    <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
+        <span><h5 class="d-inline-block"><i class="lnr-pushpin ico"></i> pages</h5></span>
+        <span class="text-right small"><%=pages.pagination.page%> of <%=pages.pagination.pages%></span>
     </div>
 
-    <table data-dna="table-bordered" class="table table-bordered table-hover">
-        <thead class="thead-default">
-            <tr>
-                <th style="width: 50%">Name</th>
-                <th class="hidden-sm-down">Route</th>
-                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
-                <th class="hidden-sm-down" style="width: 5%;"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% pages.forEach((page) => { %>
-            <% if (page.status === 'delete') { return; } %>
-            <tr>
-                <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
-                <td class="hidden-sm-down">
-                    <% page.routes.forEach((route) => { %>
-                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view page" data-placement="left" target="_blank" class="badge badge-primary d-inline">
-                        <%=route%>
-                    </a>
-                    <% }); %>
-                </td>
-                <td class="hidden-sm-down">
-                    <i class="<%=page.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=page.status%>"></i>
-                </td>
-                <td class="hidden-sm-down action">
-                    <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
-                </td>
-            </tr>
-            <% }); %>
-        </tbody>
-    </table>
+    <!--// Filters //-->
+    <form class="thread-filters bgc-white rounded card-shadow p-2 mt-2 mb-3 mt-md-4 mb-md-5" method="get">
+        <div data-dna="input-group" class="input-group-sm input-group">
+            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(pages.query.hasOwnProperty('find')) ? pages.query.find : ''%>">
+            <div class="input-group-btn">
+                <button class="btn btn-secondary" type="submit"><i class="lnr-magnifier"></i></button>
+            </div>
+            <% if (pages.filtered >= 2 || pages.query.hasOwnProperty('find')) { %>
+            <div class="input-group-btn">
+                <a href="/admin/pages/1" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="tooltip" data-placement="left" title="clear filters">
+                    <span><i class="lnr-cross txtc-danger"></i></span>
+                </a>
+            </div>
+            <% } %>
 
-    <% let deleted_pages = _.where(pages, {status: 'delete'}); %>
-    <% if (deleted_pages.length > 0) { %>
-    <div class="mt-xxl mb-s">
-        <h5 class="d-inline-block"><i class="lnr-trash ico"></i> Deleted Pages</h5>
-    </div>
-    <table data-dna="table-bordered" class="table table-bordered table-hover">
-        <thead class="thead-default">
-            <tr>
-                <th style="width: 50%">Name</th>
-                <th class="hidden-sm-down">Route</th>
-                <th class="hidden-sm-down" style="width: 2%;"><i class="lnr-power-switch"></i></th>
-                <th class="hidden-sm-down" style="width: 5%;"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% pages.forEach((page) => { %>
-            <% if (page.status !== 'delete') { return; } %>
-            <tr>
-                <td class="title"><a href="<%=page.edit_url%>"><%=page.title%></a></td>
-                <td class="hidden-sm-down">
-                    <% page.routes.forEach((route) => { %>
-                    <a href="<%=baseurl + route%>" data-toggle="tooltip" title="view page" data-placement="left" target="_blank" class="badge badge-primary d-inline">
-                        <%=route%>
-                    </a>
-                    <% }); %>
-                </td>
-                <td class="hidden-sm-down">
-                    <i class="<%=page.status_icon%>" data-toggle="tooltip" data-placement="left" title="<%=page.status%>"></i>
-                </td>
-                <td class="hidden-sm-down action">
-                    <a href="<%=page.edit_url%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
-                </td>
-            </tr>
-            <% }); %>
-        </tbody>
-    </table>
-    <div class="text-center p-l">
-        <button type="submit" class="btn btn-outline-danger text-uppercase" data-toggle="modal" data-target="#adminPagesDeleteModal">Permanently Delete Pages</button>
-    </div>
-    <% } %>
-</section>
+            <% if (pages.query.hasOwnProperty('user')) { %>
+            <div class="input-group-btn">
+                <input type="hidden" name="user" value="<%=pages.query.user%>" />
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "user=<%=pages.query.user%>"}' id="unfilter-author">
+                    <span><i class="lnr-cross mr-2"></i></span>
+                    <span>User</span>
+                </button>
+            </div>
+            <% } %>
 
-<div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminPagesDelete" aria-hidden="true" id="adminPagesDeleteModal">
-    <div class="modal-dialog">
-        <form id="admin-delete-form" action="<%=baseurl%>/admin/purge/page" method="post">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete Pages</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"><i class="lnr-cross"></i></span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="mb-l mt-m">Permanently deleting cannot be undone.<br />Are you sure?</div>
-                    <button type="button" class="btn btn-secondary btn-block text-uppercase" data-dismiss="modal" aria-label="Cancel delete">No</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger btn-block btn-lg text-uppercase">Yes</button>
+            <% if (pages.query.hasOwnProperty('status')) { %>
+            <% if (pages.query.status.length === 1) { %>
+            <div class="input-group-btn">
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=pages.query.status.join('')%>"}' id="unfilter-status">
+                    <span><i class="lnr-cross mr-2"></i></span>
+                    <span>
+                        <% for (let prop in statuses) { %>
+                        <% if (pages.query.status[0] === prop) { %><%=statuses[prop]%><% } %>
+                        <% } %>
+                    </span>
+                </button>
+            </div>
+            <% } } %>
+
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Filter</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <% for (prop in statuses) { %>
+                    <% if (stat === prop) { %>
+                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0);" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=pages.query.status.join('')%>"}'><%=statuses[prop]%></a>
+                    <% } else { %>
+                    <% let l = link.split('[STATUS]').join(prop); %>
+                    <a class="dropdown-item text-uppercase small" href="<%=l%>"><%=statuses[prop]%></a>
+                    <% } %>
+                    <% if (prop === 'delete') { %>
+                    <div class="dropdown-divider"></div>
+                    <% } %>
+                    <% } %>
                 </div>
             </div>
-        </form>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Sort</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-uppercase small <%=(pages.query['order'] === 'descending' || !pages.query['order']) ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=descending&sortBy=createdAt' : '?sort=descending&sortBy=createdAt'%>">Newest</a>
+                    <a class="dropdown-item text-uppercase small <%=(pages.query['order'] === 'ascending') ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=ascending&sortBy=createdAt' : '?sort=ascending&sortBy=createdAt'%>">Oldest</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--// pages //-->
+    <div class="admin-thread-list">
+        <% pages.list.forEach((item) => { %>
+        <div class="d-flex thread small txtc-gray-light mb-md-5 mb-3" id="<%=item.objectId%>">
+            <!--// Date //-->
+            <div class="nogrow thread-date-wrap hidden-sm-down">
+                <div class="nogrow thread-date card-shadow rounded-circle bgc-white d-flex justify-content-center align-items-center flex-column">
+                    <div class="nogrow"><%-item.date.split(' ').join('</div><div class="nogrow">')%></div>
+                </div>
+            </div>
+
+            <!--// page //-->
+            <div class="d-flex thread-excerpt card-shadow bgc-white bd-t-1 bdc-<%=item.status_color%> pl-3 pl-sm-4 pr-3 pr-sm-4">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <div class="thread-title bold txtc-gray">
+                            <i class="<%=item.status_icon%> txtc-gray mr-2" aria-hidden="true"></i>
+                            <a href="<%=item.edit_url%>" class="txtc-gray"><%=item.title%></a>
+                        </div>
+                        <div class="thread-author my-1 d-block" style="height: 20px; overflow: hidden;">
+                            <i class="lnr-user txtc-gray mr-2" aria-hidden="true"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray-light"><%=item.author.username%></a>
+                            <span class="dot rounded-circle bgc-<%=item.status_color%>" data-toggle="tooltip" title="<%=statuses[item.status]%>"></span>
+
+                            <span class="txtc-gray-light monospace" style="font-size: 1rem"><%=item.time%></span>
+                        </div>
+                        <div class="thread-body txtc-gray-light">
+                            <i class="lnr-file-code txtc-gray mr-2" aria-hidden="true"></i> <%=(item.meta.hasOwnProperty('body')) ? core.hbsParse(item.meta.body).replace(/<(?:.|\n)*?>/gm, '') : ''%>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-end">
+                    <div class="text-right pl-2 pl-sm-3" style="max-width: 110px;">
+                        <div class="btn-group nogrow" role="group" aria-label="...">
+                            <% if (can_edit === true || jam.currentuser.id === item.author.objectId) { %>
+                            <a class="text-uppercase btn btn-sm btn-secondary" href="<%=item.edit_url%>">
+                                <i class="lnr-pencil hidden-md-up"></i>
+                                <span class="hidden-sm-down">Edit Page</span>
+                            </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% }); %>
     </div>
+
+</section>
+<div class="row flex-sm-row flex-column-reverse">
+    <div class="col-12 col-sm-4 col-md-3 col-xl-2 mb-4 mt-2 mt-sm-0 mb-sm-0 text-center text-sm-left">
+        <% if (pages.query.hasOwnProperty('status') && pages.list.length > 0) { %>
+        <% if (pages.query.status[0] === 'delete') { %>
+        <button type="button" class="btn btn-danger text-uppercase col-12" style="min-width: 250px;" data-toggle="modal" data-target="#thread_purge_modal">
+            Purge Deleted
+        </button>
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="purgeModalLabel" aria-hidden="true" id="thread_purge_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purgeModalLabel">Confirm Purge</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"><i class="lnr-cross"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center pb-3">
+                        <p class="mt-2 mb-0">Purging deleted pages cannot be undone</p>
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="col-2 text-uppercase btn btn-secondary" data-dismiss="modal">No</button>
+                        <button type="button" class="col-2 text-uppercase btn btn-primary nogrow" data-purge="pages">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } } %>
+    </div>
+
+    <% if (pages.pagination.pages > 1) { %>
+    <!--// Pagination //-->
+    <div class="col-12 col-sm-8 col-md-9 col-xl-10 text-center text-sm-right mt-2 mt-sm-0">
+        <ul class="pagination d-inline-flex">
+            <li class="page-item">
+                <% if (pages.pagination.page > 1) { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+pages.pagination.page+'/').join('/'+pages.pagination.prev+'/');%>" aria-label="Previous">
+                    <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <% } else { %>
+                <div class="page-link txtc-gray bgc-gray-lightest">
+                    <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                </div>
+                <% } %>
+            </li>
+
+            <% for (let p = pages.pagination.min; p <= pages.pagination.max; p++) { %>
+            <li class="page-item">
+                <% if (p === pages.pagination.page) { %>
+                <span class="page-link txtc-primary bgc-gray-lightest">
+                    <span class="sr-only">Current page</span>
+                    <%=p%>
+                </span>
+                <% } else { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+pages.pagination.page+'/').join('/'+p+'/');%>">
+                    <span class="sr-only">Page</span>
+                    <%=p%>
+                </a>
+                <% } %>
+            </li>
+            <% } %>
+
+            <% if (pages.pagination.pages > 3) { %>
+            <li class="page-item dropup">
+                <button type="button" class="page-link txtc-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Pages</span>
+                    &hellip;
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <% for (let p = 1; p <= pages.pagination.pages; p++) { %>
+                    <a class="dropdown-item <%=(pages.pagination.page === p) ? 'active' : ''%>" href="<%-req.originalUrl.split('/'+pages.pagination.page+'/').join('/'+p+'/');%>">
+                        PAGE <%=p%>
+                    </a>
+                    <% } %>
+                </div>
+            </li>
+            <% } %>
+
+            <li class="page-item">
+                <% if (pages.pagination.next <= pages.pagination.pages) { %>
+                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+pages.pagination.page+'/').join('/'+pages.pagination.next+'/');%>" aria-label="Next">
+                    <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    <span class="sr-only">Next</span>
+                </a>
+                <% } else { %>
+                <div class="page-link txtc-gray bgc-gray-lightest">
+                    <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                </div>
+                <% } %>
+            </li>
+        </ul>
+    </div>
+    <% } %>
 </div>
+

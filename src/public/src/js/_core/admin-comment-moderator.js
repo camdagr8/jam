@@ -211,17 +211,6 @@ $(function () {
             $(this).toggleClass('active');
         });
 
-        $(document).on('click', '.comment-filters [data-without]', function () {
-            let d    = $(this).data('without');
-            let w    = (d.hasOwnProperty('with')) ? d.with : '';
-            let u    = d.string.split(d.value).join(w).split('//').join('/');
-            let q    = u.split('?').pop();
-            u        = (q.length < 1) ? u.split('?').shift() : u;
-            u        = u.replace(/\/[0-9]\//gi, '/1/');
-
-            window.location.href = u;
-        });
-
         $(document).on('click', '[data-comment-approve]', approve_comment);
 
         $(document).on('click', '[data-purge="comment"]', purge_comments);

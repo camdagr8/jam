@@ -1,9 +1,11 @@
+const permissions    = require('./perms.json');
+
 module.exports = {
     id: 'comments',
 
     index: 2,
 
-    perms: ['administrator', 'moderator'],
+    perms: permissions.list,
 
     sections: ['all'],
 

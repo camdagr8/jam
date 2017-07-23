@@ -15,8 +15,7 @@ exports.use = (req, res, next) => {
         item['body']    = core.hbsParse(item['body'], jam) || item['body'];
         jam['rec']      = item;
 
-        if (item.status === 'delete') {
-
+        if (item.status === 'delete' && core.is_role(50) === false) {
             jam['rec']['title'] = '404 Error';
             res.status(404).render(core.template.theme + '/templates/404', jam);
             return;
@@ -39,7 +38,7 @@ exports.use = (req, res, next) => {
                 let when    = moment(item.publishAt['iso']);
                 let diff    = when.diff(now, 'minutes');
 
-                if (diff > 0) {
+                if (diff > 0 && core.is_role(50) === false) {
                     jam['rec']['title'] = '404 Error';
                     res.status(404).render(core.template.theme + '/templates/404', jam);
                     return;
@@ -53,7 +52,7 @@ exports.use = (req, res, next) => {
             let when    = moment(item.unpublishAt['iso']);
             let diff    = when.diff(now, 'minutes');
 
-            if (diff < 1) {
+            if (diff < 1 && core.is_role(50) === false) {
                 jam['rec']['title'] = '404 Error';
                 res.status(404).render(core.template.theme + '/templates/404', jam);
                 return;

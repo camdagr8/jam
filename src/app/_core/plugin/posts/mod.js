@@ -1,3 +1,4 @@
+const permissions = require('./perms.json');
 const moment = require('moment');
 
 const recent = (count = 5) => {
@@ -25,7 +26,7 @@ module.exports = {
 
     index: 1,
 
-    perms: ['administrator', 'publisher', 'moderator'],
+    perms: permissions.list,
 
     sections: ['all'],
 

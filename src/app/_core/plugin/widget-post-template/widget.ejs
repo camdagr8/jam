@@ -9,7 +9,6 @@
         <ul class="list-group list-group-flush" data-toggle="check">
             <li class="list-group-item">
                 <select class="form-control" id="admin-template-select" name="template" title="Select Template">
-                    <option value="">Select</option>
                     <% jam.templates.forEach((item) => { %>
                     <% if (String(item.template).toLowerCase().substr(0, 7) !== 'article') { return; }%>
                     <option value="<%= item.template %>" data-template='<%-JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>

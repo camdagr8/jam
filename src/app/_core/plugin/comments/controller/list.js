@@ -26,7 +26,7 @@ exports.use = (req, res, next) => {
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions)) {
+    if (!core.perm_check(permissions.list)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render(core.template.theme + '/templates/404', jam);
         return;
@@ -62,7 +62,7 @@ exports.all = (req, res) => {
         query         : {}
     };
 
-    jam['can_moderate'] = core.perm_check(permissions, jam.currentuser);
+    jam['can_moderate'] = core.perm_check(permissions.edit_others, jam.currentuser);
 
     let filtered    = 0;
     let params      = {};
@@ -137,6 +137,7 @@ exports.all = (req, res) => {
 
         let output = [];
         results.list.forEach((item) => {
+
             let d                = moment(item.createdAt);
             item['date']         = d.format('MMM DD YYYY');
             item['post']         = item.post.toJSON();

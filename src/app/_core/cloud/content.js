@@ -64,105 +64,40 @@ const content_get = (request, response) => {
 };
 
 const content_purge = (request, response) => {
-    let type = (request.params.hasOwnProperty('type')) ? request.params.type : null;
-    let qry = core.query({table: "Content", limit: 1000});
-    qry.equalTo('status', 'delete');
-    if (type !== null) { qry.equalTo('type', type); }
+    let last;
+    let count     = 0;
+    let params    = request.params;
+    let qry       = new Parse.Query('Content');
+    let type      = (params.hasOwnProperty('type')) ? params.type : null;
+    let limit     = (params.hasOwnProperty('limit')) ? params.limit : 1000;
 
-    qry.find().then((results) => {
-        return Parse.Object.destroyAll(results);
+    qry.equalTo('status', 'delete');
+    qry.descending('createdAt');
+    qry.equalTo('type', type);
+    qry.limit(limit);
+
+    let promise = qry.find({sessionToken: stoken}).then((results) => {
+        count    = results.length;
+        last     = _.last(results);
+        return Parse.Object.destroyAll(results, {sessionToken: stoken});
+    }).then(() => {
+        if (count === limit) {
+            return {request: request, response: response};
+        } else {
+            return 'OK';
+        }
+    }).then((result) => {
+        if (result === 'OK') {
+            response.success(result);
+        } else {
+            purge(result.request, result.response);
+        }
+
+        promise.resolve();
     }).catch((err) => {
         response.error(err.message);
-    }).then(() => {
-        response.success(true);
     });
-};
-
-/**
- *
- * content_get_pages
- *
- * @author Cam Tullos cam@tullos.ninja
- * @since 0.1.0
- *
- * @description Gets the list of pages from the Content table.
- *
- * @param request.params.skip {Number} The starting index. Default: 0.
- * @param request.params.limit {Number} The number of pages to return. Default: 1000.
- *
- * @returns {Array} Returns an array of Parse.Objects.
- */
-const content_get_pages = (request, response) => {
-
-    let results    = [];
-    let pagination = {};
-    let params     = request.params;
-    let page       = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
-    let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
-    let order      = (params.hasOwnProperty('order')) ? params.order : 'descending';
-    let orderBy    = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'createdAt';
-    let skip       = (limit * page) - limit;
-    skip           = (skip < 0) ? 0 : skip;
-
-
-    // 0.1 - Use core.query() to contruct the Parse.Query object
-    let qopt = {
-        table      : 'Content',
-        orderBy    : orderBy,
-        order      : order
-    };
-
-    const qry = core.query(qopt);
-
-    if (!params.hasOwnProperty('deleted')) {
-        qry.notEqualTo('status', 'delete');
-    }
-
-    qry.equalTo('type', 'page');
-    qry.count().then((count) => {
-        let pages    = Math.ceil(count / limit);
-        let nxt      = Math.min(page + 1, pages);
-        let prv      = Math.max(page - 1, page);
-        let max      = page + 2;
-        let min      = page - 2;
-
-        max          = (max > pages) ? pages : max;
-        min          = (min < 1) ? 1 : min;
-
-        pagination = {
-            count    : count,
-            pages    : pages,
-            page     : page,
-            next     : nxt,
-            prev     : prv,
-            max      : max,
-            min      : min,
-            query    : (params.hasOwnProperty('deleted')) ? '?deleted=true' : ''
-        };
-
-        qry.skip(skip);
-        qry.limit(limit);
-        return qry.find();
-
-    }).then((items) => {
-
-        items.forEach((item) => {
-            let obj            = item.toJSON();
-            obj['status_icon'] = pubicons[obj.status];
-            obj['edit_url']    = jam.baseurl + '/admin/page/' + obj.objectId;
-            obj['routes']      = obj['routes'] || [];
-
-            results.push(obj);
-        });
-
-    }, (err) => {
-        log(__filename);
-        log(err.message);
-    }).always(() => {
-        let output = {pagination: pagination, list: results};
-        response.success(output);
-    });
-};
+}
 
 /**
  *
@@ -177,17 +112,27 @@ const content_get_pages = (request, response) => {
  *
  * @returns {Array} Returns an array of Parse.Objects.
  */
-const content_get_posts = (request, response) => {
+const content_list = (request, response) => {
 
-    let results    = [];
-    let pagination = {};
-    let params     = request.params;
-    let page       = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
-    let limit      = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
-    let order      = (params.hasOwnProperty('order')) ? params.order : 'descending';
-    let orderBy    = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'createdAt';
-    let skip       = (limit * page) - limit;
-    skip           = (skip < 0) ? 0 : skip;
+    let results       = [];
+    let params        = request.params;
+    let type          = (params.hasOwnProperty('type')) ? params.type : 'post';
+    let page          = (params.hasOwnProperty('page')) ? Number(params.page) : 1;
+    let limit         = (params.hasOwnProperty('limit')) ? Number(params.limit) : 50;
+    let order         = (params.hasOwnProperty('order')) ? params.order : 'descending';
+    let orderBy       = (params.hasOwnProperty('orderBy')) ? params.orderBy : 'createdAt';
+    let skip          = (limit * page) - limit;
+    skip              = (skip < 0) ? 0 : skip;
+    let pagination    = {
+        limit    : limit,
+        count    : 0,
+        pages    : 0,
+        page     : 0,
+        next     : 0,
+        prev     : 0,
+        max      : 0,
+        min      : 0
+    };
 
 
     // 0.1 - Use core.query() to contruct the Parse.Query object
@@ -199,22 +144,60 @@ const content_get_posts = (request, response) => {
 
     const qry = core.query(qopt);
 
-    if (!params.hasOwnProperty('deleted')) {
-        qry.notEqualTo('status', 'delete');
+    // Content type
+    qry.equalTo('type', type);
+
+    // User
+    if (params.hasOwnProperty('user')) {
+        let user;
+
+        if (typeof params.user === 'string') {
+            user = new Parse.User();
+            user.set('objectId', params.user);
+        } else {
+            user = params.user;
+        }
+
+        qry.equalTo('creator', user);
     }
 
-    qry.equalTo('type', 'post');
+    // Status
+    if (!params.hasOwnProperty('status')) {
+        qry.notEqualTo('status', 'delete');
+    } else {
+
+        if (params.status[0] === 'unpublish-later') {
+            qry.greaterThan('unpublishAt', new Date());
+        }
+
+        params['status'] = (params.hasOwnProperty('status')) ? params.status : 'publish';
+        params['status'] = (typeof params.status === 'string') ? [String(params.status).toLowerCase()] : params.status;
+        params['status'] = _.without(params.status, 'unpublish-later');
+
+        if (params.status.length > 0) {
+            qry.containedIn('status', params.status);
+        }
+    }
+
+    // Find
+    if (params.hasOwnProperty('find')) {
+        let reg = new RegExp(params.find, 'gi');
+        qry.matches('meta.body', reg);
+    }
+
     qry.count().then((count) => {
         let pages    = Math.ceil(count / limit);
-        let nxt      = Math.min(page + 1, pages);
-        let prv      = Math.max(page - 1, page);
+        let nxt      = page + 1;
+        let prv      = page - 1;
         let max      = page + 2;
         let min      = page - 2;
 
         max          = (max > pages) ? pages : max;
         min          = (min < 1) ? 1 : min;
+        prv          = (prv < 1) ? 1 : prv;
 
         pagination = {
+            limit    : limit,
             count    : count,
             pages    : pages,
             page     : page,
@@ -222,11 +205,16 @@ const content_get_posts = (request, response) => {
             prev     : prv,
             max      : max,
             min      : min,
-            query    : (params.hasOwnProperty('deleted')) ? '?deleted=true' : ''
         };
+
+        if (params.hasOwnProperty('include')) {
+            params.include = (typeof params.include === 'string') ? [params.include] : params.include;
+            params.include.forEach((inc) => { qry.include(inc); });
+        }
 
         qry.skip(skip);
         qry.limit(limit);
+
         return qry.find();
 
     }).then((items) => {
@@ -234,14 +222,14 @@ const content_get_posts = (request, response) => {
         items.forEach((item) => {
             let obj            = item.toJSON();
             obj['status_icon'] = pubicons[obj.status];
-            obj['edit_url']    = jam.baseurl + '/admin/post/' + obj.objectId;
+            obj['edit_url']    = jam.baseurl + '/admin/'+type+'/' + obj.objectId;
             obj['routes']      = obj['routes'] || [];
 
             results.push(obj);
         });
+
     }, (err) => {
-        log(__filename);
-        log(err.message);
+        log(err.message, __filename);
     }).always(() => {
         response.success({pagination: pagination, list: results});
     });
@@ -329,6 +317,11 @@ const content_before_save = (request, response) => {
         request.object.set('creator', usr);
     }
 
+    let title = request.object.get('title');
+    title = core.hbsParse(title);
+    request.object.set('title', title);
+
+
     response.success();
 
 };
@@ -342,14 +335,14 @@ const content_before_save = (request, response) => {
 Parse.Cloud.define('content_get', content_get);
 
 Parse.Cloud.define('content_get_pages', (request, response) => {
-    request.params['skip']  = (request.params.hasOwnProperty('skip')) ? request.params.skip : 0;
-    request.params['limit'] = (request.params.hasOwnProperty('limit')) ? request.params.limit : 1000;
-    request.params['limit'] = (request.params.limit > 1000) ? 1000 : request.params.limit;
-
-    content_get_pages(request, response);
+    request.params['type'] = 'page';
+    content_list(request, response);
 });
 
-Parse.Cloud.define('content_get_posts', content_get_posts);
+Parse.Cloud.define('content_get_posts', (request, response) => {
+    request.params['type'] = 'post';
+    content_list(request, response);
+});
 
 Parse.Cloud.define('content_post', content_post);
 

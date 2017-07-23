@@ -46,7 +46,7 @@ const purge = (req, res) => {
 
 const use = (req, res, next) =>  {
 
-    if (!core.perm_check(permissions)) {
+    if (!core.perm_check(permissions.edit_others, jam.currentuser)) {
         jam['err'] = {code: '403', message: 'Forbidden'};
         res.render(core.template.theme + '/templates/404', jam);
     }  else {

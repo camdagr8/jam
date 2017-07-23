@@ -1,10 +1,10 @@
 [
-    {
-        "route"         : ["/admin/post/:id", "/admin/post"],
-        "controller"    : "[plugin_dir]/controller/editor.js"
-    },
-    {
-        "route"         : ["/admin/posts/:page", "/admin/posts"],
-        "controller"    : "[plugin_dir]/controller/list.js"
-    }
+  {
+    "route": ["/admin/post/:id", "/admin/post"],
+    "controller": "[plugin_dir]/controller/editor.js"
+  },
+  {
+    "route": ["/admin/posts/:page/:status", "/admin/posts/:page", "/admin/posts"],
+    "controller": "[plugin_dir]/controller/list.js"
+  }
 ]

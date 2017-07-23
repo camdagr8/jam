@@ -153,7 +153,7 @@
                         </div>
                     </div>
                 </div>
-                <% if (can_moderate === true) { %>
+                <% if (can_moderate === true || item.post.creator.objectId === jam.currentuser.id) { %>
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="text-right" style="width: 110px;">
                         <div class="btn-group nogrow" role="group" aria-label="...">
@@ -193,7 +193,7 @@
                         </button>
                     </div>
                     <div class="modal-body text-center pb-3">
-                        <p class="mt-2 mb-0">Purging deleted comments can not be undone</p>
+                        <p class="mt-2 mb-0">Purging deleted comments cannot be undone</p>
                         Are you sure?
                     </div>
                     <div class="modal-footer justify-content-center">
