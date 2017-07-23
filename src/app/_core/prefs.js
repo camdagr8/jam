@@ -90,8 +90,8 @@ module.exports = (req, res, next) => {
 
     }).then(() => { // Get the current user from session token
 
-        let stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : null;
-        return (stoken) ? Parse.Cloud.run('user_session_get', {token: stoken}) : null;
+        stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
+        return (stoken) ? Parse.Cloud.run('user_session_get', {token: stoken}) : undefined;
 
     }).then((user) => { // Set the currentuser value: Parse.User || null
 

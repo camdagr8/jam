@@ -63,16 +63,16 @@ $(function () {
     };
 
     const collapseToggle = function () {
-        if (cookie.get('collapse')) {
-            let o = cookie.get('collapse');
-            _.keys(o).forEach((k) => {
-                if (o[k] === true) {
-                    $(k).removeClass('show').collapse('hide');
-                } else {
-                    $(k).addClass('show').collapse('show');
-                }
-            });
-        }
+        let o    = cookie.get('collapse') || {};
+        o        = (typeof o === 'string') ? {} : o;
+
+        _.keys(o).forEach((k) => {
+            if (o[k] === true) {
+                $(k).removeClass('show').collapse('hide');
+            } else {
+                $(k).addClass('show').collapse('show');
+            }
+        });
     };
 
     const hide_alert = (delay = 0, target = '#admin-alert') => {
@@ -974,10 +974,27 @@ $(function () {
         if (!t) { return; }
 
         let o    = cookie.get('collapse') || {};
+        o        = (typeof o === 'string') ? {} : o;
         o[t]     = !($(this).attr('aria-expanded') === 'true');
 
         cookie.set('collapse', o);
     });
+
+    $(document).on('click', '[data-toggle="disabled"]', function () {
+        let targ = ($(this).data('target')) ? $($(this).data('target')) : $(this);
+        targ.prop('disabled', !targ.prop('disabled'));
+
+        if (targ['trumbowyg']) {
+            let state = (targ.prop('disabled') === true) ? 'disable' : 'enable';
+            targ.trumbowyg(state);
+        }
+    });
+
+    $(document).on('click', '[data-toggle="active"]', function () {
+        let targ = ($(this).data('target')) ? $($(this).data('target')) : $(this);
+        targ.toggleClass('active');
+    });
+
 
     // Status toggles
     setTimeout(function () {
@@ -1051,6 +1068,9 @@ $(function () {
         cookie.remove('status');
     }
 
-    // Must be last function
+    // Toggle collapseables
     collapseToggle();
+
+    // Show sidebar
+    $('#admin-menu .list-menu:first-child').fadeIn(250);
 });

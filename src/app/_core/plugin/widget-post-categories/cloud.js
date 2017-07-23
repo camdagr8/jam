@@ -33,14 +33,6 @@ const cat_list = (request, response) => {
         qry.matches('name', reg);
     }
 
-    if (params.hasOwnProperty('containedIn')) {
-        qry.containedIn('slug', params.containedIn);
-    }
-
-    if (params.hasOwnProperty('notContainedIn')) {
-        qry.notContainedIn('slug', params.notContainedIn);
-    }
-
     qry.count().then((count) => {
         let pages    = Math.ceil(count / limit);
         let nxt      = page + 1;
@@ -65,6 +57,14 @@ const cat_list = (request, response) => {
 
         qry.skip(skip);
         qry.limit(limit);
+
+        if (params.hasOwnProperty('containedIn')) {
+            qry.containedIn('slug', params.containedIn);
+        }
+
+        if (params.hasOwnProperty('notContainedIn')) {
+            qry.notContainedIn('slug', params.notContainedIn);
+        }
 
         return qry.find();
 
