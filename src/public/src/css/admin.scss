@@ -19,28 +19,33 @@
     white-space: nowrap;
 }
 
-.admin-comment-list {
+.admin-comment-list,
+.admin-thread-list {
     width: 100%;
     padding: 3px;
 
 
-    .comment {
+    .comment,
+    .thread {
         position: relative;
         width: 100%;
     }
 
-    .comment-date-wrap {
+    .comment-date-wrap,
+    .thread-date-wrap {
         width: 150px;
     }
 
-    .comment-date {
+    .comment-date,
+    .thread-date {
         float: left;
         width: 100px;
         height: 100px;
         margin-right: 50px;
     }
 
-    .comment-date:before {
+    .comment-date:before,
+    .thread-date:before {
         border-bottom: 1px solid #E9E9E9;
         position: absolute;
         height: 1px;
@@ -50,7 +55,8 @@
         content: '';
     }
 
-    .comment-date:after {
+    .comment-date:after,
+    .thread-date:after {
         border-right: 1px solid #E9E9E9;
         position: absolute;
         height: 150px;
@@ -60,27 +66,32 @@
         content: '';
     }
 
-    .comment-date div {
+    .comment-date div,
+    .thread-date div {
         font-size: 1.75rem;
         line-height: 1;
     }
 
-    .comment-date div:first-child {
+    .comment-date div:first-child,
+    .thread-date div:first-child {
         font-size: 1rem;
         text-transform: uppercase;
     }
-    .comment-date div:last-child {
+    .comment-date div:last-child,
+    .thread-date div:last-child {
         font-size: .7rem;
     }
 
-    .comment-excerpt {
+    .comment-excerpt,
+    .thread-excerpt {
         height: 99px;
         padding: 15px;
         overflow: hidden;
         flex-grow: 1 !important;
     }
 
-    .comment-body {
+    .comment-body,
+    .thread-body {
         text-overflow: ellipsis;
         overflow: hidden;
         height: 20px;
@@ -94,7 +105,8 @@
         margin: 0 10px 1px 10px;
     }
 
-    .comment:first-child .comment-date-wrap:after {
+    .comment:first-child .comment-date-wrap:after,
+    .thread:first-child .thread-date-wrap:after {
         width: 11px;
         height: 11px;
         content: "";
@@ -103,5 +115,11 @@
         position: absolute;
         background-color: #E9E9E9;
         border-radius: 100%;
+    }
+
+    .thread-title,
+    .comment-post {
+        max-height: 20px;
+        overflow: hidden;
     }
 }

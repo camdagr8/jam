@@ -214,11 +214,9 @@ const list = (request, response) => {
             results.push(obj);
         });
 
-        response.success({pagination: pagination, list: results});
-
     }).catch((err) => {
-        log(__filename);
-        log(err.message);
+        log(err.message, __filename);
+    }).always(() => {
         response.success({pagination: pagination, list: results});
     });
 };

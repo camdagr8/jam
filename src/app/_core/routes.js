@@ -78,7 +78,7 @@ module.exports = (req, res, next) => {
     });
 
     // Type of http request methods to handle
-    let methods = ['use', 'all', 'get', 'post', 'put', 'delete'];
+    let methods = ['use', 'get', 'post', 'put', 'delete', 'all'];
 
     routes.forEach((item) => {
         let c = item.controller;
