@@ -221,9 +221,15 @@ const content_list = (request, response) => {
 
         items.forEach((item) => {
             let obj            = item.toJSON();
+            obj['routes']      = obj['routes'] || [];
             obj['status_icon'] = pubicons[obj.status];
             obj['edit_url']    = jam.baseurl + '/admin/'+type+'/' + obj.objectId;
-            obj['routes']      = obj['routes'] || [];
+
+            let r = [jam.baseurl];
+            if (Array.isArray(obj['category'])) { r.push('/' + obj.category[0]); }
+            if (obj.routes.length > 0) { r.push(obj.routes[0]); }
+
+            obj['view_url'] = r.join('');
 
             results.push(obj);
         });
@@ -321,6 +327,11 @@ const content_before_save = (request, response) => {
     title = core.hbsParse(title);
     request.object.set('title', title);
 
+    if (request.object.isNew() && request.object.get('type') === 'post') {
+        if (!request.object.get('category')) {
+            request.object.set('category', ['blog']);
+        }
+    }
 
     response.success();
 

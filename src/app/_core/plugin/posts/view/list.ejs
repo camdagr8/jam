@@ -111,7 +111,7 @@
                     <div>
                         <div class="thread-title bold txtc-gray">
                             <i class="<%=item.status_icon%> txtc-gray mr-2" aria-hidden="true"></i>
-                            <a href="<%=item.edit_url%>" class="txtc-gray"><%=item.title%></a>
+                            <a href="<%=item.view_url%>" class="txtc-gray" target="_blank"><%=item.title%></a>
                         </div>
                         <div class="thread-author my-1 d-block" style="height: 20px; overflow: hidden;">
                             <i class="lnr-user txtc-gray mr-2" aria-hidden="true"></i> <a href="?user=<%=item.author.objectId%>" class="bold txtc-gray-light"><%=item.author.username%></a>
@@ -141,8 +141,8 @@
         </div>
         <% }); %>
     </div>
-
 </section>
+
 <div class="row flex-sm-row flex-column-reverse">
     <div class="col-12 col-sm-4 col-md-3 col-xl-2 mb-4 mt-2 mt-sm-0 mb-sm-0 text-center text-sm-left">
         <% if (posts.query.hasOwnProperty('status') && posts.list.length > 0) { %>
