@@ -27,11 +27,6 @@ let routes = [
     {
         "route"         : ["/signout", "/logout"],
         "controller"    : "/_core/controller/logout.js"
-    },
-
-    {
-        "route"         : ["/cdn/:file"],
-        "controller"    : "/_core/controller/cdn.js"
     }
 ];
 

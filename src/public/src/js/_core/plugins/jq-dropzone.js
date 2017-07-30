@@ -16,6 +16,7 @@ const log = console.log.bind(console);
                     previews            : '.previews',
                     clickable           : true,
                     autoProcessQueue    : false,
+                    addRemoveLinks      : false,
                     url                 : 'http://localhost'
                 };
 
@@ -38,6 +39,7 @@ const log = console.log.bind(console);
                         previewTemplate            : tmp,
                         previewsContainer          : previews,
                         url                        : opt.url,
+                        addRemoveLinks             : opt.addRemoveLinks,
                         addedfile                  : function (file) {
                             file.previewElement    = dz.createElement(this.options.previewTemplate.trim());
                             this.previewsContainer.insertBefore(file.previewElement, this.previewsContainer.firstChild);

@@ -7,10 +7,7 @@
     "test": "npm install && gulp --dev"
   },
   "dependencies": {
-    "aws-sdk": "*",
-    "bluemix-object-storage": "^2.0.1",
     "body-parser": "*",
-    "cfenv": "1.0.x",
     "cookie-parser": "*",
     "cookie-session": "*",
     "cors": "^2.8.1",
@@ -28,8 +25,8 @@
     "moment": "*",
     "mongodb": "^2.2.28",
     "parse": "^1.9.2",
-    "parse-dashboard": "^1.0.26",
-    "parse-server": "^2.4.2",
+    "parse-dashboard": "^1.1.0",
+    "parse-server": "^2.5.3",
     "promise": "^7.1.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",

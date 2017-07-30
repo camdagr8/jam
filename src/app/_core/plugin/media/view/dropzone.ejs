@@ -1,0 +1,52 @@
+<!--// Dropzone //-->
+<style>
+    #admin-media .centered {
+        transform    : translate(-50%, -50%);
+        position     : absolute;
+
+        left         : 50%;
+        top          : 50%;
+    }
+
+    #admin-media i.centered {
+        font-size    : 70px;
+    }
+
+    #admin-media .nogrow {
+        flex-grow: 0;
+    }
+</style>
+<section class="my-2 my-sm-4">
+    <div class="card card-shadow bgc-white bd-0">
+        <div data-uploader>
+            <span class="label mt-2">
+                <span class="hidden-xs-down">Drag &amp; Drop or</span> Click to Add Files
+            </span>
+        </div>
+
+        <div class="previews d-flex flex-wrap justify-content-center">
+            <div class="nogrow flex-first" id="admin-media-upload-btn" style="display: none;">
+                <div class="upload-item" style="position: relative; padding: 0; width: 9.5rem; height: 9.5rem;">
+                    <button type="button" class="btn btn-primary centered rounded-0 text-uppercase" style="height: 9.5rem; width: 9.5rem;">
+                        <div><i class="lnr-cloud-upload" style="font-size: 50px;"></i></div>
+                        <div class="small">Upload Files</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script id="admin-media-hbs-UPLOAD-ITEM" type="text/x-handlebars">
+    <div class="nogrow bgc-gray-lightest">
+        <div class="upload-item" style="position: relative; padding: 0; min-width: 9.5rem;" id="preview-{{id}}">
+            <div class="upload-image bd-0">
+                <img data-dz-thumbnail title="{{name}}" />
+                {{{other}}}
+                <button data-dz-remove="{{id}}" type="button" class="btn btn-sm btn-outline-danger btn-tr rounded-0 bd-0">
+                    <i class="lnr-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</script>

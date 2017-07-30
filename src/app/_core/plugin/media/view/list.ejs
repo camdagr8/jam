@@ -1,0 +1,29 @@
+<section>
+    <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
+         <h5 class="d-inline-block"><i class="lnr-picture ico"></i> Media Library</h5>
+    </div>
+</section>
+
+<% include ./dropzone %>
+
+<!--// Filters //-->
+<section>
+    <form class="media-filters bgc-white card-shadow p-2 mt-4 mb-4" method="get">
+        <div data-dna="input-group" class="input-group-sm input-group">
+            <input type="text" class="form-control" placeholder="Search" name="find" value="">
+            <div class="input-group-btn">
+                <button class="btn btn-secondary" type="submit"><i class="lnr-magnifier"></i></button>
+            </div>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Type</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">Image</a>
+                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">Video</a>
+                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">File</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

@@ -1,0 +1,11 @@
+{
+  "list": [
+    "administrator",
+    "moderator",
+    "publisher"
+  ],
+  "edit_others": [
+    "administrator",
+    "moderator"
+  ]
+}

@@ -3,14 +3,14 @@
 	<head>
 		<%- include ./partials/head -%>
 	</head>
-	<body class="bgc-gray-lightest">
+	<body id="<%=jam.section%>" class="bgc-gray-lightest">
 
 		<%- include ./partials/header -%>
 
 		<main class="admin-container" role="main" style="overflow-x: hidden;">
 			<%- include ./partials/sidebar -%>
 
-			<section id="admin-content">
+			<section id="admin-content" class="<%=jam.section%>" data-section="<%=jam.section%>">
 
 				<div id="admin-alert">
 					<div class="alert alert-danger">

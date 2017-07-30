@@ -7,9 +7,9 @@ Parse.Cloud.define('file_get', (request, response) => {
         return;
     }
 
-    let skip = request.params.hasOwnProperty('skip') ? request.params.skip : 0;
-    let limit = request.params.hasOwnProperty('limit') ? request.params.limit : 1000;
-    let qry = core.query({table: 'File', order: 'descending', orderBy: 'createdAt', limit: limit, skip: skip});
+    let skip     = request.params.hasOwnProperty('skip') ? request.params.skip : 0;
+    let limit    = request.params.hasOwnProperty('limit') ? request.params.limit : 1000;
+    let qry      = core.query({table: 'File', order: 'descending', orderBy: 'createdAt', limit: limit, skip: skip});
 
     if (request.params.hasOwnProperty('name')) {
         qry.equalTo('name', request.params.name);
@@ -34,7 +34,6 @@ Parse.Cloud.define('file_get', (request, response) => {
         response.error(err.message);
     });
 });
-
 
 Parse.Cloud.define('file_post', (request, response) => {
     let usr = request.user || jam.currentuser;

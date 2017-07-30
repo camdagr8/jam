@@ -15,14 +15,15 @@ module.exports = (req, res, next) => {
     let url = req.url.split('/');
     url.shift();
 
-    jam['baseurl']           = req.protocol + '://' + req.get('host');
-    jam['theme']             = 'default';
-    jam['blocks']            = [];
-    jam['currentuser']       = null;
-    jam['helpers']           = [];
-    jam['is']                = {};
-    jam['req']               = req;
-    jam['config']            = {};
+    jam['baseurl']        = req.protocol + '://' + req.get('host');
+    jam['theme']          = 'default';
+    jam['blocks']         = [];
+    jam['currentuser']    = null;
+    jam['helpers']        = [];
+    jam['is']             = {};
+    jam['req']            = req;
+    jam['config']         = {};
+    jam['section']        = url.join('-');
 
     // normalize cookie functions
     jam['cookie'] = {

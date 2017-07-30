@@ -1,0 +1,10 @@
+[
+  {
+    "route"         : ["/cdn/:file"],
+    "controller"    : "[plugin_dir]/controller/cdn.js"
+  },
+  {
+    "route": ["/admin/media"],
+    "controller": "[plugin_dir]/controller/list.js"
+  }
+]

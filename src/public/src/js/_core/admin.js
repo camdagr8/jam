@@ -897,8 +897,8 @@ $(function () {
                     itemTemplate: '#metabox-hbs-UPLOAD-ITEM'
                 }).each(function () {
                     if (!this.__uploader) { return; }
-                    this.__uploader.on('addedfile', uploader.on.addedfile);
-                    this.__uploader.on('complete', uploader.on.complete);
+                    this.__uploader.on('addedfile', uploader.widget.on.addedfile);
+                    this.__uploader.on('complete', uploader.widget.on.complete);
                 });
 
                 if (_.isArray(box.val)) { box.val.reverse(); }
