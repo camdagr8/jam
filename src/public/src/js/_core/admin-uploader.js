@@ -99,8 +99,8 @@ window.uploader = {
                         break;
 
                     default:
-                        icon                = (window.uploader.archives.indexOf(ext) > -1) ? 'lnr-file-zip' : icon;
-                        icon                = (window.uploader.docs.indexOf(ext) > -1) ? 'lnr-document2' : icon;
+                        icon = (window.uploader.archives.indexOf(ext) > -1) ? 'lnr-file-zip' : icon;
+                        icon = (window.uploader.docs.indexOf(ext) > -1) ? 'lnr-document2' : icon;
                 }
 
                 context['other'] = (type !== 'image') ? `<i class="${icon} centered txtc-gray-light" title="${file.name}"></i>` : null;

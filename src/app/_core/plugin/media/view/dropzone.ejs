@@ -3,7 +3,6 @@
     #admin-media .centered {
         transform    : translate(-50%, -50%);
         position     : absolute;
-
         left         : 50%;
         top          : 50%;
     }
@@ -15,6 +14,17 @@
     #admin-media .nogrow {
         flex-grow: 0;
     }
+
+    #admin-media .upload-image [data-dz-remove] {
+        opacity: 0;
+    }
+
+    #admin-media .upload-image:hover [data-dz-remove],
+    [data-dz-remove]:active,
+    [data-dz-remove]:focus {
+        opacity: 1;
+    }
+
 </style>
 <section class="my-2 my-sm-4">
     <div class="card card-shadow bgc-white bd-0">
