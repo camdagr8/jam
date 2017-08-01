@@ -23,7 +23,8 @@ module.exports = (req, res, next) => {
     jam['is']             = {};
     jam['req']            = req;
     jam['config']         = {};
-    jam['section']        = url.join('-');
+    jam['section']        = url[0];
+    jam['section']        += (url.length > 1) ? '-' + url[1] : '';
 
     // normalize cookie functions
     jam['cookie'] = {

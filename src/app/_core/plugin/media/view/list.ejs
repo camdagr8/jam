@@ -1,14 +1,16 @@
-<section>
-    <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
+<section class="mt-2 mt-sm-2 mt-md-4 mt-lg-0">
+    <div class="d-flex">
          <h5 class="d-inline-block"><i class="lnr-picture ico"></i> Media Library</h5>
     </div>
 </section>
 
+<% if (jam.can_upload) { %>
 <% include ./dropzone %>
+<% } %>
 
 <!--// Filters //-->
-<section>
-    <form class="media-filters bgc-white card-shadow p-2 mt-4 mb-4" method="get">
+<section class="mt-4 mb-4">
+    <form class="media-filters bgc-white card-shadow p-2" method="get">
         <div data-dna="input-group" class="input-group-sm input-group">
             <input type="text" class="form-control" placeholder="Search" name="find" value="">
             <div class="input-group-btn">
@@ -19,11 +21,88 @@
                     <span>Type</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">Image</a>
-                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">Video</a>
-                    <a class="dropdown-item text-uppercase small" href="javascript:void(0);">File</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=image">Image</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=video">Video</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=audio">Audio</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=file">File</a>
                 </div>
             </div>
         </div>
     </form>
 </section>
+
+<!--// Library //-->
+<section id="media-library-list" class="bgc-gray-lightest row">
+    <% files.list.forEach((item, i) => { %>
+    <%- include(item.template, {item: item}) -%>
+    <% }); %>
+</section>
+
+<% if (files.pagination.pages > 1) { %>
+<!--// Pagination //-->
+<section>
+    <div class="row">
+        <div class="col-12 text-center text-sm-right mt-2 mt-sm-0">
+            <ul class="pagination d-inline-flex">
+                <li class="page-item">
+                    <% if (files.pagination.page > 1) { %>
+                    <a class="page-link txtc-gray" href="/admin/media/<%=files.pagination.prev%>" aria-label="Previous">
+                        <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <% } else { %>
+                    <div class="page-link txtc-gray bgc-gray-lightest">
+                        <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    </div>
+                    <% } %>
+                </li>
+
+                <% for (let p = files.pagination.min; p <= files.pagination.max; p++) { %>
+                <li class="page-item">
+                    <% if (p === files.pagination.page) { %>
+                    <span class="page-link txtc-primary bgc-gray-lightest">
+                        <span class="sr-only">Current page</span>
+                        <%=p%>
+                    </span>
+                    <% } else { %>
+                    <a class="page-link txtc-gray" href="/admin/media/<%=p%>">
+                        <span class="sr-only">Page</span>
+                        <%=p%>
+                    </a>
+                    <% } %>
+                </li>
+                <% } %>
+
+                <% if (files.pagination.pages > 3) { %>
+                <li class="page-item dropup">
+                    <button type="button" class="page-link txtc-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Pages</span>
+                        &hellip;
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <% for (let p = 1; p <= files.pagination.pages; p++) { %>
+                        <a class="dropdown-item <%=(files.pagination.page === p) ? 'active' : ''%>" href="/admin/media/<%=p%>">
+                            PAGE <%=p%>
+                        </a>
+                        <% } %>
+                    </div>
+                </li>
+                <% } %>
+
+                <li class="page-item">
+                    <% if (files.pagination.next <= files.pagination.pages) { %>
+                    <a class="page-link txtc-gray" href="/admin/media/<%=files.pagination.next%>" aria-label="Next">
+                        <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                        <span class="sr-only">Next</span>
+                    </a>
+                    <% } else { %>
+                    <div class="page-link txtc-gray bgc-gray-lightest">
+                        <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
+                    </div>
+                    <% } %>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+<% } %>

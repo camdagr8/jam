@@ -4,6 +4,11 @@
     "moderator",
     "publisher"
   ],
+  "upload": [
+    "administrator",
+    "moderator",
+    "publisher"
+  ],
   "edit_others": [
     "administrator",
     "moderator"

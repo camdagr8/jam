@@ -152,11 +152,11 @@ gulp.task('serve', (done) => {
 	gulp.task('styles:watch', ['styles']);
 	gulp.watch([config.styles.watch], ['styles:watch']);
 
-	gulp.task('scripts:watch', ['scripts'], browserSync.reload);
+	gulp.task('scripts:watch', ['vendor', 'scripts'], browserSync.reload);
 	gulp.watch([config.scripts.watch], ['scripts:watch']);
 
     gulp.task('vendor:watch', ['vendor'], browserSync.reload);
-    gulp.watch([config.scripts.watch], ['vendor:watch']);
+    gulp.watch([config.scripts.vendor.core, config.scripts.vendor.app], ['vendor:watch']);
 
 	gulp.watch(config.build.watch, watcher);
 

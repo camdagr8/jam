@@ -13,6 +13,7 @@ const beautify_html    = require('js-beautify').html;
 const Cookies          = require('js-cookie');
 const log              = console.log.bind(console);
 
+require('./plugins/jq-divRatio.js');
 
 const cookie = {
     get       : Cookies.getJSON,

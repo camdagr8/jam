@@ -1,0 +1,20 @@
+<div class="col-12 col-sm-6 col-md-4 col-xl-3 mb-2 mb-md-4">
+    <div data-ratio="4:3" class="card-media card-shadow" style="background-image: url('/cdn/<%=item.name%>');">
+        <div class="card-media-info">
+            <div style="width: 100%" class="row mb-2">
+                <div class="col-12 col-md-9 mx-auto">
+                    <a class="btn btn-sm btn-outline-primary btn-block txt-uppercase" href="/cdn/<%=item.name%>" target="_blank">View</a>
+                </div>
+            </div>
+            <div style="width: 100%" class="row">
+                <div class="col-12 col-md-9 mx-auto">
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-block txt-uppercase" data-objectId="<%=item.objectId%>">Edit</button>
+                </div>
+            </div>
+            <button type="button" class="card-media-delete btn btn-sm btn-outline-danger bd-0">
+                <i class="lnr-cross"></i>
+            </button>
+            <div class="label"><%=item.name%></div>
+        </div>
+    </div>
+</div>
