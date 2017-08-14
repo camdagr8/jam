@@ -43,16 +43,17 @@ global.log = (...args) => {
 };
 
 // Parse API setup
-const api = new ParseServer({
-    appId				: env.APP_ID,
-    appName				: env.APP_NAME,
-    cloud				: appdir + '/_core/cloud/cloud.js',
-    databaseURI			: env.DATABASE_URI,
-    javascriptKey		: env.JAVASCRIPT_KEY,
-    masterKey			: env.MASTER_KEY,
-    publicServerURL 	: env.SERVER_URI + env.PARSE_MOUNT,
-    serverURL			: env.SERVER_URI + env.PARSE_MOUNT,
-    loggerAdapter 		: {
+const api               = new ParseServer({
+    appId               : env.APP_ID,
+    appName             : env.APP_NAME,
+    cloud               : appdir + '/_core/cloud/cloud.js',
+    databaseURI         : env.DATABASE_URI,
+    javascriptKey       : env.JAVASCRIPT_KEY,
+    masterKey           : env.MASTER_KEY,
+    publicServerURL     : env.SERVER_URI + env.PARSE_MOUNT,
+    serverURL           : env.SERVER_URI + env.PARSE_MOUNT,
+    maxUploadSize       : env.MAX_UPLOAD_SIZE,
+    loggerAdapter       : {
         module          : "parse-server/lib/Adapters/Logger/WinstonLoggerAdapter",
         options         : {
             logLevel    : "error"

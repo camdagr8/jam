@@ -1,0 +1,109 @@
+<!--// Handlebars templates //-->
+<script type="text/x-handlebars" id="card-media-tpl-image">
+    <div class="col-12 col-sm-6 col-md-4 col-xl-3 mb-2 mb-md-4">
+        <div data-ratio="4:3" class="card-media card-shadow" style="background-image: url('/cdn/{{name}}');">
+            <div class="card-media-info">
+                <div style="width: 100%" class="row mb-2">
+                    <div class="col-12 col-md-9 mx-auto">
+                        <a class="btn btn-sm btn-outline-primary btn-block txt-uppercase" href="/cdn/{{name}}" target="_blank">View</a>
+                    </div>
+                </div>
+                <div style="width: 100%" class="row">
+                    <div class="col-12 col-md-9 mx-auto">
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-block txt-uppercase" data-objectId="{{objectId}}">Edit</button>
+                    </div>
+                </div>
+                <button type="button" class="card-media-delete btn btn-sm btn-outline-danger bd-0">
+                    <i class="lnr-cross"></i>
+                </button>
+                <div class="label">{{name}}</div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars" id="card-media-tpl-file">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-4">
+        <div data-ratio="4:3" class="card-media card-shadow">
+            <div class="card-media-icon">
+                <i class="lnr-cloud-download"></i>
+                <div class="label">{{name}}</div>
+            </div>
+
+            <div class="card-media-info">
+                <div style="width: 100%" class="row">
+                    <div class="col-12 col-md-9 mx-auto">
+                        <a class="btn btn-sm btn-outline-primary btn-block txt-uppercase" href="/cdn/{{name}}" target="_blank">Download</a>
+                    </div>
+                </div>
+                <button type="button" class="card-media-delete btn btn-sm btn-outline-danger bd-0">
+                    <i class="lnr-cross"></i>
+                </button>
+                <div class="label">{{name}}</div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/x-handlebars" id="card-media-tpl-video">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-4">
+        <div data-ratio="4:3" class="card-media card-shadow">
+            <div class="card-media-video">
+                {{#if poster}}
+                <video controls preload="none" poster="{{poster}}">
+                    <source src="/cdn/{{name}}" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                {{else}}
+                <video controls preload="none" >
+                    <source src="/cdn/{{name}}" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                {{/if}}
+                <div class="card-media-info">
+                    <div style="width: 100%" class="row">
+                        <div class="col-12 col-md-9 mx-auto">
+                            <button type="button" class="btn btn-sm btn-outline-primary btn-block txt-uppercase" data-objectId="{{objectId}}">Edit</button>
+                        </div>
+                    </div>
+                    <button type="button" class="card-media-delete btn btn-sm btn-outline-danger bd-0">
+                        <i class="lnr-cross"></i>
+                    </button>
+                </div>
+
+                <div class="label">{{name}}</div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars" id="card-media-tpl-audio">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-4">
+        <div data-ratio="4:3" class="card-media card-shadow">
+            <div class="card-media-audio">
+                <div class="card-media-icon mt--m">
+                    <i class="lnr-mic"></i>
+                </div>
+
+                <audio controls preload="none">
+                    <source src="/cdn/{{name}}" type="audio/ogg">
+                    Your browser does not support HTML5 audio.
+                </audio>
+
+                <div class="card-media-info">
+                    <div style="width: 100%" class="row">
+                        <div class="col-12 col-md-9 mx-auto">
+                            <button type="button" class="btn btn-sm btn-outline-primary btn-block txt-uppercase" data-objectId="{{objectId}}">Edit</button>
+                        </div>
+                    </div>
+                    <button type="button" class="card-media-delete btn btn-sm btn-outline-danger bd-0">
+                        <i class="lnr-cross"></i>
+                    </button>
+                </div>
+
+                <div class="label">{{name}}</div>
+            </div>
+        </div>
+    </div>
+</script>

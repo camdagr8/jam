@@ -29,12 +29,13 @@ module.exports = (req, res, next) => {
     // normalize cookie functions
     jam['cookie'] = {
         get       : function (name) {
+            let cookies = req.cookies || {};
             if (name) {
-                if (req.cookies.hasOwnProperty(name)) {
-                    return req.cookies[name];
+                if (cookies.hasOwnProperty(name)) {
+                    return cookies[name];
                 }
             } else {
-                return req.cookies;
+                return cookies;
             }
         },
         set       : function (name, value, options) { res.cookie(name, value, options); },

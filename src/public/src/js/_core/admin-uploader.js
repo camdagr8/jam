@@ -8,6 +8,7 @@ require('./plugins/jq-dropzone');
 const _          = require('underscore');
 const hbs        = require('handlebars');
 const slugify    = require('slugify');
+const moment     = require('moment');
 const log        = console.log.bind(console);
 
 window.uploader = {
@@ -16,60 +17,6 @@ window.uploader = {
     docs: ['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt', 'wpd', 'xls', 'xlsx', 'pages', 'pub', 'ppt', 'pptx', 'key', 'odp', 'csv'],
 
     library: {
-
-        remove: (e) => {
-            let btn    = $(e.currentTarget);
-            let id     = btn.data('dz-remove');
-            let dz     = $('#admin-media');
-            dz         = (dz.length > 0) ? dz[0] : {};
-            dz         = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
-
-            if (dz === null) { return; }
-
-            let file = _.findWhere(dz.files, {id: id});
-
-            dz.removeFile(file);
-        },
-
-        toggleUploadBtn: () => {
-            let btn    = $('#admin-media-upload-btn');
-            let dz     = $('#admin-media');
-            dz         = (dz.length > 0) ? dz[0] : {};
-            dz         = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
-
-            if (dz.files.length > 0) {
-                btn.fadeIn(250);
-            } else {
-                btn.fadeOut(250);
-            }
-        },
-
-        upload: () => {
-            let dz    = $('#admin-media');
-            dz        = (dz.length > 0) ? dz[0] : {};
-            dz        = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
-
-            if (dz === null) { return; }
-
-            /*
-             pfile.save().then((result) => {
-             return Parse.Cloud.run('file_post', {file: result, name: name, extension: ext});
-             }).catch((err) => {
-             throw new Error(err.message);
-             }).then((result) => {
-             file['object']  = result.toJSON();
-             file.object.url = '/cdn/' + name;
-
-             // remove media library tile
-             $('#media_' + result.id).remove();
-
-             uploader.widget.on.addedfile(file);
-
-             }).catch((err) => {
-             throw new Error(err.message);
-             });
-             */
-        },
 
         on: {
             addedfile: (file) => {
@@ -112,12 +59,133 @@ window.uploader = {
             },
 
             complete: (file) => {
+                let rec    = file.rec;
+                let dz     = $('#admin-media');
+                dz         = (dz.length > 0) ? dz[0] : {};
+                dz         = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
 
+                dz.removeFile(file);
+
+                let tplHTML    = $('#card-media-tpl-' + rec.type).html();
+                let tpl        = hbs.compile(tplHTML);
+                let item       = tpl(rec);
+
+                let elm = $(item).prependTo('#media-library-list');
+                elm.find('[data-ratio]').divRatio();
+            },
+
+            completeQ: () => {
+                // Reset the upload button
+                let btn = $('#admin-media-library-upload');
+                btn.find('.status').html('Upload Files');
+                btn.find('.spinner i').removeClass('lnr-loading2').addClass('lnr-cloud-upload');
+                btn.find('.spinner').removeClass('spin');
+                btn.prop('disabled', false);
+                btn.prop('aria-disabled', false);
             },
 
             removedfile: () => {
                 window.uploader.library.toggleUploadBtn();
             }
+        },
+
+        processQ: () => {
+            let dz    = $('#admin-media');
+            dz        = (dz.length > 0) ? dz[0] : {};
+            dz        = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
+
+            if (dz === null) { window.uploader.library.on.complete(); return; }
+
+            // Get file from Q
+            let files = dz.files;
+
+            if (files.length < 1) {
+                window.uploader.library.on.completeQ();
+                return;
+            }
+
+            let meta    = {};
+            let file    = files[0];
+            let name    = slugify(String(file.name).toLowerCase());
+
+            // File meta
+            if (file.type.split('/').shift() === 'image') {
+                meta['width']     = file.width;
+                meta['height']    = file.height;
+            }
+
+            // Parse Object Data
+            let obj = {
+                name          : name,
+                meta          : meta,
+                size          : file.size,
+                type          : file.type,
+                extension     : file.extension,
+                modifiedAt    : new Date(file.lastModified)
+            };
+
+            // Save the Parse File Object
+            let pfile = new Parse.File(name, file);
+            pfile.save().then((result) => {
+                obj['file'] = result;
+
+                // Save the Parse Object
+                return Parse.Cloud.run('file_post', obj);
+
+            }).then((rec) => {
+                dz.files[0]['rec'] = rec;
+
+                // Emit the complete event
+                dz.emit("complete", dz.files[0]);
+            }).always(() => {
+                window.uploader.library.processQ();
+            });
+        },
+
+        remove: (e) => {
+            let btn    = $(e.currentTarget);
+            let id     = btn.data('dz-remove');
+            let dz     = $('#admin-media');
+            dz         = (dz.length > 0) ? dz[0] : {};
+            dz         = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
+
+            if (dz === null) { return; }
+
+            let file = _.findWhere(dz.files, {id: id});
+
+            dz.removeFile(file);
+        },
+
+        toggleUploadBtn: () => {
+            let btn    = $('#admin-media-upload-btn');
+            let dz     = $('#admin-media');
+            dz         = (dz.length > 0) ? dz[0] : {};
+            dz         = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
+
+            if (dz.files.length > 0) {
+                btn.fadeIn(250);
+            } else {
+                btn.fadeOut(250);
+            }
+        },
+
+        upload: () => {
+            let dz    = $('#admin-media');
+            dz        = (dz.length > 0) ? dz[0] : {};
+            dz        = (dz.hasOwnProperty('__uploader')) ? dz.__uploader : null;
+
+            if (dz === null) { return; }
+
+            // Update the upload button
+            let btn = $('#admin-media-library-upload');
+            btn.find('.status').html('Uploading...');
+            btn.find('.spinner i').removeClass('lnr-cloud-upload').addClass('lnr-loading2');
+            btn.find('.spinner').addClass('spin');
+            btn.prop('disabled', true);
+            btn.prop('aria-disabled', true);
+
+            // Start the Q
+            window.uploader.library.processQ();
         }
     },
 
@@ -354,6 +422,8 @@ $(function () {
 
     $(document).on('change', '#adminMediaLibrary-modal .modal-tiles input:checkbox', uploader.widget.on.librarySelect);
 
+    $(document).on('click', '#admin-media-library-upload', uploader.library.upload);
+
     $('#admin-media').dropzone({
         itemTemplate      : '#admin-media-hbs-UPLOAD-ITEM',
         clickable         : '[data-uploader]',
@@ -366,5 +436,3 @@ $(function () {
         this.__uploader.on('removedfile', uploader.library.on.removedfile);
     });
 });
-
-

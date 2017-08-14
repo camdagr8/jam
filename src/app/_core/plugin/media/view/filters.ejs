@@ -1,0 +1,57 @@
+<!--// Filters //-->
+<section class="mt-4 mb-4">
+    <form class="media-filters bgc-white card-shadow p-2" method="get">
+        <div data-dna="input-group" class="input-group-sm input-group">
+
+            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(files.query.hasOwnProperty('find')) ? files.query.find : ''%>" />
+
+            <div class="input-group-btn">
+                <button class="btn btn-secondary" type="submit"><i class="lnr-magnifier"></i></button>
+            </div>
+
+            <% if (files.filtered >= 2 || files.query.hasOwnProperty('find')) { %>
+            <div class="input-group-btn">
+                <a href="/admin/media/1" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="tooltip" data-placement="left" title="clear filters">
+                    <span><i class="lnr-cross txtc-danger"></i></span>
+                </a>
+            </div>
+            <% } %>
+
+            <% if (files.query.hasOwnProperty('type')) { %>
+            <div class="input-group-btn">
+                <input type="hidden" name="user" value="<%=files.query.type%>" />
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "type=<%=files.query.type%>"}' id="unfilter-type">
+                    <span><i class="lnr-cross mr-2"></i></span>
+                    <span><%=files.query.type%></span>
+                </button>
+            </div>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Type</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-uppercase small<%=(files.query.type === 'image') ? ' active' : ''%>" href="/admin/media/1?type=image">Image</a>
+                    <a class="dropdown-item text-uppercase small<%=(files.query.type === 'video') ? ' active' : ''%>" href="/admin/media/1?type=video">Video</a>
+                    <a class="dropdown-item text-uppercase small<%=(files.query.type === 'audio') ? ' active' : ''%>" href="/admin/media/1?type=audio">Audio</a>
+                    <a class="dropdown-item text-uppercase small<%=(files.query.type === 'file') ? ' active' : ''%>" href="/admin/media/1?type=file">File</a>
+                </div>
+            </div>
+            <% } else { %>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Type</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=image">Image</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=video">Video</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=audio">Audio</a>
+                    <a class="dropdown-item text-uppercase small" href="/admin/media/1?type=file">File</a>
+                </div>
+            </div>
+            <% } %>
+
+
+        </div>
+    </form>
+</section>

@@ -1,1 +1,59 @@
-"use strict";(function(a){var b=console.log.bind(console);a.fn.divRatio=function(c){var e=a.extend({prop:"width",ratio:"4:3"},c);return this.each(function(){var f=a(this).data(),g=a.extend(e,f);g.prop=g.prop.toLowerCase();var h=g.ratio.replace(/[^0-9:]*/g,"").split(":"),i="width"===g.prop?"innerWidth":"innerHeight",j="width"===g.prop?"height":"width",k=h[1]/h[0],l=a(this)[i]();this.__ratio={prop:j,factor:k,axis:i},b(this.__ratio),a(this).css(j,l*k+"px")}),a(window).on("resize",function(){a("[data-ratio]").each(function(){if(this.hasOwnProperty("__ratio")){var f=this.__ratio.axis,g=this.__ratio.prop,h=this.__ratio.factor,i=a(this)[f]();a(this).css(g,i*h+"px")}})}),this},a("[data-ratio]").divRatio()})(window.jQuery);
+/**
+ * Created by ctullos on 7/31/17.
+ */
+(function ($) {
+
+    const log = console.log.bind(console);
+
+    $.fn.divRatio = function(params) {
+
+        if (params === 'resize') {
+            $.each($("*"), function() {
+                if (this.hasOwnProperty('__ratio')) {
+                    let axis   = this.__ratio.axis;
+                    let prop   = this.__ratio.prop;
+                    let factor = this.__ratio.factor;
+
+                    let val  = $(this)[axis]();
+                    let size = val * factor;
+
+                    $(this).css(prop, size + 'px');
+                }
+            });
+            return;
+        }
+
+        const def = $.extend({
+            prop     : "width",
+            ratio    : "4:3"
+        }, params);
+
+        this.each(function () {
+
+            const d         = $(this).data();
+            const opt       = $.extend(def, d);
+            opt['prop']     = opt.prop.toLowerCase();
+
+            let r           = opt.ratio.replace(/[^0-9:]*/g, '').split(':');
+            let axis        = (opt.prop === 'width') ? 'innerWidth' : 'innerHeight';
+            let prop        = (opt.prop === 'width') ? 'height' : 'width';
+            let factor      = r[1] / r[0];
+
+            let val         = $(this)[axis]();
+            let size        = val * factor;
+
+            this.__ratio    = {prop: prop, factor: factor, axis: axis};
+
+            $(this).css(prop, size + 'px');
+        });
+
+        $(window).bind('resize', function () {
+            $.fn.divRatio('resize');
+        });
+
+        return this;
+    };
+
+    $('[data-ratio]').divRatio();
+
+}(window.jQuery));

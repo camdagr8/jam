@@ -1,4 +1,88 @@
-const moment = require('moment');
+const moment     = require('moment');
+const slugify    = require('slugify');
+
+const before_save = (request, response) => {
+
+    let params = request.object.toJSON();
+
+    // Validate required fields
+    let emsg = validate(params);
+    if (emsg) {
+        response.error(emsg);
+        return;
+    }
+
+    // New Object?
+    if (request.object.isNew()) {
+        // File creator
+        request.object.set('creator', request.user);
+
+        // ACL
+
+        let acl = new Parse.ACL();
+        acl.setPublicReadAccess(true);
+        acl.setWriteAccess(request.user.id, true);
+        acl.setRoleWriteAccess("Administator", true);
+        acl.setRoleWriteAccess("Moderator", true);
+
+        request.object.setACL(acl);
+    } else {
+        // moderator?
+        if (jam.hasOwnProperty('currentuser')) {
+            if (params.author.id !== request.user.id) {
+                request.object.set('moderatedBy', request.user);
+                request.object.set('moderatedAt', new Date());
+            }
+        }
+    }
+
+    // slugify file name
+    let name = slugify(params.name);
+    request.object.set('name', name);
+
+    // extension
+    let ext    = name.toLowerCase().split('.').pop();
+    ext        = ext.toLowerCase();
+
+    request.object.set('extension', ext);
+
+    // type
+    if (params.hasOwnProperty('type')) {
+        let typearr    = params.type.split('/');
+        let type       = (typearr.length > 1) ? typearr[0] : params.type;
+        type           = type.toLowerCase();
+        type           = file_type(type, ext);
+
+        request.object.set('type', type);
+    }
+
+    response.success();
+};
+
+const file_type = (filetype, ext) => {
+    let types = {
+        image: ['jpg', 'jpeg', 'png', 'gif', 'svg'],
+        video: ['mp4', 'm4v', 'mov'],
+        audio: ['wav', 'mp3']
+    };
+
+    let type = 'file';
+
+    for (let prop in types) {
+        if (prop === filetype) {
+            type = prop;
+            break;
+        }
+
+        if (types[prop].indexOf(ext) > -1) {
+            type = prop;
+            break;
+        }
+    }
+
+    return type;
+};
+
 const list = (request, response) => {
     let results    = [];
     let params     = request.params;
@@ -38,11 +122,13 @@ const list = (request, response) => {
     }
 
     if (params.hasOwnProperty('containedIn')) {
+        let containedIn = (Array.isArray(params.containedIn)) ? params.containedIn : [params.containedIn];
         qry.containedIn('objectId', params.containedIn);
     }
 
     if (params.hasOwnProperty('notContainedIn')) {
-        qry.notContainedIn('objectId', params.notContainedIn);
+        let notContainedIn = (Array.isArray(params.notContainedIn)) ? params.notContainedIn : [params.notContainedIn];
+        qry.notContainedIn('objectId', notContainedIn);
     }
 
     qry.count().then((count) => {
@@ -68,7 +154,7 @@ const list = (request, response) => {
         };
 
         if (params.hasOwnProperty('include')) {
-            params.include = (typeof params.include === 'string') ? [params.include] : params.include;
+            params.include = (Array.isArray(params.include)) ? params.include : [params.include];
             params.include.forEach((inc) => { qry.include(inc); });
         }
 
@@ -89,6 +175,33 @@ const list = (request, response) => {
     }).always(() => {
         response.success({pagination: pagination, list: results});
     });
+};
+
+const save = (request, response) => {
+    let obj = new Parse.Object('File');
+
+    obj.save(request.params, {sessionToken: stoken}).then((result) => {
+        response.success(result.toJSON());
+    }).catch((err) => {
+        response.error(err.message);
+    });
+};
+
+const validate = (params) => {
+    if (!jam.hasOwnProperty('currentuser')) {
+        return 'You must be a signed in user to upload a file';
+    }
+
+    let required = {
+        'file'    : 'file is a required parameter',
+        'name'    : 'name is a required parameter'
+    };
+
+    for (let prop in required) {
+        if (!params.hasOwnProperty(prop)) {
+            return required[prop];
+        }
+    }
 };
 
 Parse.Cloud.define('file_get', (request, response) => {
@@ -127,33 +240,8 @@ Parse.Cloud.define('file_get', (request, response) => {
     });
 });
 
-Parse.Cloud.define('file_post', (request, response) => {
-    let usr = request.user || jam.currentuser;
-
-    if (!usr) {
-        response.error('request.user is a required parameter');
-        return;
-    }
-
-    let obj = new Parse.Object('File');
-
-    Parse.Cloud.run('file_get', {name: request.params.name}).then((results) => {
-        if (results.length > 0) {
-            obj.set('objectId', results[0].id);
-        }
-    }).catch((err) => {
-        response.error(err.message);
-    }).then(() => {
-        _.keys(request.params).forEach((key) => {
-            obj.set(key, request.params[key]);
-        });
-
-        return obj.save();
-    }).then((result) => {
-        response.success(result);
-    }).catch((err) => {
-        response.error(err.message);
-    });
-});
+Parse.Cloud.define('file_post', save);
 
 Parse.Cloud.define('file_list', list);
+
+Parse.Cloud.beforeSave('File', before_save);
