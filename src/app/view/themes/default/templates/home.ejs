@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="home">
+
+<% include ../partials/header %>
+<% if (rec.meta.hasOwnProperty('attachments')) { %>
+<% if (rec.meta.attachments.hasOwnProperty('hero')) { %>
+<section class="hero hero-home" style="background-image: url('<%=rec.meta.attachments.hero[0].url%>');"></section>
+<% } %>
+<% } %>
+<main role="main" class="bgc-white">
+
+    <% if (rec['meta']['body']) { %>
+    <%-core.hbsParse(rec.meta.body)%>
+    <% } %>
+
+    <% if (rec['meta']['study']) { %>
+    <%-core.hbsParse(rec.meta.study)%>
+    <% } %>
+
+    <% if (rec.meta.hasOwnProperty('attachments')) { %>
+    <% if (rec.meta.attachments.hasOwnProperty('features')) { %>
+    <section class="container home-articles pt-xxxl pb-xxxl">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <h2 class="heading-3 mb-m">Recent Projects</h2>
+            </div>
+        </div>
+        <div class="row">
+            <% rec.meta.attachments.features.forEach((item, i) => { let link = rec.meta.links[i]; %>
+            <div class="col-xs-12 col-lg-4">
+                <img src="<%=item.url%>" alt="<%=item.title%>" class="rounded-top rounded-bottom" style="width: 100%;">
+                <h5 class="mb-2 mt-3"><%=item.title%></h5>
+                <p class="mb-3"><%-item.caption%></p>
+                <div class="mb-5">
+                    <% if (link.hasOwnProperty('icon')) {  %>
+                    <a href="<%-link.url%>" class="btn btn-warning" target="_blank"><%-link.label%> <i class="<%-link.icon%> mt-xxs ml-xs"></i></a>
+                    <% } else { %>
+                    <%-link.label%>
+                    <% } %>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </section>
+    <% } } %>
+
+    <% if (rec.meta.hasOwnProperty('attachments')) { %>
+    <% if (rec.meta.attachments.hasOwnProperty('gallery')) { %>
+    <section class="home-tiles">
+        <% rec.meta.attachments.gallery.forEach((item) => { %>
+        <span class="tile" style="background-image: url('<%=item.url%>');">
+            <span class="label"><%-(item.hasOwnProperty('title')) ? item.title : ''%></span>
+        </span>
+        <% }); %>
+    </section>
+    <% } %>
+
+    <%} %>
+
+</main>
+    
+<% include ../partials/footer %>
+
+</body>
+</html>
