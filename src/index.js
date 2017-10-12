@@ -6,7 +6,6 @@
 global.basedir          = __dirname; // ref to this directory as root
 global.env              = (process.env.NODE_ENV) ? process.env : require(basedir + '/env.json');
 global.appdir           = basedir + env.APP_MOUNT; // ref to the /app dir
-global.jam              = {}; // global namespace used to store misc. data
 global.core             = require(appdir + '/_core/core.js');
 global._                = require('underscore');
 global.stoken;

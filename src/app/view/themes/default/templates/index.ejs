@@ -7,8 +7,8 @@
 
         <% include ../partials/header %>
 
-        <% if (rec['meta']['body']) { %>
-        <%-core.hbsParse(rec.meta.body)%>
+        <% if (jam.rec['meta']['body']) { %>
+        <%-core.hbsParse(jam.rec.meta.body, jam)%>
         <% } %>
 
         <% include ../partials/footer %>

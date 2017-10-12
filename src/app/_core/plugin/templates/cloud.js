@@ -60,9 +60,8 @@ const template_post = (request, response) => {
 
 const template_before_save = (request, response) => {
 
-    let usr = request.user || jam.currentuser;
-    if (usr) {
-        request.object.set('creator', usr);
+    if (request.user) {
+        request.object.set('creator', request.user);
     }
 
     response.success();

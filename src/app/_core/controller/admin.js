@@ -5,15 +5,15 @@
  */
 module.exports = (req, res, next) => {
     //log('admin');
-	if (!jam.currentuser) {
+	if (!req.jam.currentuser) {
 		res.redirect('/login');
 	} else {
 		// Get widgets
-		core.add_widgets('all');
+		core.add_widgets('all', req);
 
 		Parse.Cloud.run('users_get').then((users) => {
 
-		    jam.users = users;
+            req.jam.users = users;
 
         }, (err) => { // Get Content/Pages error
             log(__filename);
@@ -21,10 +21,10 @@ module.exports = (req, res, next) => {
 
         }).then(() => { // Get template files
 
-            return core.scan(`${appdir}/view/themes/${jam.theme}/templates/`);
+            return core.scan(`${appdir}/view/themes/${req.jam.theme}/templates/`);
 
         }).then((files) => { // Get template files success
-            let path = `${appdir}/view/themes/${jam.theme}/templates/`;
+            let path = `${appdir}/view/themes/${req.jam.theme}/templates/`;
 
             files.forEach((file) => {
 
@@ -34,7 +34,7 @@ module.exports = (req, res, next) => {
                     path: path + file
                 };
 
-                jam['template_files'].push(obj);
+                req.jam['template_files'].push(obj);
             });
 
         }, (err) => { // Get template files error
@@ -47,7 +47,7 @@ module.exports = (req, res, next) => {
 
         }).then((templates) => {
 
-            jam['templates'] = templates;
+            req.jam['templates'] = templates;
 
         }, (err) => {
             log(__filename);

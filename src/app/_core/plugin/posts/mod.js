@@ -1,10 +1,10 @@
 const permissions = require('./perms.json');
 const moment = require('moment');
 
-const recent = (count = 5) => {
+const recent = (req, count = 5) => {
     let output    = [];
     let now       = moment();
-    let p         = _.clone(jam.posts);
+    let p         = _.clone(req.jam.posts);
     let w         = _.where(p, {status: 'delete'});
     p             = _.difference(p, w).slice(0, count);
 
@@ -31,12 +31,12 @@ module.exports = {
     sections: ['all'],
 
     use: (req, res, next) => {
-        if (jam.is.admin) {
+        if (req.jam.is.admin) {
             Parse.Cloud.run('content_get_posts', {orderBy: 'updatedAt', order: 'decending', limit: 20})
             .then((results) => {
-                jam.posts = results.list;
-                jam.plugin['posts']['recent'] = recent(3);
-                jam.plugin['posts']['pagination'] = results.pagination;
+                req.jam.posts = results.list;
+                req.jam.plugin['posts']['recent'] = recent(req, 3);
+                req.jam.plugin['posts']['pagination'] = results.pagination;
             })
             .always(next);
         } else {

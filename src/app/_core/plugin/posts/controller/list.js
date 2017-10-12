@@ -7,7 +7,7 @@ const purge = (req, res) => {
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
         delete req.body.nonce;
-        return Parse.Cloud.run('content_purge', {type: 'post'}, {sessionToken: stoken});
+        return Parse.Cloud.run('content_purge', {type: 'post'}, {sessionToken: req.jam.sessionToken});
     }).then((result) => {
         output.data = result;
         return Parse.Cloud.run('nonce_create');
@@ -50,26 +50,26 @@ exports.use = (req, res, next) => {
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions.list, jam.currentuser)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions.list, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
         // Get widgets
-        core.add_widgets('post-list');
+        core.add_widgets('post-list', req);
 
         // Set nonce value
-        jam.nonce = result;
+        req.jam.nonce = result;
 
         next();
 
     }, (err) => {
         log(__filename, err);
-        jam['err'] = {code: 400, message: 'Bad Request'};
-        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+        req.jam['err'] = {code: 400, message: 'Bad Request'};
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', req);
     });
 
 };
@@ -77,18 +77,18 @@ exports.use = (req, res, next) => {
 exports.delete = purge;
 
 exports.all = (req, res) => {
-    jam['posts'] = {
+    req.jam['posts'] = {
         list          : [],
         pagination    : {},
         query         : {}
     };
 
-    jam['can_edit'] = core.perm_check(permissions.edit_others, jam.currentuser);
+    req.jam['can_edit'] = core.perm_check(permissions.edit_others, req.jam.currentuser);
 
     let filtered    = 0;
     let params      = {};
     let darr       = __dirname.split('/'); darr.pop();
-    jam.content    = darr.join('/') + '/view/list.ejs';
+    req.jam.content    = darr.join('/') + '/view/list.ejs';
 
     _.keys(req.params).forEach((k) => {
         if (!_.isEmpty(req.params[k])) {
@@ -127,16 +127,16 @@ exports.all = (req, res) => {
         opt['order'] = req.query.sort;
     }
 
-    Parse.Cloud.run('content_get_posts', opt, {sessionToken: stoken}).then((results) => {
-        jam.posts['pagination'] = results.pagination;
+    Parse.Cloud.run('content_get_posts', opt, {sessionToken: req.jam.sessionToken}).then((results) => {
+        req.jam.posts['pagination'] = results.pagination;
 
         let output = [];
 
         results.list.forEach((item) => {
             let d                   = moment(item.createdAt);
             item['date']            = d.format('MMM DD YYYY');
-            item['author']          = item.creator.toJSON();
-            item['op']              = Boolean(item.author.objectId === jam.currentuser.id);
+            item['author']          = (item.hasOwnProperty('creator')) ? item.creator.toJSON() : {};
+            item['op']              = Boolean(item.author.objectId === req.jam.currentuser.id);
             item['time']            = d.format('LT');
             item['status_color']    = status_color(item.status);
             item['meta']            = (item.hasOwnProperty('meta')) ? item.meta : {};
@@ -145,13 +145,13 @@ exports.all = (req, res) => {
         });
 
 
-        jam.posts['query']    = opt;
-        jam.posts['list']     = output;
-        jam.posts['filtered'] = filtered;
+        req.jam.posts['query']    = opt;
+        req.jam.posts['list']     = output;
+        req.jam.posts['filtered'] = filtered;
 
     }).catch((err) => {
         log(__filename, err.message);
     }).always(() => {
-        res.render(core.template.admin, jam);
+        res.render(core.template.admin, req);
     });
 };

@@ -26,48 +26,48 @@ exports.use = (req, res, next) => {
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions.list)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions.list, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
         // Get widgets
-        core.add_widgets('comment-list');
+        core.add_widgets('comment-list', req);
 
         // Set nonce value
-        jam.nonce = result;
+        req.jam.nonce = result;
 
         // Customize wysiwyg
-        if (jam.plugin.hasOwnProperty('wysiwyg')) {
-            jam.plugin.wysiwyg['field'] = 'body';
-            jam.plugin.wysiwyg['placeholder'] = 'Comment';
+        if (req.jam.plugin.hasOwnProperty('wysiwyg')) {
+            req.jam.plugin.wysiwyg['field'] = 'body';
+            req.jam.plugin.wysiwyg['placeholder'] = 'Comment';
         }
 
         next();
 
     }, (err) => {
         log(__filename, err);
-        jam['err'] = {code: 400, message: 'Bad Request'};
-        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+        req.jam['err'] = {code: 400, message: 'Bad Request'};
+        res.status(req.jam.err.code).render(core.template.theme + '/templates/404', req);
     });
 };
 
 exports.all = (req, res) => {
-    jam['comments']    = {
+    req.jam['comments']    = {
         list          : [],
         pagination    : {},
         query         : {}
     };
 
-    jam['can_moderate'] = core.perm_check(permissions.edit_others, jam.currentuser);
+    req.jam['can_moderate'] = core.perm_check(permissions.edit_others, req.jam.currentuser);
 
     let filtered    = 0;
     let params      = {};
     let darr        = __dirname.split('/'); darr.pop();
-    jam.content     = darr.join('/') + '/view/list.ejs';
+    req.jam.content     = darr.join('/') + '/view/list.ejs';
 
     _.keys(req.params).forEach((k) => {
         if (!_.isEmpty(req.params[k])) {
@@ -133,7 +133,7 @@ exports.all = (req, res) => {
 
     Parse.Cloud.run('comment_list', opt).then((results) => {
 
-        jam.comments['pagination'] = results.pagination;
+        req.jam.comments['pagination'] = results.pagination;
 
         let output = [];
         results.list.forEach((item) => {
@@ -149,13 +149,13 @@ exports.all = (req, res) => {
             output.push(item);
         });
 
-        jam.comments['query']    = opt;
-        jam.comments['list']     = output;
-        jam.comments['filtered'] = filtered;
+        req.jam.comments['query']    = opt;
+        req.jam.comments['list']     = output;
+        req.jam.comments['filtered'] = filtered;
 
     }).catch((err) => {
         log(__filename, err.message);
     }).always(() => {
-        res.render(core.template.admin, jam);
+        res.render(core.template.admin, req);
     });
 };

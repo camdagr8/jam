@@ -1,14 +1,14 @@
 <!--// Widget sidebar-templates //-->
-<li class="list-menu-heading <%=(url[1] === 'template' || url[1] === 'templates') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
+<li class="list-menu-heading <%=(jam.url[1] === 'template' || jam.url[1] === 'templates') ? 'active' : ''%>" data-toggle="collapse" href="#admin-menu-collapse-<%=index%>" aria-expanded="true" aria-controls="admin-menu-collapse-<%=index%>">
     <h6><i class="lnr-file-code ico"></i>Templates</h6>
 </li>
 <li class="list-sub-menu collapse show" id="admin-menu-collapse-<%=index%>" aria-expanded="true">
     <ul class="list-sub-menu">
         <li>
-            <a href="<%=baseurl%>/admin/template" class="list-menu-item menu-add">New Template</a>
+            <a href="<%=jam.baseurl%>/admin/template" class="list-menu-item menu-add">New Template</a>
         </li>
         <li>
-            <a href="<%=baseurl%>/admin/templates" class="list-menu-item">View All</a>
+            <a href="<%=jam.baseurl%>/admin/templates" class="list-menu-item">View All</a>
         </li>
     </ul>
 </li>

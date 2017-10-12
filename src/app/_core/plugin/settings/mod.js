@@ -10,7 +10,7 @@ module.exports = {
     zone: 'sidebar',
 
     use: (req, res, next) => {
-        if (jam.is.admin) {
+        if (req.jam.is.admin) {
             next();
         } else {
             next();

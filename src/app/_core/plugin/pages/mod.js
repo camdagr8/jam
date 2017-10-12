@@ -1,9 +1,9 @@
 const moment = require('moment');
 
-const recent = (count = 5) => {
+const recent = (count = 5, req) => {
     let output    = [];
     let now       = moment();
-    let p         = _.clone(jam.pages);
+    let p         = _.clone(req.jam.pages);
     let w         = _.where(p, {status: 'delete'});
     p             = _.difference(p, w).slice(0, count);
 
@@ -30,12 +30,12 @@ module.exports = {
     sections: ['all'],
 
     use: (req, res, next) => {
-        if (jam.is.admin) {
+        if (req.jam.is.admin) {
             Parse.Cloud.run('content_get_pages', {orderBy: 'updatedAt', order: 'decending', limit: 20})
             .then((results) => {
-                jam.pages = results.list;
-                jam.plugin['pages']['recent'] = recent(3);
-                jam.plugin['pages']['pagination'] = results.pagination;
+                req.jam.pages = results.list;
+                req.jam.plugin['pages']['recent'] = recent(3, req);
+                req.jam.plugin['pages']['pagination'] = results.pagination;
             })
             .always(next);
         } else {

@@ -8,16 +8,16 @@ exports.use = (req, res) => {
                 let url = result[0].get('file').url();
                 req.pipe(request(url)).pipe(res);
             } else {
-                jam['rec']['title'] = '404 Error';
-                res.status(404).render(core.template.theme + '/templates/404', jam);
+                req.jam['rec']['title'] = '404 Error';
+                res.status(404).render(core.template.theme + '/templates/404', req);
             }
         }).catch(() => {
-            jam['rec']['title'] = '404 Error';
-            res.status(404).render(core.template.theme + '/templates/404', jam);
+            req.jam['rec']['title'] = '404 Error';
+            res.status(404).render(core.template.theme + '/templates/404', req);
         });
 
     } else {
-        jam['rec']['title'] = '404 Error';
-        res.status(404).render(core.template.theme + '/templates/404', jam);
+        req.jam['rec']['title'] = '404 Error';
+        res.status(404).render(core.template.theme + '/templates/404', req);
     }
 };

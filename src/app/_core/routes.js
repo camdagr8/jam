@@ -6,7 +6,8 @@ const fs = require('fs-extra');
 /**
  * 0.0 - Pre-defined routes needed for the admin interface.
  */
-let routes = [
+let routes = [];
+let core_routes = [
     {
         "method"        : "all",
         "route"         : ["/uninstall"],
@@ -42,10 +43,11 @@ let routes = [
  */
 const user_routes = require(appdir + '/model/routes.json');
 
-// 1.1 - Append user routes to the reserved routes
-user_routes.forEach((r) => {
-    routes.push(r);
-});
+// 1.1 - Append user routes
+routes = routes.concat(user_routes);
+
+// 1.2 - Append core routes
+routes = routes.concat(core_routes);
 
 module.exports = (req, res, next) => {
     if (req.path === '/install' && req.method === 'POST') {

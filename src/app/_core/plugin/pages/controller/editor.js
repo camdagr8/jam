@@ -13,42 +13,42 @@ const permissions    = ['administrator', 'publisher', 'moderator'];
  * -----------------------------------------------------------------------------
  */
 const page_use = (req, res, next) => {
-    jam['rec'] = {meta: {}};
+    req.jam['rec'] = {meta: {}};
 
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get widgets
-    core.add_widgets('page-editor');
+    core.add_widgets('page-editor', req);
 
     // Customize wysiwyg
-    if (jam.plugin.hasOwnProperty('wysiwyg')) {
-        jam.plugin.wysiwyg['field'] = 'body';
-        jam.plugin.wysiwyg['placeholder'] = 'Page Content';
+    if (req.jam.plugin.hasOwnProperty('wysiwyg')) {
+        req.jam.plugin.wysiwyg['field'] = 'body';
+        req.jam.plugin.wysiwyg['placeholder'] = 'Page Content';
     }
 
 
     // Get page rec if :id specified in url
     if (req.params['id']) {
 
-        // Get the Content record and save it to `jam.rec`
+        // Get the Content record and save it to `req.jam.rec`
         let obj = new Parse.Object('Content');
         obj.set('objectId', req.params.id);
         obj.fetch().then((result) => {
-            jam['rec'] = (result) ? result.toJSON() : jam.rec;
+            req.jam['rec'] = (result) ? result.toJSON() : req.jam.rec;
 
-            if (jam.rec.hasOwnProperty('publishAt')) {
-                jam.rec['publishAt'] = moment(jam.rec.publishAt.iso).format('L');
+            if (req.jam.rec.hasOwnProperty('publishAt')) {
+                req.jam.rec['publishAt'] = moment(req.jam.rec.publishAt.iso).format('L');
             }
 
-            if (jam.rec.hasOwnProperty('unpublishAt')) {
-                jam.rec['unpublishAt'] = moment(jam.rec.unpublishAt.iso).format('L');
+            if (req.jam.rec.hasOwnProperty('unpublishAt')) {
+                req.jam.rec['unpublishAt'] = moment(req.jam.rec.unpublishAt.iso).format('L');
             }
 
             next();
@@ -64,22 +64,22 @@ const page_use = (req, res, next) => {
 
 const page_get = (req, res) => {
     let darr       = __dirname.split('/'); darr.pop();
-    jam.content    = darr.join('/') + '/view/editor.ejs';
+    req.jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
-    Parse.Cloud.run('nonce_create').then((result) => {
+    Parse.Cloud.run('nonce_create', {}, {user: req.jam.currentuser}).then((result) => {
 
-        jam.nonce = result;
-        res.render(core.template.admin, jam);
+        req.jam.nonce = result;
+        res.render(core.template.admin, req);
 
     }, (err) => {
         log(__filename);
         log(err);
-        jam['err'] = {
+        req.jam['err'] = {
             code: 400,
             message: 'Bad Request'
         };
-        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+        res.status(req.jam.err.code).render(core.template.theme + '/templates/404', req);
 
     });
 };
@@ -92,7 +92,7 @@ const page_save = (req, res) => {
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
         delete req.body.nonce;
-        return Parse.Cloud.run('content_post', req.body);
+        return Parse.Cloud.run('content_post', req.body, {sessionToken: req.jam.sessionToken});
 
     }, (err) => {
 

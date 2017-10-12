@@ -1,8 +1,8 @@
-<form id="admin-form" action="<%=baseurl%>/admin/user" method="post">
+<form id="admin-form" action="<%=jam.baseurl%>/admin/user" method="post">
 
-    <input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="nonce" value="<%=jam.nonce%>" />
     <input type="hidden" name="type" value="user" />
-    <input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
+    <input type="hidden" name="objectId" value="<%=jam.rec['objectId']%>" />
 
     <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
         <h5><i class="lnr-user ico"></i> User Editor</h5>
@@ -12,7 +12,7 @@
             <div class="mb-l">
                 <h6>Email</h6>
                 <div class="form-group">
-                    <input type="email" class="form-control form-control-lg pl-s" placeholder="name@email.com" name="email" autocomplete="off" value="<%=rec['email']%>" />
+                    <input type="email" class="form-control form-control-lg pl-s" placeholder="name@email.com" name="email" autocomplete="off" value="<%=jam.rec['email']%>" />
                 </div>
             </div>
             <hr />
@@ -27,9 +27,9 @@
             </div>
 
             <div class="blocks">
-                <% if (blocks) { %>
+                <% if (jam.blocks) { %>
 
-                <% blocks.forEach(function (block, i) { %>
+                <% jam.blocks.forEach(function (block, i) { %>
                 <div class="mb-m"><%- include(block, {index: i}) -%></div>
                 <% }); %>
 
@@ -37,9 +37,9 @@
             </div>
         </div>
         <aside class="widgets">
-            <% if (widgets) { %>
+            <% if (jam.widgets) { %>
 
-            <% widgets.forEach(function (widget, i) { %>
+            <% jam.widgets.forEach(function (widget, i) { %>
             <div class="mb-m"><%- include(widget, {index: i}) -%></div>
             <% }); %>
 
@@ -53,7 +53,7 @@
                     data-submit='Saving...'>Save User</button>
             </div>
 
-            <% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
+            <% if (jam.rec['objectId'] && jam.currentuser['id'] !== jam.rec['objectId']) { %>
             <div>
                 <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminUserDeleteModal">Delete User</button>
             </div>
@@ -62,14 +62,14 @@
     </div>
 </form>
 
-<% if (rec['objectId'] && currentuser['id'] !== rec['objectId']) { %>
+<% if (jam.rec['objectId'] && jam.currentuser['id'] !== jam.rec['objectId']) { %>
 <div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminUserDelete" aria-hidden="true" id="adminUserDeleteModal">
     <div class="modal-dialog">
-        <form id="admin-delete-form" action="<%=baseurl%>/admin/user" method="delete">
+        <form id="admin-delete-form" action="<%=jam.baseurl%>/admin/user" method="delete">
 
-            <input type="hidden" value="<%=rec['objectId']%>" name="objectId" />
-            <input type="hidden" value="<%=rec['username']%>" name="username" />
-            <input type="hidden" value="<%=nonce%>" name="nonce" />
+            <input type="hidden" value="<%=jam.rec['objectId']%>" name="objectId" />
+            <input type="hidden" value="<%=jam.rec['username']%>" name="username" />
+            <input type="hidden" value="<%=jam.nonce%>" name="nonce" />
 
             <div class="modal-content">
                 <div class="modal-header">

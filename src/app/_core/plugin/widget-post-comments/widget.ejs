@@ -1,5 +1,5 @@
 <% if (jam.is.admin === true) { %>
-<% if (comments.pagination.hasOwnProperty('count')) { %>
+<% if (jam.comments.pagination.hasOwnProperty('count')) { %>
 <!--// widget-post-comments //-->
 <div class="card card-shadow bgc-white bd-0" id="widget-post-comments">
     <h6 class="card-header">
@@ -11,20 +11,20 @@
     <div class="collapse" id="collapse_widget-post-comments">
         <div class="card-body p-4">
 
-            <% if (comments.pagination.count === 1) { %>
+            <% if (jam.comments.pagination.count === 1) { %>
             <span id="comment-count">1 Comment</span>
             <% } else { %>
-            <span id="comment-count"><%-comments.pagination.count%> Comments</span>
+            <span id="comment-count"><%-jam.comments.pagination.count%> Comments</span>
             <% } %>
 
         </div>
         <div class="card-footer" style="margin-top: -1px;">
-            <% if (comments.waiting > 0) { %>
-            <a href="/admin/comments/1/<%=rec.objectId%>/wait" class="btn btn-block text-uppercase btn-info">
-                <%=comments.waiting%> waiting approval
+            <% if (jam.comments.waiting > 0) { %>
+            <a href="/admin/comments/1/<%=jam.rec.objectId%>/wait" class="btn btn-block text-uppercase btn-info">
+                <%=jam.comments.waiting%> waiting approval
             </a>
             <% } else { %>
-            <a href="/admin/comments/1/<%=rec.objectId%>" class="btn btn-block text-uppercase btn-outline-primary">
+            <a href="/admin/comments/1/<%=jam.rec.objectId%>" class="btn btn-block text-uppercase btn-outline-primary">
                 Moderate Comments
             </a>
             <% } %>

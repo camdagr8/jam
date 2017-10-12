@@ -14,7 +14,7 @@
 <div class="modal fade" id="comment-moderator">
     <div class="modal-dialog modal-lg" role="document">
         <form method="post" action="">
-            <input type="hidden" name="nonce" value="<%=nonce%>" />
+            <input type="hidden" name="nonce" value="<%=jam.nonce%>" />
             <input type="hidden" name="author" value="" />
             <div class="modal-content">
                 <div class="modal-header">
@@ -58,9 +58,9 @@
     </div>
 </div>
 
-<% if (blocks) { %>
+<% if (jam.blocks) { %>
 
-<% blocks.forEach(function (block, i) { %>
+<% jam.blocks.forEach(function (block, i) { %>
 <%- include(block, {index: i}) -%>
 <% }); %>
 

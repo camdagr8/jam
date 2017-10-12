@@ -21,8 +21,8 @@
  * @description Renders the install.ejs file
  */
 const install_get = (req, res) => {
-    jam.title = "Jam Install";
-    res.render(appdir + '/_core/view/admin/install', jam);
+    req.jam.title = "Jam Install";
+    res.render(appdir + '/_core/view/admin/install', req);
 };
 
 
@@ -182,10 +182,10 @@ module.exports = (req, res, next) => {
 */
 module.exports = (req, res, next) => {
     //log('installer');
-    if (jam.config['installed'] === true) {
+    if (req.jam.config['installed'] === true) {
         next();
     } else {
-        jam.title = "Jam Install";
-        res.render(appdir + '/_core/view/admin/no-install', jam);
+        req.jam.title = "Jam Install";
+        res.render(appdir + '/_core/view/admin/no-install', req);
     }
 };

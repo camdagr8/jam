@@ -12,16 +12,16 @@
                     <option value="">Select</option>
                     <% jam.templates.forEach((item) => { %>
                     <% if (String(item.template).toLowerCase().substr(0, 7) === 'article') { return; }%>
-                    <option value="<%= item.template %>" data-template='<%-JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
+                    <option value="<%= item.template %>" data-template='<%-JSON.stringify(item)%>' <%- (jam.rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
                     <% }); %>
                 </select>
             </li>
         </ul>
-        <% if (rec['objectId']) { %>
+        <% if (jam.rec['objectId']) { %>
         <div class="card-footer bgc-gray-lightest" style="margin-top: -1px;">
             <a
                 target="_preview"
-                href="<%=baseurl%><%=rec['routes'][0]%>"
+                href="<%=jam.baseurl%><%=jam.rec['routes'][0]%>"
                 class="btn btn-outline-primary btn-block text-uppercase">Preview</a>
         </div>
         <% } %>

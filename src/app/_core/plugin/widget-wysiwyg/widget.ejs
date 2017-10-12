@@ -134,13 +134,13 @@
 			<path d="M48 35.9L36 49.6 24 36h24z"/>
 		</symbol>
 
-		<% if (helpers.length > 0) { %>
+		<% if (jam.helpers.length > 0) { %>
 		<symbol id="trumbowyg-plugin" viewBox="0 0 72 72">
             <path d="M72 19.863l-6.364-6.363-12.568 12.569-7.137-7.137 12.568-12.568-6.363-6.363-12.568 12.568-8.068-8.068-6.091 6.091 36 36 6.091-6.091-8.069-8.069 12.569-12.568z" />
 			<path d="M55.831 47.376l-31.206-31.206c-6.737 8.079-14.38 20.563-9.098 31.304l-9.299 9.299c-2.188 2.188-2.188 5.767 0 7.955l1.045 1.045c2.188 2.188 5.767 2.188 7.955 0l9.299-9.298c10.741 5.283 23.225-2.36 31.305-9.098z" />
         </symbol>
 
-		<% helpers.forEach((helper) => { %>
+		<% jam.helpers.forEach((helper) => { %>
 		<% if (helper.hasOwnProperty('icon') && helper.hasOwnProperty('name')) { %>
 		<symbol id="trumbowyg-<%=helper.name%>" viewBox="0 0 72 72">
 			<%- include(helper.icon) -%>
@@ -154,10 +154,10 @@
 
 <script type="text/javascript">
 window.wysiwyg_helpers = {};
-<% if (helpers.length > 0) { -%>
-<% helpers.forEach((helper) => { -%>
+<% if (jam.helpers.length > 0) { -%>
+<% jam.helpers.forEach((helper) => { -%>
 <% if (helper.hasOwnProperty('func')) { -%>
-<% let m = plugin[helper.func]; -%>
+<% let m = jam.plugin[helper.func]; -%>
 <% if (m.hasOwnProperty('wysiwyg')) { -%>
 window.wysiwyg_helpers['<%-helper.name%>'] = '<%-String(m.wysiwyg).replace(/\'/g, '"')%>';
 <% } -%>

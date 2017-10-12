@@ -13,13 +13,13 @@ module.exports = {
     type: 'widget',
 
     use: (req, res, next) => {
-        jam['roles'] = [];
+        req.jam['roles'] = [];
 
         let qry = new Parse.Query(Parse.Role);
         qry.limit(1000);
         qry.find().then((results) => {
-            results.forEach((item) => { jam.roles.push(item.toJSON()); });
-            jam.roles = _.sortBy(jam.roles, 'level');
+            results.forEach((item) => { req.jam.roles.push(item.toJSON()); });
+            req.jam.roles = _.sortBy(req.jam.roles, 'level');
             next();
         }, (err) => {
             log(__filename);

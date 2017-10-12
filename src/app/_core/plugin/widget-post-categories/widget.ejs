@@ -15,7 +15,7 @@
     </h6>
     <div class="collapse show" id="collapse_widget-post-categories">
         <ul class="list-group list-group-flush" data-toggle="check" id="widget-post-categories-checks">
-            <% categories.selected.forEach((item) => { %>
+            <% jam.categories.selected.forEach((item) => { %>
             <li class="list-group-item">
                 <label class="check" tabindex="0">
                     <span data-category-label><%=item.name%></span>
@@ -23,8 +23,8 @@
                 </label>
             </li>
             <% }); %>
-            <% categories.list.forEach((item) => { %>
-            <% if (_.findWhere(categories.selected, {objectId: item.objectId})) { return null; } %>
+            <% jam.categories.list.forEach((item) => { %>
+            <% if (_.findWhere(jam.categories.selected, {objectId: item.objectId})) { return null; } %>
             <li class="list-group-item">
                 <label class="check" tabindex="0">
                     <span data-category-label><%=item.name%></span>
@@ -63,7 +63,7 @@
                 </li>
             </ul>
             <ul class="list-group list-group-flush" data-toggle="check" style="margin-top: -1px; margin-bottom: -1px;" id="widget-post-category-list">
-                <% categories.list.forEach((result) => { %>
+                <% jam.categories.list.forEach((result) => { %>
                 <li class="list-group-item d-flex justify-content-center" data-category-form>
                     <div data-dna="input-group" class="input-group col-12" style="margin-left: -15px; margin-right: -15px;">
                         <span data-dna="input-group-btn" class="input-group-btn">
@@ -73,7 +73,7 @@
                         <input type="text" data-category-name value="<%=result.name%>" class="form-control" placeholder="Category" />
                         <span data-dna="input-group-btn" class="input-group-btn">
                             <button class="btn btn-secondary" type="button" data-category-toggle='<%-JSON.stringify(result)%>'>
-                                <% if (_.findWhere(categories.selected, {objectId: result.objectId})) { %>
+                                <% if (_.findWhere(jam.categories.selected, {objectId: result.objectId})) { %>
                                 <i class="lnr-check-square"></i>
                                 <% } else { %>
                                 <i class="lnr-square"></i>
@@ -87,7 +87,7 @@
                 </li>
                 <% }); %>
             </ul>
-            <% if (categories.pagination.pages > 1) { %>
+            <% if (jam.categories.pagination.pages > 1) { %>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-outline-primary col-6 text-uppercase" data-category-more >Load More</button>
             </div>
@@ -97,7 +97,7 @@
 </div>
 
 <script type="text/javascript">
-    const categories = <%-JSON.stringify(categories)%>;
+    const categories = <%-JSON.stringify(jam.categories)%>;
 
     $(function () {
         const category_icon = function (item) {

@@ -1,10 +1,10 @@
 <aside id="admin-menu" class="bg-translucent bdc-inverse" aria-expanded="true">
 	<ul class="list-menu" style="display: none;">
 		<li class="list-menu-link">
-			<h6><a href="<%=baseurl%>/admin"><i class="lnr-screen ico"></i>Dashboard</a></h6>
+			<h6><a href="<%=jam.baseurl%>/admin"><i class="lnr-screen ico"></i>Dashboard</a></h6>
 		</li>
 
-		<% sidebar.forEach((widget, i) => { %>
+		<% jam.sidebar.forEach((widget, i) => { %>
 		<%- include(widget, {index: i}) %>
 		<% }); %>
 

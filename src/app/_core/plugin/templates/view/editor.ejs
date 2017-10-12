@@ -1,8 +1,8 @@
-<form id="admin-form" action="<%=baseurl%>/admin/template" method="post">
+<form id="admin-form" action="<%=jam.baseurl%>/admin/template" method="post">
 
-    <input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="nonce" value="<%=jam.nonce%>" />
     <input type="hidden" name="type" value="template" />
-    <input type="hidden" name="objectId" value="<%=rec['objectId']%>" />
+    <input type="hidden" name="objectId" value="<%=jam.rec['objectId']%>" />
 
     <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
         <h5><i class="lnr-pencil ico"></i> Template Editor</h5>
@@ -14,7 +14,7 @@
             <!-- Template Title -->
             <div class="input-group mb-l">
                 <span class="input-group-addon bgc-white" style="width: 46px;"><i class="lnr-file-empty"></i></span>
-                <input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=rec['title']%>" />
+                <input type="text" class="form-control form-control-lg pl-s" placeholder="Template Name" name="title" autocomplete="off" value="<%=jam.rec['title']%>" />
                 <span class="input-group-addon bgc-white" style="width: 50px;" data-toggle="popover" data-placement="left" title="Template Name" data-trigger="hover" data-content="The name of the template as it will appear in the template select dropdown widget."><i class="lnr-question-circle"></i></span>
             </div>
 
@@ -25,7 +25,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <input type="text" class="form-control" name="template" value="<%=rec['template']%>" readonly />
+                            <input type="text" class="form-control" name="template" value="<%=jam.rec['template']%>" readonly />
                             <div class="input-group-btn">
                                 <button type="button" class="btn btn-primary" style="width: 50px;">
                                     <i class="lnr-chevron-down"></i>
@@ -33,8 +33,8 @@
                             </div>
                         </div>
                         <div class="dropdown-menu dropdown-menu-right" style="margin-top: -10px; margin-right: 20px;">
-                            <% template_files.forEach((file) => { -%>
-                            <a class="dropdown-item <%=(file === rec['template']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
+                            <% jam.template_files.forEach((file) => { -%>
+                            <a class="dropdown-item <%=(file === jam.rec['template']) ? 'active' : ''%>" href="#" data-dropdown-select="input[name='template']"><%=file.name%></a>
                             <% }); -%>
                         </div>
                     </li>
@@ -49,7 +49,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <select name="metaboxType" class="form-control">
-                                <% meta_types.forEach((type) => { %>
+                                <% jam.meta_types.forEach((type) => { %>
                                 <option <%=(type['checked'] === true) ? 'selected' : ''%> value="<%=type.value%>">
                                     <%=type.name%>
                                 </option>
@@ -89,7 +89,7 @@
 
                     <!-- Template Metabox List -->
                     <ul class="list-group list-group-flush" id="admin-template-metaboxes" data-sortable style="margin-top: -1px;">
-                        <% if (rec['metabox']) { rec.metabox.forEach((item) => { -%>
+                        <% if (jam.rec['metabox']) { jam.rec.metabox.forEach((item) => { -%>
                         <li class="list-group-item">
                             <div class="input-group">
                                 <span class="input-group-addon bgc-gray-lightest text-right">Metabox:</span>
@@ -102,7 +102,7 @@
                                 <div class="input-group-btn">
                                     <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="<%=item.type%>" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <% meta_types.forEach((type) => { %>
+                                        <% jam.meta_types.forEach((type) => { %>
                                         <a class="dropdown-item <%=(type.value === item.type) ? 'active' : '';%>" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
                                         <% }); %>
                                     </div>
@@ -141,7 +141,7 @@
                     data-confirm="Are you sure?"
                     data-submit='Saving...'>Save Template</button>
             </div>
-            <% if (rec['objectId']) { %>
+            <% if (jam.rec['objectId']) { %>
             <div>
                 <button type="button" class="btn btn-danger btn-block text-uppercase" data-toggle="modal" data-target="#adminTemplateDeleteModal">Delete Template</button>
             </div>
@@ -163,7 +163,7 @@
             <div class="input-group-btn">
                 <input type="text" readonly class="btn btn-secondary metabox-type" style="min-width: 100px;" value="{{metaboxType}}" name="metabox[type]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                 <div class="dropdown-menu dropdown-menu-right">
-                    <% meta_types.forEach((type) => { %>
+                    <% jam.meta_types.forEach((type) => { %>
                     <a class="dropdown-item" href="#" data-dropdown-select=".metabox-type" data-dropdown-value="<%=type.value%>"><%=type.name%></a>
                     <% }); %>
                 </div>
@@ -188,13 +188,13 @@
     </li>
 </script>
 
-<% if (rec['objectId']) { %>
+<% if (jam.rec['objectId']) { %>
 <div data-dna="modal-sm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="adminTemplateDelete" aria-hidden="true" id="adminTemplateDeleteModal">
     <div class="modal-dialog">
-        <form id="admin-delete-form" action="<%=baseurl%>/admin/template" method="delete">
+        <form id="admin-delete-form" action="<%=jam.baseurl%>/admin/template" method="delete">
 
-            <input type="hidden" value="<%=rec['objectId']%>" name="objectId" />
-            <input type="hidden" value="<%=nonce%>" name="nonce" />
+            <input type="hidden" value="<%=jam.rec['objectId']%>" name="objectId" />
+            <input type="hidden" value="<%=jam.nonce%>" name="nonce" />
 
             <div class="modal-content">
                 <div class="modal-header">

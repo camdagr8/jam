@@ -1,6 +1,6 @@
 
 exports.all = (req, res, next) => {
-	if (jam['currentuser']) {
+	if (req.jam['currentuser']) {
 		res.redirect('/admin');
 	} else {
 		next();
@@ -9,7 +9,7 @@ exports.all = (req, res, next) => {
 
 
 exports.get = (req, res) => {
-	res.render(appdir + '/_core/view/admin/login', jam);
+	res.render(appdir + '/_core/view/admin/login', req);
 };
 
 

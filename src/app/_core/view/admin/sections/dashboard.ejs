@@ -1,8 +1,8 @@
 <div id="dashboard">
     <div class="row">
-        <% if (dashboards) { %>
+        <% if (jam.dashboards) { %>
 
-        <% dashboards.forEach(function (widget, i) { %>
+        <% jam.dashboards.forEach(function (widget, i) { %>
         <%- include(widget, {index: i}) -%>
         <% }); %>
 

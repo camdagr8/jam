@@ -32,7 +32,8 @@ const content_get = (request, response) => {
     let rqry = core.query({table: 'Content'});
 
     // 1.0 - Apply route search
-    rqry.contains('routes', request.params.route);
+    let route = (typeof request.params.route === 'string') ? [request.params.route] : request.params.route;
+    rqry.containsAll('routes', route);
 
     queries.push(rqry);
 
@@ -70,16 +71,17 @@ const content_purge = (request, response) => {
     let qry       = new Parse.Query('Content');
     let type      = (params.hasOwnProperty('type')) ? params.type : null;
     let limit     = (params.hasOwnProperty('limit')) ? params.limit : 1000;
+    let session = (request.user) ? request.user.getSessionToken() : undefined;
 
     qry.equalTo('status', 'delete');
     qry.descending('createdAt');
     qry.equalTo('type', type);
     qry.limit(limit);
 
-    let promise = qry.find({sessionToken: stoken}).then((results) => {
+    let promise = qry.find({sessionToken: session}).then((results) => {
         count    = results.length;
         last     = _.last(results);
-        return Parse.Object.destroyAll(results, {sessionToken: stoken});
+        return Parse.Object.destroyAll(results, {sessionToken: session});
     }).then(() => {
         if (count === limit) {
             return {request: request, response: response};
@@ -97,7 +99,7 @@ const content_purge = (request, response) => {
     }).catch((err) => {
         response.error(err.message);
     });
-}
+};
 
 /**
  *
@@ -181,8 +183,8 @@ const content_list = (request, response) => {
 
     // Find
     if (params.hasOwnProperty('find')) {
-        let reg = new RegExp(params.find, 'gi');
-        qry.matches('meta.body', reg);
+        let v = core.strip_tags(params.find);
+        qry.containsAll('index', v);
     }
 
     qry.count().then((count) => {
@@ -223,6 +225,7 @@ const content_list = (request, response) => {
             let obj            = item.toJSON();
             obj['routes']      = obj['routes'] || [];
             obj['status_icon'] = pubicons[obj.status];
+<<<<<<< HEAD
             obj['edit_url']    = jam.baseurl + '/admin/'+type+'/' + obj.objectId;
 
             let r = [jam.baseurl];
@@ -230,6 +233,10 @@ const content_list = (request, response) => {
             if (obj.routes.length > 0) { r.push(obj.routes[0]); }
 
             obj['view_url'] = r.join('');
+=======
+            obj['edit_url']    = '/admin/'+type+'/' + obj.objectId;
+            obj['routes']      = obj['routes'] || [];
+>>>>>>> origin/master
 
             results.push(obj);
         });
@@ -252,6 +259,7 @@ const content_list = (request, response) => {
  *
  */
 const content_post = (request, response) => {
+
     delete request.params.nonce;
 
     let obj = new Parse.Object('Content');
@@ -270,6 +278,19 @@ const content_post = (request, response) => {
 
     if (!request.params.hasOwnProperty('routes')) {
         obj.unset('routes');
+    }
+
+    if (request.user) {
+        if (!request.params.objectId) {
+            // set the initial creator
+            obj.set('creator', request.user);
+        } else {
+            // log the update
+            obj.addUnique('editors', {timestamp: new Date(), user: request.user.id, data: request.params});
+        }
+    } else {
+        response.error('request.user is undefined');
+        return;
     }
 
     obj.save(null).then((result) => {
@@ -318,19 +339,29 @@ const content_before_save = (request, response) => {
         request.object.set('category', [cats]);
     }
 
-    let usr = request.user || jam.currentuser;
-    if (usr) {
-        request.object.set('creator', usr);
-    }
 
     let title = request.object.get('title');
-    title = core.hbsParse(title);
     request.object.set('title', title);
 
+<<<<<<< HEAD
     if (request.object.isNew() && request.object.get('type') === 'post') {
         if (!request.object.get('category')) {
             request.object.set('category', ['blog']);
         }
+=======
+    let index = [];
+    let meta = request.object.get('meta');
+    meta['title'] = title;
+
+    for (let prop in meta) {
+        let val = core.strip_tags(meta[prop]);
+        index = index.concat(val);
+    }
+
+    if (index.length > 0) {
+        index = _.uniq(index);
+        request.object.set('index', index);
+>>>>>>> origin/master
     }
 
     response.success();
@@ -360,9 +391,3 @@ Parse.Cloud.define('content_post', content_post);
 Parse.Cloud.define('content_purge', content_purge);
 
 Parse.Cloud.beforeSave('Content', content_before_save);
-
-/**
- * After Content save function that creates a timestamp in the local build so that
- * browsersync will cause a reload when the database is changed.
- */
-//Parse.Cloud.afterSave('Content', core.timestamper);
