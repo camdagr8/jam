@@ -32,7 +32,8 @@ const content_get = (request, response) => {
     let rqry = core.query({table: 'Content'});
 
     // 1.0 - Apply route search
-    rqry.contains('routes', request.params.route);
+    let route = (typeof request.params.route === 'string') ? [request.params.route] : request.params.route;
+    rqry.containsAll('routes', route);
 
     queries.push(rqry);
 
