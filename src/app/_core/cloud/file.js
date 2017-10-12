@@ -1,6 +1,6 @@
 
 Parse.Cloud.define('file_get', (request, response) => {
-    let usr = request.user || jam.currentuser;
+    let usr = request.user;
 
     if (!usr && !request.params.hasOwnProperty('ovr')) {
         response.error('request.user is a required parameter');
@@ -37,7 +37,7 @@ Parse.Cloud.define('file_get', (request, response) => {
 
 
 Parse.Cloud.define('file_post', (request, response) => {
-    let usr = request.user || jam.currentuser;
+    let usr = request.user;
 
     if (!usr) {
         response.error('request.user is a required parameter');

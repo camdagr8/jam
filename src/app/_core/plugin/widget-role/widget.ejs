@@ -1,4 +1,4 @@
-<% if (currentuser['id'] !== rec['objectId']) { %>
+<% if (jam.currentuser['id'] !== jam.rec['objectId']) { %>
 <!--// Widget widget-role //-->
 <div class="card card-shadow bgc-white bd-0 mb-l" id="widget-role">
     <h6 class="card-header">
@@ -10,12 +10,12 @@
 
     <div class="collapse show" id="collapse_widget-role">
         <ul class="list-group list-group-flush" data-toggle="check">
-            <% if (roles) { %>
-            <% roles.forEach((role) => { %>
+            <% if (jam.roles) { %>
+            <% jam.roles.forEach((role) => { %>
             <li class="list-group-item">
                 <label class="check" tabindex="0">
                     <%=role.name%>
-                    <input type="checkbox" name="roles[]" autocomplete="off" class="hidden-xs-up" value="<%=role.name.toLowerCase()%>" <%=(core.is_role(role.name, rec)) ? 'checked' : ''%> aria-checked="<%=(core.is_role(role.name, rec))%>">
+                    <input type="checkbox" name="roles[]" autocomplete="off" class="hidden-xs-up" value="<%=role.name.toLowerCase()%>" <%=(core.is_role(role.name, jam.currentuser)) ? 'checked' : ''%> aria-checked="<%=(core.is_role(role.name, jam.currentuser))%>">
                 </label>
             </li>
             <% }); %>

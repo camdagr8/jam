@@ -1,7 +1,7 @@
 <section class="admin-list">
     <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
         <h5 class="d-inline-block"><i class="lnr-file-code ico"></i> Templates</h5>
-        <a href="<%=baseurl%>/admin/template" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Template</a>
+        <a href="<%=jam.baseurl%>/admin/template" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New Template</a>
     </div>
 
     <table data-dna="table-bordered" class="table table-bordered table-hover">
@@ -13,16 +13,16 @@
             </tr>
         </thead>
         <tbody>
-            <% templates.forEach((template) => { %>
+            <% jam.templates.forEach((template) => { %>
             <tr>
                 <td class="title">
-                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>"><%=template.title%></a>
+                    <a href="<%=jam.baseurl%>/admin/template/<%=template.objectId%>"><%=template.title%></a>
                 </td>
                 <td class="hidden-sm-down">
-                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>"><i class="lnr-file-code"></i> <%=template.template%>.ejs</a>
+                    <a href="<%=jam.baseurl%>/admin/template/<%=template.objectId%>"><i class="lnr-file-code"></i> <%=template.template%>.ejs</a>
                 </td>
                 <td class="action hidden-sm-down">
-                    <a href="<%=baseurl%>/admin/template/<%=template.objectId%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
+                    <a href="<%=jam.baseurl%>/admin/template/<%=template.objectId%>" class="btn btn-primary btn-sm btn-block" data-dna="btn">EDIT</a>
                 </td>
             </tr>
             <% }); %>

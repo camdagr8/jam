@@ -13,7 +13,7 @@ module.exports = {
 
     use         : (req, res, next) => {
 
-        jam['comments'] = {
+        req.jam['comments'] = {
             list          : [],
             pagination    : {},
             waiting       : 0
@@ -27,8 +27,8 @@ module.exports = {
             let opt    = {post: id, status: ['publish', 'wait']};
 
             Parse.Cloud.run('comment_list', opt).then((results) => {
-                jam.comments.pagination = results.pagination;
-                jam.comments.list       = results.list;
+                req.jam.comments.pagination = results.pagination;
+                req.jam.comments.list       = results.list;
 
                 opt['status'] = 'wait';
                 opt['limit']  = 0;
@@ -38,7 +38,7 @@ module.exports = {
 
             }).then((results) => {
 
-                jam.comments.waiting = results.pagination.count;
+                req.jam.comments.waiting = results.pagination.count;
 
             }).catch((err) => {
 

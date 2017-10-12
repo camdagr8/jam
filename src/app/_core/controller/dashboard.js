@@ -7,24 +7,24 @@ const permissions    = ['administrator', 'publisher', 'moderator'];
  * -----------------------------------------------------------------------------
  */
 exports.use = (req, res, next) => {
-    jam['rec'] = {};
+    req.jam['rec'] = {};
 
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get widgets
-    core.add_widgets('dashboard');
+    core.add_widgets('dashboard', req);
 
     next();
 
 };
 exports.all = (req, res) => {
-    jam.content = './sections/dashboard';
-    res.render(core.template.admin, jam);
+    req.jam.content = './sections/dashboard';
+    res.render(core.template.admin, req);
 };

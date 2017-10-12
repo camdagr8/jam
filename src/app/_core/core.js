@@ -96,7 +96,7 @@ const perm_check = (perms, user) => {
 
 /**
  *
- * add_widgets(sections)
+ * add_widgets(sections, req)
  *
  * @author Cam Tullos cam@tullos.ninja
  * @since 0.1.0
@@ -104,20 +104,22 @@ const perm_check = (perms, user) => {
  * @description Addes widgets from the plugins array for the specified sections.
  * @param sections {Array} List of section partial names. ie: page-editor or dashboard
  */
-const add_widgets = (sections) => {
+const add_widgets = (sections, req) => {
 
 	sections = (_.isArray(sections)) ? sections : [sections];
 	sections.push('all');
 	sections = _.uniq(sections);
 
-	jam.plugins.forEach((plugin) => {
+	let user = req.jam.currentuser;
+
+	req.jam.plugins.forEach((plugin) => {
 		let p = plugin.name.split('-').join('_');
-		let m = jam.plugin[p];
+		let m = req.jam.plugin[p];
 
 		// Access control ---------------------------------------------------- X
 		let access = true;
 		if (m.hasOwnProperty('perms')) {
-			access = perm_check(m.perms);
+			access = perm_check(m.perms, user);
 		}
 
 		if (access !== true) { return; }
@@ -137,15 +139,15 @@ const add_widgets = (sections) => {
 		// Exit if no intersecting sections ---------------------------------- X
 		if (_.intersection(sections, m.sections).length < 1) { return; }
 
-		jam[z] = (jam.hasOwnProperty(z)) ? jam[z] : [];
-		jam[z].push(plugin.widget);
-		jam[z] = _.uniq(jam[z]);
+        req.jam[z] = (req.jam.hasOwnProperty(z)) ? req.jam[z] : [];
+        req.jam[z].push(plugin.widget);
+        req.jam[z] = _.uniq(req.jam[z]);
 	});
 };
 
 /**
  *
- * core.plugins(mod_path)
+ * core.plugins(mod_path, req)
  *
  * @author Cam Tullos cam@tullos.ninja
  * @since 0.1.0
@@ -154,7 +156,7 @@ const add_widgets = (sections) => {
  * @param mod_path {String} The plugin directory to scan.
  * @returns {Array} List of module objects.
  */
-const plugins = (mod_path) => {
+const plugins = (mod_path, req) => {
     if (!fs.existsSync(mod_path)) {
         return [];
     }
@@ -162,7 +164,7 @@ const plugins = (mod_path) => {
 	let output 	= [];
 	let mods 	= fs.readdirSync(mod_path);
 
-	if (!jam.hasOwnProperty('plugin')) { jam.plugin = {}; }
+	if (!req.jam.hasOwnProperty('plugin')) { req.jam.plugin = {}; }
 
 	mods.forEach((dir) => {
 
@@ -192,9 +194,9 @@ const plugins = (mod_path) => {
 			let p          = obj.name.split('-').join('_');
 			obj['func']    = p;
 
-			if (!jam.plugin.hasOwnProperty(p)) {
-				jam.plugin[p] = m;
-				output.push(obj);
+			if (!req.jam.plugin.hasOwnProperty(p)) {
+                req.jam.plugin[p] = m;
+                output.push(obj);
 			}
 
 		} else {
@@ -210,7 +212,7 @@ const plugins = (mod_path) => {
 
 /**
  *
- * core.hbsParse(source, data)
+ * core.hbsParse(source, data, jam)
  *
  * @author Cam Tullos cam@tullos.ninja
  * @since 0.1.0
@@ -222,9 +224,11 @@ const plugins = (mod_path) => {
  *
  * @return {String} Parsed version of the `source` value with `data` applied.
  */
-const hbsParse = (source, data) => {
+const hbsParse = (source, data, jam) => {
 	// 0.1 - Trim the whitespace from the source.
 	source = source.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
+
+	jam = jam || data;
 
 	// 1.0 - Get the Handlebars helpers and partials from jam.helpers array.
 	jam.helpers.forEach((mod) => {
@@ -278,8 +282,6 @@ const hbsParse = (source, data) => {
 const is_role = (permission, user) => {
 
     if (permission === 'all' || permission === 0) { return true; }
-
-    user = user || jam['currentuser'];
 
     if (!user) { return false; }
 
@@ -419,6 +421,22 @@ const themes_get = () => {
     return themes;
 };
 
+const strip_tags = (str) => {
+    let newStr = String(str).replace(/<\/?[^>]+(>|$)/g, '')
+    .replace(/[{].*[}]/g, '')
+    .replace(/[^\s\w]/g, '')
+    .replace(/\r?\n|\r/g, ' ')
+    .replace(/\s+/g,' ')
+    .replace(/\t/g, '')
+    .trim()
+    .toLowerCase()
+    .split(' ');
+
+    newStr = _.uniq(newStr);
+
+    return newStr;
+};
+
 /**
  * Exports
  */
@@ -435,3 +453,4 @@ exports.template       = template;
 exports.timestamper    = timestamper;
 exports.find_file      = find_file;
 exports.themes         = themes_get;
+exports.strip_tags     = strip_tags;

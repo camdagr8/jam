@@ -11,7 +11,7 @@ const approve = (req, res) => {
             let id        = req.params.id;
             let status    = req.body.status;
 
-            Parse.Cloud.run('comment_approve', {objectId: id, status: 'publish'}, {sessionToken: stoken}).then((result) => {
+            Parse.Cloud.run('comment_approve', {objectId: id, status: 'publish'}, {sessionToken: req.jam.sessionToken}).then((result) => {
                 output['data']      = result;
                 output['status']    = 'OK';
                 res.json(output);
@@ -30,7 +30,7 @@ const purge = (req, res) => {
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
         delete req.body.nonce;
-        return Parse.Cloud.run('comment_purge', null, {sessionToken: stoken});
+        return Parse.Cloud.run('comment_purge', null, {sessionToken: req.jam.sessionToken});
     }).then((result) => {
         output.data = result;
         return Parse.Cloud.run('nonce_create');
@@ -46,15 +46,13 @@ const purge = (req, res) => {
 
 const use = (req, res, next) =>  {
 
-    if (!core.perm_check(permissions.edit_others, jam.currentuser)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions.edit_others, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
     }  else {
-        stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
-
-        if (!stoken || typeof stoken === 'undefined') {
-            jam['err'] = {code: '403', message: 'Forbidden'};
-            res.render(core.template.theme + '/templates/404', jam);
+        if (req.jam.sessionToken) {
+            req.jam['err'] = {code: '403', message: 'Forbidden'};
+            res.render(core.template.theme + '/templates/404', req);
         } else {
             next();
         }
@@ -70,14 +68,14 @@ const save = (req, res) => {
     let nonce     = req.body.nonce;
     let output    = {data: null, nonce: null};
 
-    Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
+    Parse.Cloud.run('nonce_get', {id: nonce}, {sessionToken: req.jam.sessionToken}).then(() => {
         delete req.body.nonce;
 
         if (req.params.hasOwnProperty('id')) {
             req.body['objectId'] = req.params.id;
         }
 
-        return Parse.Cloud.run('comment_save', req.body, {sessionToken: stoken});
+        return Parse.Cloud.run('comment_save', req.body, {sessionToken: req.jam.sessionToken});
     }).then((result) => {
         output.data = result;
         return Parse.Cloud.run('nonce_create');

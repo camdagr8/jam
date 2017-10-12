@@ -1,7 +1,7 @@
 
-<form id="settings-form" action="<%=baseurl%>/admin/settings" method="post">
+<form id="settings-form" action="<%=jam.baseurl%>/admin/settings" method="post">
 
-    <input type="hidden" name="nonce" value="<%=nonce%>" />
+    <input type="hidden" name="nonce" value="<%=jam.nonce%>" />
 
     <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
         <h5><i class="lnr-equalizer ico"></i> Settings</h5>
@@ -13,7 +13,7 @@
             <div class="mb-l">
                 <label for="config-title">Title</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" aria-label="Title" id="config-title" value="<%=config.title%>" name="title" />
+                    <input type="text" class="form-control" aria-label="Title" id="config-title" value="<%=jam.config.title%>" name="title" />
                     <span class="input-group-addon" data-toggle="tooltip" title="The admin title value">?</span>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                 <div>
                     <select class="form-control" name="theme" title="Theme">
                         <% core.themes().forEach((item) => {%>
-                        <option value="<%=item.name%>" <%=(config.theme === item.name) ? 'selected' : ''%>><%=item.name%></option>
+                        <option value="<%=item.name%>" <%=(jam.config.theme === item.name) ? 'selected' : ''%>><%=item.name%></option>
                         <% }); %>
                     </select>
                 </div>
@@ -33,9 +33,9 @@
         <div class="col-12">
 
             <div class="blocks">
-            <% if (blocks) { %>
+            <% if (jam.blocks) { %>
 
-            <% blocks.forEach(function (block, i) { %>
+            <% jam.blocks.forEach(function (block, i) { %>
             <%- include(block, {index: i}) -%>
             <% }); %>
 

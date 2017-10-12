@@ -13,7 +13,7 @@ module.exports = {
 
     use         : (req, res, next) => {
 
-        jam['categories'] = {
+        req.jam['categories'] = {
             list          : [],
             selected      : [],
             pagination    : {}
@@ -36,19 +36,19 @@ module.exports = {
                 rec = rec.toJSON();
                 rec['category'] = (rec.hasOwnProperty('category')) ? rec.category : [];
 
-                jam['rec'] = rec;
+                req.jam['rec'] = rec;
 
                 return Parse.Cloud.run('category_list', {containedIn: rec.category, limit: rec.category.length});
 
             }).then((cats) => {
 
-                jam.categories.selected = cats.list;
+                req.jam.categories.selected = cats.list;
                 return Parse.Cloud.run('category_list', {limit: limit});
 
             }).then((cats) => {
 
-                jam.categories.list          = cats.list;
-                jam.categories.pagination    = cats.pagination;
+                req.jam.categories.list          = cats.list;
+                req.jam.categories.pagination    = cats.pagination;
 
             }).catch((err) => {
 
@@ -61,9 +61,9 @@ module.exports = {
 
             Parse.Cloud.run('category_list', {limit: limit}).then((cats) => {
 
-                jam.categories.selected      = [];
-                jam.categories.list          = cats.list;
-                jam.categories.pagination    = cats.pagination;
+                req.jam.categories.selected      = [];
+                req.jam.categories.list          = cats.list;
+                req.jam.categories.pagination    = cats.pagination;
 
             }).catch((err) => {
 

@@ -49,7 +49,7 @@ const user_delete = (req, res) => {
     let nonce = req.body.nonce;
     let output = {
         message: `Deleted ${req.body.username}`,
-        redirect: `${jam.baseurl}/admin/users`
+        redirect: `${req.jam.baseurl}/admin/users`
     };
 
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
@@ -76,41 +76,41 @@ const user_delete = (req, res) => {
  * -----------------------------------------------------------------------------
  */
 exports.use = (req, res, next) => {
-    jam['rec'] = {};
+    req.jam['rec'] = {};
 
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get widgets
-    core.add_widgets('user-editor');
+    core.add_widgets('user-editor', req);
 
     // Get template rec if :id specified in url
     if (req.params['id']) {
-        jam['rec'] = _.findWhere(jam.users, {objectId: req.params.id});
+        req.jam['rec'] = _.findWhere(req.jam.users, {objectId: req.params.id});
     }
     next();
 };
 
 exports.get = (req, res) => {
     let darr       = __dirname.split('/'); darr.pop();
-    jam.content    = darr.join('/') + '/view/editor.ejs';
+    req.jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
 
-        jam['nonce'] = result;
-        res.render(core.template.admin, jam);
+        req.jam['nonce'] = result;
+        res.render(core.template.admin, req);
 
     }, (err) => {
 
-        jam['err'] = {code: 400, message: 'Bad Request'};
-        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+        req.jam['err'] = {code: 400, message: 'Bad Request'};
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', req);
 
     });
 };

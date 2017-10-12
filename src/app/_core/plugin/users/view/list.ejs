@@ -1,7 +1,7 @@
 <section class="admin-list">
     <div class="mb-2 mb-sm-2 mt-sm-2 mt-md-4 mb-md-5 mt-lg-0">
         <h5 class="d-inline-block"><i class="lnr-users2 ico"></i> Users</h5>
-        <a href="<%=baseurl%>/admin/user" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New User</a>
+        <a href="<%=jam.baseurl%>/admin/user" class="d-inline-block btn btn-outline-primary btn-new float-right" data-dna="btn-outline-primary">New User</a>
     </div>
 
     <table data-dna="table-bordered" class="table table-bordered table-hover">
@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            <% users.forEach((user) => { %>
+            <% jam.users.forEach((user) => { %>
             <% let roles = []; %>
             <% for (let prop in user.roles) { roles.push(prop); } %>
             <tr>

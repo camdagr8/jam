@@ -1,8 +1,8 @@
 <%
-    let qarr        = req.originalUrl.split('?');
+    let qarr        = originalUrl.split('?');
     let q           = (qarr.length > 1) ? '?' + qarr.pop() : '';
     let statuses    = {"publish": "Published", "draft": "Drafts", "delete": "Deleted", "publish-later": "Publish Later", "unpublish-later": "Unpublish Later"};
-    let stat        = (posts.query.hasOwnProperty('status')) ? posts.query.status.join('') : '';
+    let stat        = (jam.posts.query.hasOwnProperty('status')) ? jam.posts.query.status.join('') : '';
     let link        = '/admin/posts/[PAGE]/[STATUS][PARAMS]';
     link            = link.split('[PARAMS]').join(q);
     link            = link.split('[PAGE]').join(1);
@@ -19,20 +19,20 @@
 %>
 
 <section class="admin-list">
-    <input type="hidden" id="thread-nonce" value="<%=nonce%>" />
+    <input type="hidden" id="thread-nonce" value="<%=jam.nonce%>" />
     <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
         <span><h5 class="d-inline-block"><i class="lnr-pushpin ico"></i> Posts</h5></span>
-        <span class="text-right small"><%=posts.pagination.page%> of <%=posts.pagination.pages%></span>
+        <span class="text-right small"><%=jam.posts.pagination.page%> of <%=jam.posts.pagination.pages%></span>
     </div>
 
     <!--// Filters //-->
     <form class="thread-filters bgc-white rounded card-shadow p-2 mt-2 mb-3 mt-md-4 mb-md-5" method="get">
         <div data-dna="input-group" class="input-group-sm input-group">
-            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(posts.query.hasOwnProperty('find')) ? posts.query.find : ''%>">
+            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(jam.posts.query.hasOwnProperty('find')) ? jam.posts.query.find : ''%>">
             <div class="input-group-btn">
                 <button class="btn btn-secondary" type="submit"><i class="lnr-magnifier"></i></button>
             </div>
-            <% if (posts.filtered >= 2 || posts.query.hasOwnProperty('find')) { %>
+            <% if (jam.posts.filtered >= 2 || jam.posts.query.hasOwnProperty('find')) { %>
             <div class="input-group-btn">
                 <a href="/admin/posts/1" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="tooltip" data-placement="left" title="clear filters">
                     <span><i class="lnr-cross txtc-danger"></i></span>
@@ -40,24 +40,24 @@
             </div>
             <% } %>
 
-            <% if (posts.query.hasOwnProperty('user')) { %>
+            <% if (jam.posts.query.hasOwnProperty('user')) { %>
             <div class="input-group-btn">
-                <input type="hidden" name="user" value="<%=posts.query.user%>" />
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "user=<%=posts.query.user%>"}' id="unfilter-author">
+                <input type="hidden" name="user" value="<%=jam.posts.query.user%>" />
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "user=<%=jam.posts.query.user%>"}' id="unfilter-author">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>User</span>
                 </button>
             </div>
             <% } %>
 
-            <% if (posts.query.hasOwnProperty('status')) { %>
-            <% if (posts.query.status.length === 1) { %>
+            <% if (jam.posts.query.hasOwnProperty('status')) { %>
+            <% if (jam.posts.query.status.length === 1) { %>
             <div class="input-group-btn">
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=posts.query.status.join('')%>"}' id="unfilter-status">
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "<%=jam.posts.query.status.join('')%>"}' id="unfilter-status">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>
                         <% for (let prop in statuses) { %>
-                        <% if (posts.query.status[0] === prop) { %><%=statuses[prop]%><% } %>
+                        <% if (jam.posts.query.status[0] === prop) { %><%=statuses[prop]%><% } %>
                         <% } %>
                     </span>
                 </button>
@@ -71,7 +71,7 @@
                 <div class="dropdown-menu dropdown-menu-right">
                     <% for (prop in statuses) { %>
                     <% if (stat === prop) { %>
-                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0);" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=posts.query.status.join('')%>"}'><%=statuses[prop]%></a>
+                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0);" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "<%=jam.posts.query.status.join('')%>"}'><%=statuses[prop]%></a>
                     <% } else { %>
                     <% let l = link.split('[STATUS]').join(prop); %>
                     <a class="dropdown-item text-uppercase small" href="<%=l%>"><%=statuses[prop]%></a>
@@ -87,8 +87,8 @@
                     <span>Sort</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-uppercase small <%=(posts.query['order'] === 'descending' || !posts.query['order']) ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=descending&sortBy=createdAt' : '?sort=descending&sortBy=createdAt'%>">Newest</a>
-                    <a class="dropdown-item text-uppercase small <%=(posts.query['order'] === 'ascending') ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=ascending&sortBy=createdAt' : '?sort=ascending&sortBy=createdAt'%>">Oldest</a>
+                    <a class="dropdown-item text-uppercase small <%=(jam.posts.query['order'] === 'descending' || !jam.posts.query['order']) ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=descending&sortBy=createdAt' : '?sort=descending&sortBy=createdAt'%>">Newest</a>
+                    <a class="dropdown-item text-uppercase small <%=(jam.posts.query['order'] === 'ascending') ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=ascending&sortBy=createdAt' : '?sort=ascending&sortBy=createdAt'%>">Oldest</a>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
 
     <!--// Posts //-->
     <div class="admin-thread-list">
-        <% posts.list.forEach((item) => { %>
+        <% jam.posts.list.forEach((item) => { %>
         <div class="d-flex thread small txtc-gray-light mb-md-5 mb-3" id="<%=item.objectId%>">
             <!--// Date //-->
             <div class="nogrow thread-date-wrap hidden-sm-down">
@@ -120,7 +120,7 @@
                             <span class="txtc-gray-light monospace" style="font-size: 1rem"><%=item.time%></span>
                         </div>
                         <div class="thread-body txtc-gray-light">
-                            <i class="lnr-file-code txtc-gray mr-2" aria-hidden="true"></i> <%=(item.meta.hasOwnProperty('body')) ? core.hbsParse(item.meta.body).replace(/<(?:.|\n)*?>/gm, '') : ''%>
+                            <i class="lnr-file-code txtc-gray mr-2" aria-hidden="true"></i> <%=(item.meta.hasOwnProperty('body')) ? core.hbsParse(item.meta.body, jam).replace(/<(?:.|\n)*?>/gm, '') : ''%>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="text-right pl-2 pl-sm-3" style="max-width: 110px;">
                         <div class="btn-group nogrow" role="group" aria-label="...">
-                            <% if (can_edit === true || jam.currentuser.id === item.author.objectId) { %>
+                            <% if (jam.can_edit === true || jam.currentuser.id === item.author.objectId) { %>
                             <a class="text-uppercase btn btn-sm btn-secondary" href="<%=item.edit_url%>">
                                 <i class="lnr-pencil hidden-md-up"></i>
                                 <span class="hidden-sm-down">Edit Post</span>
@@ -145,8 +145,8 @@
 </section>
 <div class="row flex-sm-row flex-column-reverse">
     <div class="col-12 col-sm-4 col-md-3 col-xl-2 mb-4 mt-2 mt-sm-0 mb-sm-0 text-center text-sm-left">
-        <% if (posts.query.hasOwnProperty('status') && posts.list.length > 0) { %>
-        <% if (posts.query.status[0] === 'delete') { %>
+        <% if (jam.posts.query.hasOwnProperty('status') && jam.posts.list.length > 0) { %>
+        <% if (jam.posts.query.status[0] === 'delete') { %>
         <button type="button" class="btn btn-danger text-uppercase col-12" style="min-width: 250px;" data-toggle="modal" data-target="#thread_purge_modal">
             Purge Deleted
         </button>
@@ -173,13 +173,13 @@
         <% } } %>
     </div>
 
-    <% if (posts.pagination.pages > 1) { %>
+    <% if (jam.posts.pagination.pages > 1) { %>
     <!--// Pagination //-->
     <div class="col-12 col-sm-8 col-md-9 col-xl-10 text-center text-sm-right mt-2 mt-sm-0">
         <ul class="pagination d-inline-flex">
             <li class="page-item">
-                <% if (posts.pagination.page > 1) { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+posts.pagination.page+'/').join('/'+posts.pagination.prev+'/');%>" aria-label="Previous">
+                <% if (jam.posts.pagination.page > 1) { %>
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.posts.pagination.page+'/').join('/'+jam.posts.pagination.prev+'/');%>" aria-label="Previous">
                     <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
                     <span class="sr-only">Previous</span>
                 </a>
@@ -190,15 +190,15 @@
                 <% } %>
             </li>
 
-            <% for (let p = posts.pagination.min; p <= posts.pagination.max; p++) { %>
+            <% for (let p = jam.posts.pagination.min; p <= jam.posts.pagination.max; p++) { %>
             <li class="page-item">
-                <% if (p === posts.pagination.page) { %>
+                <% if (p === jam.posts.pagination.page) { %>
                 <span class="page-link txtc-primary bgc-gray-lightest">
                     <span class="sr-only">Current page</span>
                     <%=p%>
                 </span>
                 <% } else { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+posts.pagination.page+'/').join('/'+p+'/');%>">
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.posts.pagination.page+'/').join('/'+p+'/');%>">
                     <span class="sr-only">Page</span>
                     <%=p%>
                 </a>
@@ -206,15 +206,15 @@
             </li>
             <% } %>
 
-            <% if (posts.pagination.pages > 3) { %>
+            <% if (jam.posts.pagination.pages > 3) { %>
             <li class="page-item dropup">
                 <button type="button" class="page-link txtc-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Pages</span>
                     &hellip;
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <% for (let p = 1; p <= posts.pagination.pages; p++) { %>
-                    <a class="dropdown-item <%=(posts.pagination.page === p) ? 'active' : ''%>" href="<%-req.originalUrl.split('/'+posts.pagination.page+'/').join('/'+p+'/');%>">
+                    <% for (let p = 1; p <= jam.posts.pagination.pages; p++) { %>
+                    <a class="dropdown-item <%=(jam.posts.pagination.page === p) ? 'active' : ''%>" href="<%-originalUrl.split('/'+jam.posts.pagination.page+'/').join('/'+p+'/');%>">
                         PAGE <%=p%>
                     </a>
                     <% } %>
@@ -223,8 +223,8 @@
             <% } %>
 
             <li class="page-item">
-                <% if (posts.pagination.next <= posts.pagination.pages) { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+posts.pagination.page+'/').join('/'+posts.pagination.next+'/');%>" aria-label="Next">
+                <% if (jam.posts.pagination.next <= jam.posts.pagination.pages) { %>
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.posts.pagination.page+'/').join('/'+jam.posts.pagination.next+'/');%>" aria-label="Next">
                     <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
                     <span class="sr-only">Next</span>
                 </a>

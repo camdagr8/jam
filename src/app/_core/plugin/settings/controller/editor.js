@@ -4,36 +4,36 @@ exports.use = (req, res, next) => {
     /**
      * Permissions
      */
-    if (!core.perm_check(permissions)) {
-        jam['err'] = {code: '403', message: 'Forbidden'};
-        res.render(core.template.theme + '/templates/404', jam);
+    if (!core.perm_check(permissions, req.jam.currentuser)) {
+        req.jam['err'] = {code: '403', message: 'Forbidden'};
+        res.render(core.template.theme + '/templates/404', req);
         return;
     }
 
     // Get widgets
-    core.add_widgets('settings-editor');
+    core.add_widgets('settings-editor', req);
 
     next();
 };
 
 exports.get = (req, res) => {
     let darr       = __dirname.split('/'); darr.pop();
-    jam.content    = darr.join('/') + '/view/editor.ejs';
+    req.jam.content    = darr.join('/') + '/view/editor.ejs';
 
     // Get nonce
     Parse.Cloud.run('nonce_create').then((result) => {
 
-        jam.nonce = result;
-        res.render(core.template.admin, jam);
+        req.jam.nonce = result;
+        res.render(core.template.admin, req);
 
     }, (err) => {
         log(__filename);
         log(err);
-        jam['err'] = {
+        req.jam['err'] = {
             code: 400,
             message: 'Bad Request'
         };
-        res.status(jam.err.code).render(core.template.theme + '/templates/404', jam);
+        res.status(jam.err.code).render(core.template.theme + '/templates/404', req);
 
     });
 };
@@ -64,9 +64,9 @@ exports.post = (req, res) => {
         return Parse.Object.saveAll(results);
 
     }).catch((err) => {
-        jam.cookie.set('error', err.message);
+        req.jam.cookie.set('error', err.message);
     }).then(() => {
-        jam.cookie.set('status', 'Successfully updated settings');
+        req.jam.cookie.set('status', 'Successfully updated settings');
     }).always(() => {
         res.redirect('/admin/settings');
     });

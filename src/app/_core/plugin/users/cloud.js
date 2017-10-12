@@ -160,15 +160,7 @@ const user_pref_set = (request, response) => {
 
         user.set('prefs', prefs);
         user.save(null, {useMasterKey: true}).then((user) => {
-            if (jam.currentuser !== null) {
-                if (jam.currentuser.id === user.id) {
-                    return jam.currentuser.fetch();
-                } else {
-                    return user;
-                }
-            } else {
-                return user;
-            }
+            return user;
         }, (err) => {
             response.error(err.message);
         }).then((user) => {
@@ -339,7 +331,7 @@ const users_get = (request, response, results = []) => {
         users.forEach((result) => {
             let user = result.toJSON();
 
-            user['edit_url'] = jam.baseurl + '/admin/user/' + user.objectId;
+            user['edit_url'] = '/admin/user/' + user.objectId;
 
             results.push(user);
         });
@@ -392,9 +384,9 @@ Parse.Cloud.define('user_post', (request, response) => {
 Parse.Cloud.define('user_pref_set', (request, response) => {
 
     // No request.user? No request.token? Got jam.currentuser?
-    if (!request['user'] && !request.params['token'] && jam.currentuser !== null) {
+    /*if (!request['user'] && !request.params['token'] && jam.currentuser !== null) {
         request['user'] = jam.currentuser;
-    }
+    }*/
 
     user_pref_set(request, response);
 });

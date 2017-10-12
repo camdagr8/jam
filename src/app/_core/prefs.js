@@ -10,39 +10,23 @@ const Promise    = require('promise');
  * @description Retrieves configuration variables, preferences, and other necessary data.
  */
 module.exports = (req, res, next) => {
-    //log('prefs');
+    stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
 
     let url = req.url.split('/');
     url.shift();
 
-    jam['baseurl']           = req.protocol + '://' + req.get('host');
-    jam['theme']             = 'default';
-    jam['blocks']            = [];
-    jam['currentuser']       = null;
-    jam['helpers']           = [];
-    jam['is']                = {};
-    jam['req']               = req;
-    jam['config']            = {};
+    req['jam']                   = (req.hasOwnProperty('jam')) ? req.jam : {};
+    req.jam['baseurl']           = req.protocol + '://' + req.get('host');
+    req.jam['theme']             = 'default';
+    req.jam['sessionToken']      = stoken;
+    req.jam['currentuser']       = null;
+    req.jam['url']               = url;
+    req.jam['blocks']            = [];
+    req.jam['helpers']           = [];
+    req.jam['is']                = {};
+    req.jam['config']            = {};
 
-    // normalize cookie functions
-    jam['cookie'] = {
-        get       : function (name) {
-            if (name) {
-                if (req.cookies.hasOwnProperty(name)) {
-                    return req.cookies[name];
-                }
-            } else {
-                return req.cookies;
-            }
-        },
-        set       : function (name, value, options) { res.cookie(name, value, options); },
-        remove    : function (name, options) { res.clearCookie(name, options); }
-    };
-
-    let collapse = jam.cookie.get('collapse') || {};
-    jam.cookie.set('collapse', collapse);
-
-    jam['meta_types'] = [
+    req.jam['meta_types']    = [
         {name: 'HTML',          value: 'HTML'},
         {name: 'Plain Text',    value: 'TEXT', checked: true},
         {name: 'Number',        value: 'NUMBER'},
@@ -53,49 +37,47 @@ module.exports = (req, res, next) => {
         {name: 'Upload',        value: 'UPLOAD'}
     ];
 
-    jam['pages']             = [];
-    jam['plugin']            = {};
-    jam['plugins']           = [];
-    jam['posts']             = [];
-    jam['sidebar']           = [];
-    jam['url']               = url;
-    jam['users']             = [];
-    jam['widgets']           = [];
-    jam['template_files']    = [];
-    jam['templates']         = [];
-    jam['dashboards']        = [];
+    req.jam['pages']             = [];
+    req.jam['plugin']            = {};
+    req.jam['plugins']           = [];
+    req.jam['posts']             = [];
+    req.jam['sidebar']           = [];
+    req.jam['users']             = [];
+    req.jam['widgets']           = [];
+    req.jam['template_files']    = [];
+    req.jam['templates']         = [];
+    req.jam['dashboards']        = [];
 
     // jam.is.admin boolean
     let base_urls = ['admin', 'dashboard'];
-    jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
+    req.jam['is']['admin']  = (base_urls.indexOf(url[0]) > -1);
 
     // Sort metabox types
-    jam['meta_types'] = _.sortBy(jam.meta_types, 'name');
+    req.jam['meta_types'] = _.sortBy(req.jam.meta_types, 'name');
 
     // Start the process
     let prm = Parse.Promise.when(Parse.Cloud.run('config_get'));
     prm.then((result) => { // Get Config objects
 
         let keys = _.keys(result);
-        keys.forEach((key) => { jam.config[key] = result[key]; });
+        keys.forEach((key) => { req.jam.config[key] = result[key]; });
 
-        core.template.theme = `${appdir}/view/themes/${jam.config.theme}`;
+        core.template.theme = `${appdir}/view/themes/${req.jam.config.theme}`;
 
     }, (err) => { // Not able to get the configs
 
         log(__filename);
         log(err.message);
-        jam.config['installed'] = false;
+        req.jam.config['installed'] = false;
         prm.reject();
 
     }).then(() => { // Get the current user from session token
 
-        stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
-        return (stoken) ? Parse.Cloud.run('user_session_get', {token: stoken}) : undefined;
+        return (req.jam.sessionToken) ? Parse.Cloud.run('user_session_get', {token: req.jam.sessionToken}) : undefined;
 
     }).then((user) => { // Set the currentuser value: Parse.User || null
 
-        jam['currentuser'] = user;
+        req.jam['currentuser'] = user;
 
     }, (err) => { // No current user: Keep going
         log(__filename);
@@ -104,20 +86,20 @@ module.exports = (req, res, next) => {
     }).then(() => { // Get helpers and plugins
 
         // Core helpers & plugins
-        jam['helpers'] = core.plugins(appdir + '/_core/helper', true);
-        jam['plugins'] = core.plugins(appdir + '/_core/plugin');
+        req.jam['helpers'] = core.plugins(appdir + '/_core/helper', req);
+        req.jam['plugins'] = core.plugins(appdir + '/_core/plugin', req);
 
         // User helpers & plugins
-        jam['helpers'] = jam.helpers.concat(core.plugins(appdir + '/helper', true));
-        jam['plugins'] = jam.plugins.concat(core.plugins(appdir + '/plugin'));
+        req.jam['helpers'] = req.jam.helpers.concat(core.plugins(appdir + '/helper', req));
+        req.jam['plugins'] = req.jam.plugins.concat(core.plugins(appdir + '/plugin', req));
 
     }).always(() => {
 
         // register plugin `use` hooks
         let before = [];
-        if (jam.is.admin === true) {
-            _.keys(jam.plugin).forEach((name) => {
-                let plugin = jam.plugin[name];
+        if (req.jam.is.admin === true) {
+            _.keys(req.jam.plugin).forEach((name) => {
+                let plugin = req.jam.plugin[name];
                 if (plugin.hasOwnProperty('use')) {
                     before.push(plugin.use);
                 }

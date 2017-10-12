@@ -1,9 +1,10 @@
 {
   "name": "Jam",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "author": "Cam Tullos",
   "scripts": {
     "start": "node index.js",
+    "local": "npm install && gulp --dev",
     "test": "npm install && gulp --dev"
   },
   "dependencies": {
@@ -69,6 +70,5 @@
   "engines": {
     "node": "8.1.4",
     "npm": ">=2.0.0"
-  },
-  "false": {}
+  }
 }

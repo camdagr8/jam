@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "method"        : "all",
+    "route"         : ["/sample"],
+    "controller"    : "/controller/sample.js"
+  }
+]

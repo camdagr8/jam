@@ -10,8 +10,10 @@
 
 // middle-ware
 exports.use = (req, res, next) => {
+    req['jam'] = (req.hasOwnProperty('jam')) ? req.jam : {};
+
     // Add some data to the global.jam object
-    jam['sample'] = {
+    req.jam['sample'] = {
         hello: 'Humans!'
     };
 
@@ -21,5 +23,5 @@ exports.use = (req, res, next) => {
 // catch all methods [DELETE|GET|POST|PUT]
 exports.all = (req, res) => {
     // Output the sample data object as JSON
-    res.json(jam);
+    res.json(req.jam);
 };

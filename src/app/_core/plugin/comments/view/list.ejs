@@ -1,12 +1,12 @@
 <%
-    let qarr        = req.originalUrl.split('?');
+    let qarr        = originalUrl.split('?');
     let q           = (qarr.length > 1) ? '?' + qarr.pop() : '';
     let statuses    = {"publish": "Approved", "wait": "Waiting", "delete": "Deleted"};
-    let stat        = (comments.query.hasOwnProperty('status')) ? comments.query.status.join('') : '';
+    let stat        = (jam.comments.query.hasOwnProperty('status')) ? jam.comments.query.status.join('') : '';
     let link        = '/admin/comments/[PAGE]/[POST][STATUS][PARAMS]';
     link            = link.split('[PARAMS]').join(q);
     link            = link.split('[PAGE]').join(1);
-    link            = (comments.query.hasOwnProperty('post')) ? link.split('[POST]').join(comments.query.post) : link.split('[POST]').join('all');
+    link            = (jam.comments.query.hasOwnProperty('post')) ? link.split('[POST]').join(jam.comments.query.post) : link.split('[POST]').join('all');
     link            = (link.substr(link.length - 1, 1) === '?') ? link.split('?').shift() : link;
 
     let sstat       = (stat === 'publishwait' || stat == 'waitpublish') ? '' : stat;
@@ -22,17 +22,17 @@
 <section class="admin-list">
     <div class="mt-2 mt-sm-2 mt-md-4 mt-lg-0 d-flex">
         <span><h5 class="d-inline-block"><i class="lnr-bubbles ico"></i> Comments</h5></span>
-        <span class="text-right small"><%=comments.pagination.page%> of <%=comments.pagination.pages%></span>
+        <span class="text-right small"><%=jam.comments.pagination.page%> of <%=jam.comments.pagination.pages%></span>
     </div>
 
     <!--// Filters //-->
     <form class="comment-filters bgc-white rounded card-shadow p-2 mt-2 mb-3 mt-md-4 mb-md-5" method="get">
         <div data-dna="input-group" class="input-group-sm input-group">
-            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(comments.query.hasOwnProperty('find')) ? comments.query.find : ''%>">
+            <input type="text" class="form-control" placeholder="Search" name="find" value="<%=(jam.comments.query.hasOwnProperty('find')) ? jam.comments.query.find : ''%>">
             <div class="input-group-btn">
                 <button class="btn btn-secondary" type="submit"><i class="lnr-magnifier"></i></button>
             </div>
-            <% if (comments.filtered >= 2 || comments.query.hasOwnProperty('find')) { %>
+            <% if (jam.comments.filtered >= 2 || jam.comments.query.hasOwnProperty('find')) { %>
             <div class="input-group-btn">
                 <a href="/admin/comments/1" class="btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-toggle="tooltip" data-placement="left" title="clear filters">
                     <span><i class="lnr-cross txtc-danger"></i></span>
@@ -40,44 +40,44 @@
             </div>
             <% } %>
 
-            <% if (comments.query.hasOwnProperty('author')) { %>
+            <% if (jam.comments.query.hasOwnProperty('author')) { %>
             <div class="input-group-btn">
-                <input type="hidden" name="user" value="<%=comments.query.author%>" />
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "user=<%=comments.query.author%>"}' id="unfilter-author">
+                <input type="hidden" name="user" value="<%=jam.comments.query.author%>" />
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "user=<%=jam.comments.query.author%>"}' id="unfilter-author">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>User</span>
                 </button>
             </div>
             <% } %>
 
-            <% if (comments.query['flagged'] === true) { %>
+            <% if (jam.comments.query['flagged'] === true) { %>
             <div class="input-group-btn">
                 <input type="hidden" name="flagged" value="true" />
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "flagged=true"}' id="unfilter-flagged">
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "flagged=true"}' id="unfilter-flagged">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>Flagged</span>
                 </button>
             </div>
             <% } %>
 
-            <% if (comments.query.hasOwnProperty('post')) { %>
+            <% if (jam.comments.query.hasOwnProperty('post')) { %>
             <div class="input-group-btn">
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=comments.query.post%>", "with": "/all"}' id="unfilter-post">
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "<%=jam.comments.query.post%>", "with": "/all"}' id="unfilter-post">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>Post</span>
                 </button>
             </div>
             <% } %>
 
-            <% if (comments.query.hasOwnProperty('status')) { %>
-            <% if (comments.query.status.length === 1) { %>
+            <% if (jam.comments.query.hasOwnProperty('status')) { %>
+            <% if (jam.comments.query.status.length === 1) { %>
             <div class="input-group-btn">
-                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=comments.query.status.join('')%>"}' id="unfilter-status">
+                <button type="button" class="hidden-xs-down btn btn-secondary text-uppercase d-flex align-items-center justify-content-around" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "<%=jam.comments.query.status.join('')%>"}' id="unfilter-status">
                     <span><i class="lnr-cross mr-2"></i></span>
                     <span>
-                        <% if (comments.query.status[0] === 'publish') { %>Approved<% } %>
-                        <% if (comments.query.status[0] === 'wait') { %>Waiting<% } %>
-                        <% if (comments.query.status[0] === 'delete') { %>Deleted<% } %>
+                        <% if (jam.comments.query.status[0] === 'publish') { %>Approved<% } %>
+                        <% if (jam.comments.query.status[0] === 'wait') { %>Waiting<% } %>
+                        <% if (jam.comments.query.status[0] === 'delete') { %>Deleted<% } %>
                     </span>
                 </button>
             </div>
@@ -88,17 +88,17 @@
                     <span>Filter</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <% if (req.originalUrl.indexOf('flagged=true') < 0) { %>
-                    <a class="dropdown-item text-uppercase small" href="/<%=url.join('/')%><%=(req.originalUrl.indexOf('?') >= 0) ? '&flagged=true' : '?flagged=true'%>">Flagged</a>
+                    <% if (originalUrl.indexOf('flagged=true') < 0) { %>
+                    <a class="dropdown-item text-uppercase small" href="/<%=jam.url.join('/')%><%=(originalUrl.indexOf('?') >= 0) ? '&flagged=true' : '?flagged=true'%>">Flagged</a>
                     <% } else { %>
-                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0)" data-without='{"string": "/<%-url.join('/')%>", "value": "flagged=true"}'>Flagged</a>
+                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0)" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "flagged=true"}'>Flagged</a>
                     <% } %>
                     <div class="dropdown-divider"></div>
 
                     <% for (prop in statuses) { %>
-                    <% let l = (comments.query.hasOwnProperty('status')) ? link.split('[STATUS]').join('/' + prop) : link.split('[STATUS]').join(''); %>
+                    <% let l = (jam.comments.query.hasOwnProperty('status')) ? link.split('[STATUS]').join('/' + prop) : link.split('[STATUS]').join(''); %>
                     <% if (stat === prop) { %>
-                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0);" data-without='{"string": "/<%-url.join('/')%>", "value": "<%=comments.query.status.join('')%>"}'><%=statuses[prop]%></a>
+                    <a class="dropdown-item text-uppercase small active" href="javascript:void(0);" data-without='{"string": "/<%-jam.url.join('/')%>", "value": "<%=jam.comments.query.status.join('')%>"}'><%=statuses[prop]%></a>
                     <% } else { %>
                     <a class="dropdown-item text-uppercase small" href="<%=l%>"><%=statuses[prop]%></a>
                     <% } %>
@@ -110,8 +110,8 @@
                     <span>Sort</span><span><i class="lnr-chevron-down ml-2" style="margin-top: 1px"></i></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-uppercase small <%=(comments.query['order'] === 'descending' || !comments.query['order']) ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=descending&sortBy=createdAt' : '?sort=descending&sortBy=createdAt'%>">Newest</a>
-                    <a class="dropdown-item text-uppercase small <%=(comments.query['order'] === 'ascending') ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=ascending&sortBy=createdAt' : '?sort=ascending&sortBy=createdAt'%>">Oldest</a>
+                    <a class="dropdown-item text-uppercase small <%=(jam.comments.query['order'] === 'descending' || !jam.comments.query['order']) ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=descending&sortBy=createdAt' : '?sort=descending&sortBy=createdAt'%>">Newest</a>
+                    <a class="dropdown-item text-uppercase small <%=(jam.comments.query['order'] === 'ascending') ? 'active' : ''%>" href="<%-sortlink%><%=(sortlink.indexOf('?') >= 0) ? '&sort=ascending&sortBy=createdAt' : '?sort=ascending&sortBy=createdAt'%>">Oldest</a>
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
 
     <!--// Comment List //-->
     <div class="admin-comment-list">
-        <% comments.list.forEach((item) => { %>
+        <% jam.comments.list.forEach((item) => { %>
         <div class="d-flex comment small txtc-gray-light mb-md-5 mb-3" id="<%=item.objectId%>">
             <!--// Date //-->
             <div class="nogrow comment-date-wrap hidden-sm-down">
@@ -149,11 +149,11 @@
                         </div>
                         <div class="comment-body txtc-gray-light">
                             <i class="lnr-<%=(item.flagged === true) ? 'flag2 txtc-danger' : 'bubble'%> txtc-gray mr-2" aria-hidden="true"></i>
-                            <%-core.hbsParse(item.body)%>
+                            <%-core.hbsParse(item.body, jam)%>
                         </div>
                     </div>
                 </div>
-                <% if (can_moderate === true || item.post.creator.objectId === jam.currentuser.id) { %>
+                <% if (jam.can_moderate === true || item.post.creator.objectId === jam.currentuser.id) { %>
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="text-right" style="width: 110px;">
                         <div class="btn-group nogrow" role="group" aria-label="...">
@@ -178,8 +178,8 @@
 
 <div class="row flex-sm-row flex-column-reverse">
     <div class="col-12 col-sm-4 col-md-3 col-xl-2 mb-4 mt-2 mt-sm-0 mb-sm-0 text-center text-sm-left">
-        <% if (comments.query.hasOwnProperty('status') && comments.list.length > 0) { %>
-        <% if (comments.query.status[0] === 'delete') { %>
+        <% if (jam.comments.query.hasOwnProperty('status') && jam.comments.list.length > 0) { %>
+        <% if (jam.comments.query.status[0] === 'delete') { %>
         <button type="button" class="btn btn-danger text-uppercase col-12" style="min-width: 250px;" data-toggle="modal" data-target="#comment_purge_modal">
             Purge Deleted
         </button>
@@ -206,13 +206,13 @@
         <% } } %>
     </div>
 
-<% if (comments.pagination.pages > 1) { %>
+<% if (jam.comments.pagination.pages > 1) { %>
     <!--// Pagination //-->
     <div class="col-12 col-sm-8 col-md-9 col-xl-10 text-center text-sm-right mt-2 mt-sm-0">
         <ul class="pagination d-inline-flex">
             <li class="page-item">
-                <% if (comments.pagination.page > 1) { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.prev+'/');%>" aria-label="Previous">
+                <% if (jam.comments.pagination.page > 1) { %>
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.comments.pagination.page+'/').join('/'+jam.comments.pagination.prev+'/');%>" aria-label="Previous">
                     <div aria-hidden="true" class="lnr lnr-chevron-left" style="margin-top: 3px; margin-bottom: 1px;"></div>
                     <span class="sr-only">Previous</span>
                 </a>
@@ -223,15 +223,15 @@
                 <% } %>
             </li>
 
-            <% for (let p = comments.pagination.min; p <= comments.pagination.max; p++) { %>
+            <% for (let p = jam.comments.pagination.min; p <= jam.comments.pagination.max; p++) { %>
             <li class="page-item">
-                <% if (p === comments.pagination.page) { %>
+                <% if (p === jam.comments.pagination.page) { %>
                 <span class="page-link txtc-primary bgc-gray-lightest">
                     <span class="sr-only">Current page</span>
                     <%=p%>
                 </span>
                 <% } else { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+p+'/');%>">
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.comments.pagination.page+'/').join('/'+p+'/');%>">
                     <span class="sr-only">Page</span>
                     <%=p%>
                 </a>
@@ -239,15 +239,15 @@
             </li>
             <% } %>
 
-            <% if (comments.pagination.pages > 3) { %>
+            <% if (jam.comments.pagination.pages > 3) { %>
             <li class="page-item dropup">
                 <button type="button" class="page-link txtc-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Pages</span>
                     &hellip;
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <% for (let p = 1; p <= comments.pagination.pages; p++) { %>
-                    <a class="dropdown-item <%=(comments.pagination.page === p) ? 'active' : ''%>" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+p+'/');%>">
+                    <% for (let p = 1; p <= jam.comments.pagination.pages; p++) { %>
+                    <a class="dropdown-item <%=(jam.comments.pagination.page === p) ? 'active' : ''%>" href="<%-originalUrl.split('/'+jam.comments.pagination.page+'/').join('/'+p+'/');%>">
                         PAGE <%=p%>
                     </a>
                     <% } %>
@@ -256,8 +256,8 @@
             <% } %>
 
             <li class="page-item">
-                <% if (comments.pagination.next <= comments.pagination.pages) { %>
-                <a class="page-link txtc-gray" href="<%-req.originalUrl.split('/'+comments.pagination.page+'/').join('/'+comments.pagination.next+'/');%>" aria-label="Next">
+                <% if (jam.comments.pagination.next <= jam.comments.pagination.pages) { %>
+                <a class="page-link txtc-gray" href="<%-originalUrl.split('/'+jam.comments.pagination.page+'/').join('/'+jam.comments.pagination.next+'/');%>" aria-label="Next">
                     <div aria-hidden="true" class="lnr lnr-chevron-right" style="margin-top: 3px; margin-bottom: 1px;"></div>
                     <span class="sr-only">Next</span>
                 </a>
@@ -274,5 +274,5 @@
 <% include ./editor %>
 
 <script type="text/javascript">
-    window.comments = <%-JSON.stringify(comments.list)%>;
+    window.comments = <%-JSON.stringify(jam.comments.list)%>;
 </script>

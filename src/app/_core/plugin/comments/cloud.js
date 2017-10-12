@@ -17,11 +17,13 @@ const approve = (request, response) => {
     }
 
     let comment = new Parse.Object('Comment');
+    let session = (request.user) ? request.user.getSessionToken() : undefined;
+
     comment.set('objectId', params.objectId);
     comment.set('status', 'publish');
     comment.set('approvedBy', request.user);
     comment.set('approvedAt', new Date());
-    comment.save(null, {sessionToken: stoken}).then(() => {
+    comment.save(null, {sessionToken: session}).then(() => {
         response.success({status: 'OK'});
     }).catch((err) => {
         response.error(err.message);
@@ -31,6 +33,7 @@ const approve = (request, response) => {
 const before_save = (request, response) => {
 
     let params = request.object.toJSON();
+    let user = request.user;
 
     // Validate required fields
     let emsg = validate(params);
@@ -47,8 +50,8 @@ const before_save = (request, response) => {
     }
 
     // Author Pointer
-    if (!params.hasOwnProperty('author') && jam.hasOwnProperty('currentuser')) {
-        params['author'] = jam.currentuser.id;
+    if (!params.hasOwnProperty('author') && user) {
+        params['author'] = user.id;
     }
 
     if (typeof params.author === 'string') {
@@ -73,9 +76,9 @@ const before_save = (request, response) => {
         request.object.setACL(acl);
     } else {
         // moderator?
-        if (jam.hasOwnProperty('currentuser')) {
-            if (params.author.id !== jam.currentuser.id) {
-                request.object.set('moderatedBy', jam.currentuser);
+        if (user) {
+            if (params.author.id !== user.id) {
+                request.object.set('moderatedBy', user);
                 request.object.set('moderatedAt', new Date());
             }
         }
@@ -88,7 +91,7 @@ const before_save = (request, response) => {
     }
 
     // Body
-    params.body = core.hbsParse(params.body);
+    //params.body = core.hbsParse(params.body);
     request.object.set('body', params.body);
 
     // Flagged
@@ -228,15 +231,16 @@ const purge = (request, response) => {
     let params    = request.params;
     let qry       = new Parse.Query('Comment');
     let limit     = (params.hasOwnProperty('limit')) ? params.limit : 1000;
+    let session   = (request.user) ? request.user.getSessionToken() : undefined;
 
     qry.equalTo('status', 'delete');
     qry.descending('createdAt');
     qry.limit(limit);
 
-    let promise = qry.find({sessionToken: stoken}).then((results) => {
+    let promise = qry.find({sessionToken: session}).then((results) => {
         count    = results.length;
         last     = _.last(results);
-        return Parse.Object.destroyAll(results, {sessionToken: stoken});
+        return Parse.Object.destroyAll(results, {sessionToken: session});
     }).then(() => {
         if (count === limit) {
             return {request: request, response: response};
@@ -258,8 +262,9 @@ const purge = (request, response) => {
 
 const save = (request, response) => {
     let obj = new Parse.Object('Comment');
+    let session = (request.user) ? request.user.getSessionToken() : undefined;
 
-    obj.save(request.params, {sessionToken: stoken}).then((result) => {
+    obj.save(request.params, {sessionToken: session}).then((result) => {
         response.success(result.toJSON());
     }).catch((err) => {
         response.error(err.message);

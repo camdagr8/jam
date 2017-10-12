@@ -12,8 +12,9 @@ const moment = require('moment');
 Parse.Cloud.define('nonce_create', (request, response) => {
 
 	let obj = new Parse.Object('Nonce');
+    let session = (request.user) ? request.user.getSessionToken() : undefined;
 
-	obj.save(null, {sessionToken: stoken}).then((rec) => {
+	obj.save(null, {sessionToken: session}).then((rec) => {
 		response.success(rec.id);
 	}, (err) => {
 		response.error(err);
@@ -40,8 +41,10 @@ Parse.Cloud.define('nonce_delete', (request, response) => {
 	}
 
 	let obj = new Parse.Object('Nonce');
+    let session = (request.user) ? request.user.getSessionToken() : undefined;
+
 	obj.set('objectId', request.params.id);
-	obj.destroy(null, {sessionToken: stoken}).then(() => {
+	obj.destroy(null, {sessionToken: session}).then(() => {
 		response.success(true);
 	}, (err) => {
 		response.error(err);

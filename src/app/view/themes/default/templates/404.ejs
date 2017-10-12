@@ -5,8 +5,8 @@
 </head>
 <body class="container pt-4">
 
-    <% if (typeof err !== 'undefined') { %>
-    <h1 class="text-center"><%= (err['code']) ? err.code : '404'%> <%= (err['message']) ? err.message : 'Page not found'%></h1>
+    <% if (typeof jam.err !== 'undefined') { %>
+    <h1 class="text-center"><%= (jam.err['code']) ? jam.err.code : '404'%> <%= (jam.err['message']) ? jam.err.message : 'Page not found'%></h1>
     <% } else { %>
     <h1 class="text-center">404 Page not found</h1>
     <% } %>

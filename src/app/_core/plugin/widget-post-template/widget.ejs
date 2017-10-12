@@ -11,16 +11,16 @@
                 <select class="form-control" id="admin-template-select" name="template" title="Select Template">
                     <% jam.templates.forEach((item) => { %>
                     <% if (String(item.template).toLowerCase().substr(0, 7) !== 'article') { return; }%>
-                    <option value="<%= item.template %>" data-template='<%-JSON.stringify(item)%>' <%- (rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
+                    <option value="<%= item.template %>" data-template='<%-JSON.stringify(item)%>' <%- (jam.rec['template'] === item.template) ? 'selected' : '' %>><%= item.title %></option>
                     <% }); %>
                 </select>
             </li>
         </ul>
-        <% if (rec['objectId'] && rec.hasOwnProperty('category')) { %>
+        <% if (jam.rec['objectId'] && jam.rec.hasOwnProperty('category')) { %>
         <div class="card-footer bgc-gray-lightest" style="margin-top: -1px;">
             <a
                 target="_preview"
-                href="<%=baseurl%><%=(rec.category[0]) ? '/' + rec.category[0] : ''%><%=rec['routes'][0]%>"
+                href="<%=jam.baseurl%><%=(jam.rec.category[0]) ? '/' + jam.rec.category[0] : ''%><%=jam.rec['routes'][0]%>"
                 class="btn btn-outline-primary btn-block text-uppercase">Preview</a>
         </div>
         <% } %>
