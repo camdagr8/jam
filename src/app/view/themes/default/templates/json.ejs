@@ -1,0 +1,10 @@
+{
+    "objectId": "<%-jam.rec.objectId%>",
+    "info": {
+        "status": "<%-jam.rec.status%>",
+        "type": "<%-jam.rec.type%>",
+        "createdAt": "<%-jam.rec.createdAt.toString()%>",
+        "createdBy": "<%-(jam.rec.hasOwnProperty('creator')) ? jam.rec.creator.objectId : '' %>"
+    },
+    "data": <%-(jam.rec.hasOwnProperty('meta')) ? JSON.stringify(jam.rec.meta) : '{}'%>
+}

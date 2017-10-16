@@ -3,7 +3,7 @@ const hbs        = require('handlebars');
 const slugify    = require('slugify');
 const Promise    = require('promise');
 const moment     = require('moment');
-const fs         = require('fs');
+const fs         = require('fs-extra');
 const rr         = require('readdir-recursive');
 
 
@@ -162,7 +162,11 @@ const plugins = (mod_path, req) => {
     }
 
 	let output 	= [];
-	let mods 	= fs.readdirSync(mod_path);
+	let mods 	= [];
+
+    if (fs.existsSync(mod_path)) {
+        mods = fs.readdirSync(mod_path);
+    }
 
 	if (!req.jam.hasOwnProperty('plugin')) { req.jam.plugin = {}; }
 
@@ -174,7 +178,11 @@ const plugins = (mod_path, req) => {
 		let name 	= slugify(dir);
 		let obj 	= {name: name, index: 1000000};
 		let path 	= mod_path + '/' + dir;
-		let files 	= fs.readdirSync(path);
+		let files 	= [];
+
+        if (fs.existsSync(path)) {
+            files = fs.readdirSync(path);
+        }
 
 		if (files.length < 1) { return; }
 
@@ -202,7 +210,6 @@ const plugins = (mod_path, req) => {
 		} else {
 			output.push(obj);
 		}
-
 	});
 
 	output = _.sortBy(output, 'index');
@@ -328,19 +335,21 @@ const ext_remove = (str) => {
  */
 const scan = (path) => {
 	return new Promise((fulfill, reject) => {
-		fs.readdir(path, 'utf8', (err, files) => {
-			if (err) {
-			    reject(err);
-			} else {
-			    let farr = [];
-			    files.forEach((file) => {
-                    if (file.substr(0, 1) !== '_' && file.substr(0, 1) !== '.') {
-                        farr.push(file);
-                    }
-                });
-			    fulfill(farr);
-			}
-		});
+        if (fs.existsSync(path)) {
+            fs.readdir(path, 'utf8', (err, files) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    let farr = [];
+                    files.forEach((file) => {
+                        if (file.substr(0, 1) !== '_' && file.substr(0, 1) !== '.') {
+                            farr.push(file);
+                        }
+                    });
+                    fulfill(farr);
+                }
+            });
+        }
 	});
 };
 
@@ -391,17 +400,26 @@ const find_file = (dirs, files) => {
     if (typeof files === 'string') { files = [files]; }
 
     let output = [];
+
     dirs.forEach((dir) => {
         rr.fileSync(dir).forEach((file) => {
 
-            let exclude    = false;
-            let farr       = file.split('/');
-            farr.forEach((i) => { if (i.substr(0, 2) === '__') { exclude = true; } });
+            let exclude = false;
+            let farr    = file.split('/');
+            farr.forEach((i) => {
+                if (i.substr(0, 2) === '__') {
+                    exclude = true;
+                }
+            });
 
-            if (exclude === true) { return; }
+            if (exclude === true) {
+                return;
+            }
 
             f = farr.pop();
-            if (files.indexOf(f) > -1) { output.push(file); }
+            if (files.indexOf(f) > -1) {
+                output.push(file);
+            }
         });
     });
 
@@ -410,7 +428,12 @@ const find_file = (dirs, files) => {
 
 const themes_get = () => {
     let themes = [];
-    let s = fs.readdirSync(appdir + '/view/themes');
+    let s = [];
+
+    if (fs.existsSync(appdir + '/view/themes')) {
+        s = fs.readdirSync(appdir + '/view/themes');
+    }
+
     s.forEach((dir) => {
         let path = appdir + '/view/themes/' + dir;
         if (fs.lstatSync(path).isDirectory()) {
@@ -454,3 +477,4 @@ exports.timestamper    = timestamper;
 exports.find_file      = find_file;
 exports.themes         = themes_get;
 exports.strip_tags     = strip_tags;
+

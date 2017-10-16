@@ -14,11 +14,11 @@ exports.get = (req, res) => {
 
 
 exports.post = (req, res) => {
-
 	Parse.User.logIn(req.body.username, req.body.password).then((user) => {
 		res.cookie(core.skey, user.getSessionToken());
 		res.redirect('/admin');
 	}, (err) => {
+	    log(err);
 		res.cookie('e', err.message);
 		res.redirect('/login');
 	});

@@ -8,7 +8,7 @@ global.env              = (process.env.NODE_ENV) ? process.env : require(basedir
 global.appdir           = basedir + env.APP_MOUNT; // ref to the /app dir
 global.core             = require(appdir + '/_core/core.js');
 global._                = require('underscore');
-global.stoken;
+//global.stoken;
 
 
 // Node modules
@@ -112,6 +112,6 @@ app.use(['/admin', '/dashboard'], admin);
 app.use(routes);
 
 // Run the server
-app.listen(env.PORT, '0.0.0.0', function() {
-	log('Server running on port:', env.PORT);
+app.listen(env.APP_PORT, '0.0.0.0', function() {
+	log('Server running on port:', env.APP_PORT);
 });
