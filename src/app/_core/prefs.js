@@ -10,15 +10,14 @@ const Promise    = require('promise');
  * @description Retrieves configuration variables, preferences, and other necessary data.
  */
 module.exports = (req, res, next) => {
-    stoken = (req.cookies.hasOwnProperty(core.skey)) ? req.cookies[core.skey] : undefined;
 
     let url = req.url.split('/');
     url.shift();
 
     req['jam']                   = (req.hasOwnProperty('jam')) ? req.jam : {};
+    req.jam['sessionToken']      = (req.cookies[core.skey]) ? req.cookies[core.skey] : undefined;
     req.jam['baseurl']           = req.protocol + '://' + req.get('host');
     req.jam['theme']             = 'default';
-    req.jam['sessionToken']      = stoken;
     req.jam['currentuser']       = null;
     req.jam['url']               = url;
     req.jam['blocks']            = [];
@@ -80,7 +79,7 @@ module.exports = (req, res, next) => {
         req.jam['currentuser'] = user;
 
     }, (err) => { // No current user: Keep going
-        log(__filename);
+        log(__filename, ':82');
         log(err.message);
 
     }).then(() => { // Get helpers and plugins

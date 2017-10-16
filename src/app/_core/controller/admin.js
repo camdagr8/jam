@@ -4,7 +4,6 @@
  * ---------------------------------------------------------------------------
  */
 module.exports = (req, res, next) => {
-    //log('admin');
 	if (!req.jam.currentuser) {
 		res.redirect('/login');
 	} else {

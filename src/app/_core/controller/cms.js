@@ -106,5 +106,6 @@ exports.use = (req, res, next) => {
 exports.all = (req, res) => {
     let tmp = req.jam.rec['template'] || 'index';
     tmp = core.template.theme + '/templates/' + tmp;
+
     res.render(tmp, req);
 };
