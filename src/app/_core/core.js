@@ -27,45 +27,45 @@ const rr         = require('readdir-recursive');
  */
 const query = (params) => {
 
-	// 0.1 - Set up some defaults
-	let table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
-	let skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
-	let limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
-		limit 	= (limit > 1000) ? 1000 : limit;
+    // 0.1 - Set up some defaults
+    let table 	= (typeof params['table'] === 'string') 	? params['table'] 			: null;
+    let skip 	= (typeof params['skip'] !== 'undefined') 	? Number(params['skip']) 	: 0;
+    let limit 	= (typeof params['limit'] !== 'undefined') 	? Number(params['limit']) 	: 100;
+    limit 	= (limit > 1000) ? 1000 : limit;
 
-	// 0.2 - Exit if no table specified
-	if (table === null) { return null; }
+    // 0.2 - Exit if no table specified
+    if (table === null) { return null; }
 
-	// 1.0 - The Parse.Query constructor
-	let qry = new Parse.Query(table);
-		qry.limit(limit);
-		qry.skip(skip);
+    // 1.0 - The Parse.Query constructor
+    let qry = new Parse.Query(table);
+    qry.limit(limit);
+    qry.skip(skip);
 
-	// 2.0 - Set the order
-	let orders 	= ['ascending', 'descending'];
-	let orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
-	let order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
-		order 	= order.toLowerCase();
-		order 	= (orders.indexOf(order) > -1) ? order : 'descending';
+    // 2.0 - Set the order
+    let orders 	= ['ascending', 'descending'];
+    let orderBy = (typeof params['orderBy'] === 'string') 	? params['orderBy'] 	: 'createdAt';
+    let order 	= (typeof params['order'] === 'string') 	? params['order'] 		: 'descending';
+    order 	= order.toLowerCase();
+    order 	= (orders.indexOf(order) > -1) ? order : 'descending';
 
-	qry[order](orderBy);
+    qry[order](orderBy);
 
-	/**
-	 * 3.0 - Use a timestamp so that we can get larger datasets w/o running
-	 * into the max object query of 100000
-	 */
-	if (params['timestamp']) {
-		let d = moment(params['timestamp']).toDate();
+    /**
+     * 3.0 - Use a timestamp so that we can get larger datasets w/o running
+     * into the max object query of 100000
+     */
+    if (params['timestamp']) {
+        let d = moment(params['timestamp']).toDate();
 
-		if (order === 'descending') {
-			qry.lessThan('createdAt', d);
-		} else {
-			qry.greaterThan('createdAt', d);
-		}
-	}
+        if (order === 'descending') {
+            qry.lessThan('createdAt', d);
+        } else {
+            qry.greaterThan('createdAt', d);
+        }
+    }
 
-	// 4.0 - Return the qry object
-	return qry;
+    // 4.0 - Return the qry object
+    return qry;
 };
 
 /**
@@ -106,43 +106,43 @@ const perm_check = (perms, user) => {
  */
 const add_widgets = (sections, req) => {
 
-	sections = (_.isArray(sections)) ? sections : [sections];
-	sections.push('all');
-	sections = _.uniq(sections);
+    sections = (_.isArray(sections)) ? sections : [sections];
+    sections.push('all');
+    sections = _.uniq(sections);
 
-	let user = req.jam.currentuser;
+    let user = req.jam.currentuser;
 
-	req.jam.plugins.forEach((plugin) => {
-		let p = plugin.name.split('-').join('_');
-		let m = req.jam.plugin[p];
+    req.jam.plugins.forEach((plugin) => {
+        let p = plugin.name.split('-').join('_');
+        let m = req.jam.plugin[p];
 
-		// Access control ---------------------------------------------------- X
-		let access = true;
-		if (m.hasOwnProperty('perms')) {
-			access = perm_check(m.perms, user);
-		}
+        // Access control ---------------------------------------------------- X
+        let access = true;
+        if (m.hasOwnProperty('perms')) {
+            access = perm_check(m.perms, user);
+        }
 
-		if (access !== true) { return; }
+        if (access !== true) { return; }
 
-		// Exit if no widget.ejs file ---------------------------------------- X
-		if (!plugin.hasOwnProperty('widget')) { return; }
+        // Exit if no widget.ejs file ---------------------------------------- X
+        if (!plugin.hasOwnProperty('widget')) { return; }
 
-		// Exit if the module doesn't have a zone ---------------------------- X
-		let z = (m.hasOwnProperty('zone')) ? m.zone : null;
-		if (!z || z === null) { return; }
+        // Exit if the module doesn't have a zone ---------------------------- X
+        let z = (m.hasOwnProperty('zone')) ? m.zone : null;
+        if (!z || z === null) { return; }
 
-		// If the mod.js file does not specify sections set it to `all`.
-		if (!m.hasOwnProperty('sections')) {
-			m['sections'] = ['all'];
-		}
+        // If the mod.js file does not specify sections set it to `all`.
+        if (!m.hasOwnProperty('sections')) {
+            m['sections'] = ['all'];
+        }
 
-		// Exit if no intersecting sections ---------------------------------- X
-		if (_.intersection(sections, m.sections).length < 1) { return; }
+        // Exit if no intersecting sections ---------------------------------- X
+        if (_.intersection(sections, m.sections).length < 1) { return; }
 
         req.jam[z] = (req.jam.hasOwnProperty(z)) ? req.jam[z] : [];
         req.jam[z].push(plugin.widget);
         req.jam[z] = _.uniq(req.jam[z]);
-	});
+    });
 };
 
 /**
@@ -157,64 +157,67 @@ const add_widgets = (sections, req) => {
  * @returns {Array} List of module objects.
  */
 const plugins = (mod_path, req) => {
-    if (!fs.existsSync(mod_path)) {
-        return [];
-    }
 
-	let output 	= [];
-	let mods 	= [];
+    let output 	= [];
+    let mods 	= [];
 
-    if (fs.existsSync(mod_path)) {
+    if (fs.existsSync(mod_path) && fs.lstatSync(mod_path).isDirectory()) {
         mods = fs.readdirSync(mod_path);
     }
 
-	if (!req.jam.hasOwnProperty('plugin')) { req.jam.plugin = {}; }
+    if (!req.jam.hasOwnProperty('plugin')) { req.jam.plugin = {}; }
 
-	mods.forEach((dir) => {
+    mods.forEach((dir) => {
+        let path 	= mod_path + '/' + dir;
 
-		if (dir.substr(0, 1) === '.') { return; }
-		if (dir.substr(0, 1) === '_') { return; }
+        if (!fs.lstatSync(path).isDirectory()) { return; }
 
-		let name 	= slugify(dir);
-		let obj 	= {name: name, index: 1000000};
-		let path 	= mod_path + '/' + dir;
-		let files 	= [];
+        if (dir.substr(0, 1) === '.') { return; }
+        if (dir.substr(0, 1) === '_') { return; }
+
+        let name 	= slugify(dir);
+        let obj 	= {name: name, index: 1000000};
+
+        let files 	= [];
 
         if (fs.existsSync(path)) {
             files = fs.readdirSync(path);
         }
 
-		if (files.length < 1) { return; }
+        if (files.length < 1) { return; }
 
-		files.forEach((file) => {
-			if (file.substr(0, 1) === '.') { return; }
-			let f = ext_remove(file);
-			obj[f] = path+'/'+file;
-		});
+        files.forEach((file) => {
+
+            if (file.substr(0, 1) === '.') {
+                return;
+            }
+            let f  = ext_remove(file);
+            obj[f] = path + '/' + file;
+        });
 
 
-		if (obj.hasOwnProperty('mod')) {
+        if (obj.hasOwnProperty('mod')) {
 
-			let m          = require(obj.mod);
-			obj.name       = (m.hasOwnProperty('id')) ? m.id : obj.name;
-			let i          = (m.hasOwnProperty('index')) ? m.index : obj.index;
-			obj.index      = (typeof i !== 'number') ? obj.index : i;
-			let p          = obj.name.split('-').join('_');
-			obj['func']    = p;
+            let m          = require(obj.mod);
+            obj.name       = (m.hasOwnProperty('id')) ? m.id : obj.name;
+            let i          = (m.hasOwnProperty('index')) ? m.index : obj.index;
+            obj.index      = (typeof i !== 'number') ? obj.index : i;
+            let p          = obj.name.split('-').join('_');
+            obj['func']    = p;
 
-			if (!req.jam.plugin.hasOwnProperty(p)) {
+            if (!req.jam.plugin.hasOwnProperty(p)) {
                 req.jam.plugin[p] = m;
                 output.push(obj);
-			}
+            }
 
-		} else {
-			output.push(obj);
-		}
-	});
+        } else {
+            output.push(obj);
+        }
+    });
 
-	output = _.sortBy(output, 'index');
+    output = _.sortBy(output, 'index');
 
-	return output;
+    return output;
 };
 
 /**
@@ -232,44 +235,44 @@ const plugins = (mod_path, req) => {
  * @return {String} Parsed version of the `source` value with `data` applied.
  */
 const hbsParse = (source, data, jam) => {
-	// 0.1 - Trim the whitespace from the source.
-	source = source.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
+    // 0.1 - Trim the whitespace from the source.
+    source = source.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
 
-	jam = jam || data;
+    jam = jam || data;
 
-	// 1.0 - Get the Handlebars helpers and partials from jam.helpers array.
-	jam.helpers.forEach((mod) => {
+    // 1.0 - Get the Handlebars helpers and partials from jam.helpers array.
+    jam.helpers.forEach((mod) => {
 
-		let m = (mod.hasOwnProperty('mod')) ? require(mod.mod) : {};
+        let m = (mod.hasOwnProperty('mod')) ? require(mod.mod) : {};
 
-		// 1.1 - If there is a view.hbs file -> register a partial {{> mod.name  }}
-		if (mod.hasOwnProperty('partial')) {
+        // 1.1 - If there is a view.hbs file -> register a partial {{> mod.name  }}
+        if (mod.hasOwnProperty('partial')) {
 
-			// 1.1.0 - Get the mod id and fall back to mod.name if not specified in mod.js
-			let n = (m.hasOwnProperty('id')) ? m.id : mod.name;
+            // 1.1.0 - Get the mod id and fall back to mod.name if not specified in mod.js
+            let n = (m.hasOwnProperty('id')) ? m.id : mod.name;
 
-			// 1.1.1 - Read file contents view.hbs
-			let tmp = fs.readFileSync(mod.partial, 'utf8');
+            // 1.1.1 - Read file contents view.hbs
+            let tmp = fs.readFileSync(mod.partial, 'utf8');
 
-			// 1.1.2 - Trim the whitespace from the tmp
-			tmp = tmp.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
+            // 1.1.2 - Trim the whitespace from the tmp
+            tmp = tmp.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
 
-			// 1.1.3 - Register the partial
-			hbs.registerPartial(n, tmp);
-		}
+            // 1.1.3 - Register the partial
+            hbs.registerPartial(n, tmp);
+        }
 
-		// 1.2 - If there is a m.helper() function defined -> register a helper {{mod.name}}
-		if (m.hasOwnProperty('helper')) {
-			hbs.registerHelper(mod.name, m.helper);
-		}
+        // 1.2 - If there is a m.helper() function defined -> register a helper {{mod.name}}
+        if (m.hasOwnProperty('helper')) {
+            hbs.registerHelper(mod.name, m.helper);
+        }
 
-	});
+    });
 
-	// 2.0 - Compile the handlebars template
-	let template = hbs.compile(source);
+    // 2.0 - Compile the handlebars template
+    let template = hbs.compile(source);
 
-	// 3.0 - Apply the data and return new string
-	return template(data);
+    // 3.0 - Apply the data and return new string
+    return template(data);
 };
 
 /**
@@ -315,11 +318,7 @@ const is_role = (permission, user) => {
  * Remove the file ext from a file path.
  */
 const ext_remove = (str) => {
-	str = str.split('.');
-	str.pop();
-	str = str.join('.');
-
-	return str;
+    return str.split('.').shift();
 };
 
 /**
@@ -334,7 +333,7 @@ const ext_remove = (str) => {
  * @returns {Promise}
  */
 const scan = (path) => {
-	return new Promise((fulfill, reject) => {
+    return new Promise((fulfill, reject) => {
         if (fs.existsSync(path)) {
             fs.readdir(path, 'utf8', (err, files) => {
                 if (err) {
@@ -350,15 +349,15 @@ const scan = (path) => {
                 }
             });
         }
-	});
+    });
 };
 
 /**
  * Core templates
  */
 const template = {
-	admin: appdir + '/_core/view/admin/admin',
-	install: appdir + '/_core/view/admin/install',
+    admin: appdir + '/_core/view/admin/admin',
+    install: appdir + '/_core/view/admin/install',
     views: null,
     theme: null
 };
@@ -373,13 +372,13 @@ const template = {
  * @description Function that updates the timestamp.json file when content is changed in the CMS
  */
 const timestamper = () => {
-	let p = appdir + '/model/timestamp.json';
-		p = p.replace(/dist/, 'src');
+    let p = appdir + '/model/timestamp.json';
+    p = p.replace(/dist/, 'src');
 
-	let t = {timestamp: moment().format()};
-		t = JSON.stringify(t);
+    let t = {timestamp: moment().format()};
+    t = JSON.stringify(t);
 
-	fs.writeFile(p, t, 'utf8', () => {});
+    fs.writeFile(p, t, 'utf8', () => {});
 };
 
 /**

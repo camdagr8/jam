@@ -223,9 +223,20 @@ const content_list = (request, response) => {
 
         items.forEach((item) => {
             let obj            = item.toJSON();
+            obj['routes']      = obj['routes'] || [];
             obj['status_icon'] = pubicons[obj.status];
+<<<<<<< HEAD
+            obj['edit_url']    = jam.baseurl + '/admin/'+type+'/' + obj.objectId;
+
+            let r = [jam.baseurl];
+            if (Array.isArray(obj['category'])) { r.push('/' + obj.category[0]); }
+            if (obj.routes.length > 0) { r.push(obj.routes[0]); }
+
+            obj['view_url'] = r.join('');
+=======
             obj['edit_url']    = '/admin/'+type+'/' + obj.objectId;
             obj['routes']      = obj['routes'] || [];
+>>>>>>> origin/master
 
             results.push(obj);
         });
@@ -332,6 +343,12 @@ const content_before_save = (request, response) => {
     let title = request.object.get('title');
     request.object.set('title', title);
 
+<<<<<<< HEAD
+    if (request.object.isNew() && request.object.get('type') === 'post') {
+        if (!request.object.get('category')) {
+            request.object.set('category', ['blog']);
+        }
+=======
     let index = [];
     let meta = request.object.get('meta');
     meta['title'] = title;
@@ -344,6 +361,7 @@ const content_before_save = (request, response) => {
     if (index.length > 0) {
         index = _.uniq(index);
         request.object.set('index', index);
+>>>>>>> origin/master
     }
 
     response.success();

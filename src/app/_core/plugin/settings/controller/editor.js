@@ -42,11 +42,12 @@ exports.post = (req, res) => {
 
     let nonce = req.body.nonce;
 
+    let keys = _.keys(req.body);
+    keys = _.without(keys, 'nonce');
+
     Parse.Cloud.run('nonce_get', {id: nonce}).then(() => {
 
         delete req.body.nonce;
-
-        let keys = _.keys(req.body);
 
         let qry = new Parse.Query('Config');
         qry.containedIn('key', keys);
@@ -54,11 +55,31 @@ exports.post = (req, res) => {
         return qry.find();
 
     }).then((results) => {
+        let rkeys = [];
+
         results.forEach((item) => {
             let k = item.get('key');
+            rkeys.push(k);
             let v = {};
             v[k] = req.body[k];
             item.set('value', v);
+        });
+
+
+        let diff = _.difference(keys, rkeys);
+        diff.forEach((k) => {
+            if (!req.body[k]) { return; }
+
+            let val    = {};
+            let v      = req.body[k];
+            let obj    = new Parse.Object('Config');
+            val[k]     = v;
+
+            obj.set('key', k);
+            obj.set('value', val);
+
+            results.push(obj);
+
         });
 
         return Parse.Object.saveAll(results);
