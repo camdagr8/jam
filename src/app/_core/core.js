@@ -318,11 +318,7 @@ const is_role = (permission, user) => {
  * Remove the file ext from a file path.
  */
 const ext_remove = (str) => {
-    str = str.split('.');
-    str.pop();
-    str = str.join('.');
-
-    return str;
+    return str.split('.').shift();
 };
 
 /**
