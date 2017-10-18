@@ -73,9 +73,6 @@ Typically you will have an external MongoDB, so be sure to update your environme
 ## Architecture
 Jam is a CMS built on [Node](https://nodejs.org/en/) + [Express](https://expressjs.com/) and uses [Parse Cloud Code](http://docs.parseplatform.org/cloudcode/guide/) to interact with the [MongoDB](https://www.mongodb.com/). Jam also uses [EJS](https://github.com/tj/ejs), a simple templating language as the server side rendering engine.
 
-## Global Objects
-Jam creates a couple global objects that are used to persist data through out the application.
-
 ### 1. The Core Object
 The `global.core` object is created before any script execution starts
 
@@ -84,8 +81,8 @@ The `global.core` object is created before any script execution starts
 | core.hbsParse | Function | Parses content for Helper wysiwyg text. Returns: String |
 | core.is_role | Function | Checks whether the specified `permission` is applied to the specified `user`. Returns: Boolean |
 
-### 2. The Jam Object
-The `global.jam` object is created before any script execution starts. Once execution is under way the following properties are attached:
+### 2. The jam Object
+The `req.jam` object is created before any routes are handled. Once execution is under way the following properties are attached:
 
 | Property | Type | Description |
 |:---------|:-----|:------------|
@@ -106,45 +103,6 @@ The `global.jam` object is created before any script execution starts. Once exec
 | jam.template_files | Array | List of template files. Only available in the admin pages. |
 | jam.templates | Array | List of registered tempaltes. Only available int he admin pages. |
 
-> _**Pro Tip:** You can pass the jam object to the render function and set the .ejs file's data value or use it as a global `jam.PROPERTY`_
-
-
-## Themes
-Themes are saved in the `~/src/app/view/themes` directory and consist of .ejs template files.
-
-### Creating A Theme
-Create a new theme by adding a new directory in the themes directory and give it a name. You will need to update the site settings via the admin dashboard to point to the new theme directory.
-
-![Theme Directory](https://ibin.co/3IoNg3hneJe8.png)
-
->_**Pro Tip:** You can create a new theme with pre-generated template files using the Jam CLI_
-```
-$ jam create theme --name "My Theme"
-```
-
-### Adding A Style Sheet
-When you create a new theme, it's typical to want a specific style sheet for that theme. There are a couple ways to add a new style sheet.
-
-#### 1. The SASS Way:
-Create a new .scss file in the `~/src/public/src/css` directory then create a new directory where your supporting .scss files can be stored.
-Upon compilation, the style sheet will be piped to the `~/src/public/assets/css` directory.
-
-![The SASS Way](https://ibin.co/3IlmRm1gnJMu.png)
-
-```
-/* default.scss */
-@import 'default/layout';
-@import 'default/header';
-@import 'default/page';
-@import 'default/footer';
-```
-
-#### 2. The Plain CSS Way:
-Simply add a new .css file to the `~/src/public/assets/css` directory.
-
-![The Plain CSS Way](https://ibin.co/3IoM9ljcNHRS.png)
-
->_**Pro Tip:** If you create a new theme with the Jam CLI, The SASS Way is automatically setup using the theme name you specified when creating the theme._
 
 ## Extending Jam
 Jam functionality can be extended by creating a helper, widget, or plugin.
@@ -244,5 +202,136 @@ module.exports = {
 };
 ```
 
-To be continued...
+### Cloud Code
+There is a wide variety of Parse Cloud Code functions available to use anywhere.. no seriously.. anywhere, even front-end or mobile apps so be careful what and how you expose functionality in Cloud Code.
 
+#### Creating A Cloud Function
+Cloud functions are automatically registered by Jam and don't need to be included or required anywhere.
+There are a couple places where you can create a cloud function:
+  - In the `~/app/cloud` directory
+  - A `cloud.js` file saved in a `~/app/plugin/[PLUGIN]` directory
+
+
+__See the [Parse Cloud Code Guide](http://docs.parseplatform.org/cloudcode/guide/) for details on how to write and use Cloud Code.__
+
+#### Jam Cloud Code API
+
+##### config_get
+Returns an Object Array of the Jam configuration objects stored in the `Config` table.
+If the `key` parameter is specified, returns the config object value as it was defined.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| key | String | (Optional) The `Config` value to return. |
+
+```js
+Parse.Cloud.run('config_get', {key: 'title'})
+
+Parse.Cloud.run('config_get')
+```
+
+##### config_set
+Updates or creates a `Parse.Object('Config')` record by simply passing name:value pairs to the request.params of the `Parse.Cloud.run()` function.
+
+```js
+Parse.Cloud.run('config_set', {title: "Site Title", theme: "default", myconfig: ["my", "config", "item"})
+```
+
+> _** Note: After creating a new config item, you may need to do a page refresh or manually add the item to the_ `req.jam.config` _object._
+
+
+##### content_get
+Queries the `Parse.Object('Content')` table for the specified route.
+Returns the first matching, newest object.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| route | String | The route to query |
+
+```js
+Parse.Cloud.run('content_get', {route: '/about'})
+```
+
+##### content_get_pages
+Queries the `Parse.Object('Content')` table where the `type` property is `page`.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| page | Number | The pagination page number to retrieve. Default: 1. |
+| limit | Number | The number of results to return per page. Default: 50. |
+| order | String | The sort order `ascending|descending`. Default: descending. |
+| orderBy | String | The sort order field. Default: createdAt. |
+| user | Parse.User or String | The Parse.User object or objectId of the content creator. |
+| status | String | The content status type: `draft|publish|publish-later|delete-later|delete`. By default, content with the `delete` status are ignored. |
+| find | String | Space delimited list string that searches the `index` field for the specified values. |
+
+```js
+Parse.Cloud.run('content_get_pages', {
+    page       : 3,
+    limit      : 5,
+    order      : 'ascending',
+    orderBy    : 'title',
+    user       : 'u5fMpRs2SP',
+    status     : 'publish',
+    find       : 'hello world'
+})
+```
+
+##### content_get_posts
+Queries the `Parse.Object('Content')` table where the `type` property is `post`. See content_get_pages for details.
+
+##### content_post
+Creates or updates a `Parse.Object('Content')`.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| objectId | String | The Parse.Object ID. Used when updating an object. |
+| routes | Array or String | The route(s) to associate the object with. Required. |
+| category | Array or String | The categories to associate the object with. Typically only used with the `post` type. The category will prepend the routes. |
+| title | String | |
+| meta | Object | Miscellaneous data associated with the object. Typically the meta is used to customize the display of the content. |
+| publishAt | Date | The date when the content object should be published. |
+| unpublishAt | Date | The date when the content object should no longer be published. |
+| status | String | The content status type: `draft|publish|publish-later|delete-later|delete`. Default: 'draft'. |
+| user | Parse.User or String | The author of the content object. Default: current user. |
+
+> _** Note: There is a system wide `Parse.Cloud.beforeSave('Content')` trigger applied where input is sanitized before input. This trigger applies to all `Parse.Object('Content')` save operations_
+
+##### content_purge
+The Jam admin does not actually delete records from the Content table when you set it's status to delete. This function will delete the `delete` status records permanently.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| type | String | The content `type` to purge |
+| limit | Number | Number of records to purge. Default: 1000 |
+
+```js
+Parse.Cloud.run('content_purge', {type: 'post', limit: 5})
+```
+
+> _** Note: You will need the correct ACL/Permissions in order to execute this command for all records._
+
+##### jwt_sign
+Creates a [JWT](https://jwt.io/) signature.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| payload | Mixed | The content to encrypt withing the JWT. |
+| secret | String, Buffer, or Object | See the (JWT documentation)[https://github.com/auth0/node-jsonwebtoken] for detaails. |
+| options | Object | See the (JWT documentation)[https://github.com/auth0/node-jsonwebtoken] for detaails. |
+
+```js
+Parse.Cloud.run('jwt_sign', {payload: "Yay!", secret: "Bears poop in the forest"})
+```
+
+##### jwt_verify
+Verifies a JWT.
+
+| Param | Type | Description |
+|:------|:-----|:------------|
+| token | Object | The JWT signature to verify. |
+| secret | String, Buffer, or Object | The secret value used when creating the signature. |
+
+```js
+Parse.Cloud.run('jwt_verify', {token: myJWTSig, secret: "Bears poop in the forest"})
+```
